@@ -1,0 +1,38 @@
+[
+    {
+      "flightNumber": "QP-1302",
+      "airline": { "name": "Akasa Air", "code": "QP" },
+      "departure": { "hub": "ATQ", "time": "2026-04-18T13:20:00Z" },
+      "arrival": { "hub": "BLR", "time": "2026-04-18T15:55:00Z" },
+      "pricing": {
+        "baseFare": 2999,
+        "currency": "INR",
+        "isRefundable": true
+      },
+      "inventory": { "availableSeats": 42 }
+    },
+    {
+      "flightNumber": "SG-162",
+      "airline": { "name": "SpiceJet", "code": "SG" },
+      "departure": { "hub": "ATQ", "time": "2026-04-18T14:40:00Z" },
+      "arrival": { "hub": "BLR", "time": "2026-04-18T17:35:00Z" },
+      "pricing": {
+        "baseFare": 3150,
+        "currency": "INR",
+        "isRefundable": true
+      },
+      "inventory": { "availableSeats": 28 }
+    },
+    {
+      "flightNumber": "6E-2134",
+      "airline": { "name": "IndiGo", "code": "6E" },
+      "departure": { "hub": "DEL", "time": "2026-04-18T09:00:00Z" },
+      "arrival": { "hub": "BOM", "time": "2026-04-18T11:15:00Z" },
+      "pricing": {
+        "baseFare": 4500,
+        "currency": "INR",
+        "isRefundable": false
+      },
+      "inventory": { "availableSeats": 102 }
+    }
+]

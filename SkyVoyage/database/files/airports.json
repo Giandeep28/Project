@@ -1,0 +1,11 @@
+[
+    {"code": "AMD", "name": "Sardar Vallabhbhai Patel International", "city": "Ahmedabad", "country": "India" },
+    {"code": "BOM", "name": "Chhatrapati Shivaji International", "city": "Mumbai", "country": "India" },
+    {"code": "DEL", "name": "Indira Gandhi International", "city": "Delhi", "country": "India" },
+    {"code": "BLR", "name": "Kempegowda International", "city": "Bangalore", "country": "India" },
+    {"code": "ATQ", "name": "Sri Guru Ram Dass Jee International", "city": "Amritsar", "country": "India" },
+    {"code": "GOI", "name": "Dabolim Airport", "city": "Goa", "country": "India" },
+    {"code": "LHR", "name": "Heathrow Airport", "city": "London", "country": "UK" },
+    {"code": "DXB", "name": "Dubai International", "city": "Dubai", "country": "UAE" },
+    {"code": "SIN", "name": "Changi Airport", "city": "Singapore", "country": "Singapore" }
+]
