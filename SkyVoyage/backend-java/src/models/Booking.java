@@ -1,42 +1,52 @@
 package models;
 
 import java.io.Serializable;
-import java.util.Date;
 
+/**
+ * Booking data model — matches the schema expected by the frontend payload and backend response.
+ *
+ * Fields:
+ *   bookingId, flightId, contactEmail, seatId, totalFare,
+ *   bookingTimestamp, status
+ */
 public class Booking implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String bookingId;
     private String flightId;
-    private String passengerName;
-    private String seatId;
+    private String contactEmail;  // Replaced passengerName with contactEmail to match frontend payload
+    private String seatId;        // Used as seatClass
     private double totalFare;
-    private long bookingTimestamp;
+    private long   bookingTimestamp;
     private String status;
 
     public Booking() {}
 
-    public Booking(String bookingId, String flightId, String passengerName, String seatId, double totalFare) {
-        this.bookingId = bookingId;
-        this.flightId = flightId;
-        this.passengerName = passengerName;
-        this.seatId = seatId;
-        this.totalFare = totalFare;
+    public Booking(String bookingId, String flightId, String contactEmail, String seatId, double totalFare) {
+        this.bookingId        = bookingId;
+        this.flightId         = flightId;
+        this.contactEmail     = contactEmail;
+        this.seatId           = seatId;
+        this.totalFare        = totalFare;
         this.bookingTimestamp = System.currentTimeMillis();
-        this.status = "CONFIRMED";
+        this.status           = "PENDING";
     }
 
-    // Getters and Setters
-    public String getBookingId() { return bookingId; }
-    public void setBookingId(String bookingId) { this.bookingId = bookingId; }
-    public String getFlightId() { return flightId; }
-    public void setFlightId(String flightId) { this.flightId = flightId; }
-    public String getPassengerName() { return passengerName; }
-    public void setPassengerName(String passengerName) { this.passengerName = passengerName; }
-    public String getSeatId() { return seatId; }
-    public void setSeatId(String seatId) { this.seatId = seatId; }
-    public double getTotalFare() { return totalFare; }
-    public void setTotalFare(double totalFare) { this.totalFare = totalFare; }
-    public long getBookingTimestamp() { return bookingTimestamp; }
-    public void setBookingTimestamp(long bookingTimestamp) { this.bookingTimestamp = bookingTimestamp; }
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    // ── Getters & Setters ─────────────────────────────────────────────────────
+    public String getBookingId()                        { return bookingId; }
+    public void   setBookingId(String v)                { this.bookingId = v; }
+    public String getFlightId()                         { return flightId; }
+    public void   setFlightId(String v)                 { this.flightId = v; }
+    public String getPassengerName()                    { return contactEmail; } // Alias for legacy/storage compatibility
+    public void   setPassengerName(String v)            { this.contactEmail = v; }
+    public String getContactEmail()                     { return contactEmail; }
+    public void   setContactEmail(String v)             { this.contactEmail = v; }
+    public String getSeatId()                           { return seatId; }
+    public void   setSeatId(String v)                   { this.seatId = v; }
+    public double getTotalFare()                        { return totalFare; }
+    public void   setTotalFare(double v)                { this.totalFare = v; }
+    public long   getBookingTimestamp()                 { return bookingTimestamp; }
+    public void   setBookingTimestamp(long v)           { this.bookingTimestamp = v; }
+    public String getStatus()                           { return status; }
+    public void   setStatus(String v)                   { this.status = v; }
 }

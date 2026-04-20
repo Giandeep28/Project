@@ -1,5 +1,6 @@
 import React from 'react';
 import { Plane, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function Footer() {
   return (
@@ -34,20 +35,20 @@ export default function Footer() {
         <div className="lg:col-span-3">
           <h4 className="text-[10px] font-black uppercase tracking-widest text-primary mb-8">Flight Services</h4>
           <ul className="space-y-4">
-            <li><a href="#" className="text-sm font-bold text-slate-500 hover:text-[var(--app-text)] transition-all uppercase">International Routes</a></li>
-            <li><a href="#" className="text-sm font-bold text-slate-500 hover:text-[var(--app-text)] transition-all uppercase">Domestic Hubs</a></li>
-            <li><a href="#" className="text-sm font-bold text-slate-500 hover:text-[var(--app-text)] transition-all uppercase">Charter Booking</a></li>
-            <li><a href="#" className="text-sm font-bold text-slate-500 hover:text-[var(--app-text)] transition-all uppercase">Cargo Express</a></li>
+            <li><Link to="/services/international-routes" target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-slate-500 hover:text-[var(--app-text)] transition-all uppercase">International Routes</Link></li>
+            <li><Link to="/services/domestic-hubs" target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-slate-500 hover:text-[var(--app-text)] transition-all uppercase">Domestic Hubs</Link></li>
+            <li><Link to="/services/charter-booking" target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-slate-500 hover:text-[var(--app-text)] transition-all uppercase">Charter Booking</Link></li>
+            <li><Link to="/services/cargo-express" target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-slate-500 hover:text-[var(--app-text)] transition-all uppercase">Cargo Express</Link></li>
           </ul>
         </div>
 
         <div className="lg:col-span-3">
           <h4 className="text-[10px] font-black uppercase tracking-widest text-primary mb-8">Support Hub</h4>
           <ul className="space-y-4">
-            <li><a href="#" className="text-sm font-bold text-slate-500 hover:text-[var(--app-text)] transition-all uppercase">SkyCare Help Desk</a></li>
-            <li><a href="#" className="text-sm font-bold text-slate-500 hover:text-[var(--app-text)] transition-all uppercase">Baggage Policies</a></li>
-            <li><a href="#" className="text-sm font-bold text-slate-500 hover:text-[var(--app-text)] transition-all uppercase">Refund Request</a></li>
-            <li><a href="#" className="text-sm font-bold text-slate-500 hover:text-[var(--app-text)] transition-all uppercase">Special Assistance</a></li>
+            <li><Link to="/support/skycare-help-desk" target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-slate-500 hover:text-[var(--app-text)] transition-all uppercase">SkyCare Help Desk</Link></li>
+            <li><Link to="/support/baggage-policies" target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-slate-500 hover:text-[var(--app-text)] transition-all uppercase">Baggage Policies</Link></li>
+            <li><Link to="/support/refund-request" target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-slate-500 hover:text-[var(--app-text)] transition-all uppercase">Refund Request</Link></li>
+            <li><Link to="/support/special-assistance" target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-slate-500 hover:text-[var(--app-text)] transition-all uppercase">Special Assistance</Link></li>
           </ul>
         </div>
 

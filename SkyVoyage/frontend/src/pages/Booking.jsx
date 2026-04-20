@@ -1,149 +1,210 @@
 import React, { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import Navbar from '../components/layout/Navbar';
-import Footer from '../components/layout/Footer';
-import SeatSelection from '../components/booking/SeatSelection';
-import PaymentPrototype from '../components/booking/PaymentPrototype';
-import BoardingPass from '../components/booking/BoardingPass';
-import { ApiClient } from '../services/ApiClient';
-import { CheckCircle2, ChevronRight, Plane, Loader2 } from 'lucide-react';
-import { useApp } from '../context/AppContext';
+import { useLocation, useNavigate, Navigate } from 'react-router-dom';
+import ApiClient from '../ApiClient';
+import SeatSelectionMap from '../components/booking/SeatSelectionMap';
 
-export default function Booking() {
-  const { state, dispatch } = useApp();
-  // Professional logic: If seats are already selected in SearchResults, jump to Authorization
-  const hasSeats = Object.keys(state.selectedSeats).length > 0;
-  const [step, setStep] = useState(hasSeats ? 2 : 1); 
-  const [bookingResult, setBookingResult] = useState(null);
+export default function Booking({ darkMode }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const searchParams = new URLSearchParams(location.search);
+  const flight = location.state?.flight;
+
+  // If landed without a flight, go back to flights search
+  if (!flight) return <Navigate to="/flights" replace />;
+
+  const [step, setStep] = useState('PASSENGERS'); // 'PASSENGERS', 'SEATS', 'PAYMENT'
   
-  const flightId = searchParams.get('flightId') || 'SV102';
-  const priceParam = searchParams.get('price');
-  const price = priceParam ? parseFloat(priceParam) : 5519;
+  const [passengers, setPassengers] = useState([{ name: '', age: '', gender: '' }]);
+  const [contactEmail, setContactEmail] = useState('');
+  const [selectedClass, setSelectedClass] = useState(flight.seatClass || 'ECONOMY');
 
-  // Selected seat for display (first from map)
-  const selectedSeatId = state.selectedSeats[0] || '1A';
+  const [seatAssignments, setSeatAssignments] = useState({});
+  const [seatAddedPrice, setSeatAddedPrice] = useState(0);
 
-  const handlePay = async (cardData) => {
+  const [payLoading, setPayLoading] = useState(false);
+  const [payError, setPayError] = useState(null);
+
+  const basePrice = flight.price * passengers.length;
+  const totalPrice = basePrice + seatAddedPrice;
+
+  const handleProceedToSeats = () => {
+    if (!contactEmail) {
+      setPayError('Contact email is required.'); return;
+    }
+    for (let i = 0; i < passengers.length; i++) {
+      if (!passengers[i].name || !passengers[i].age || !passengers[i].gender) {
+        setPayError(`Please complete all fields for Passenger ${i+1}.`); return;
+      }
+    }
+    setPayError(null);
+    setStep('SEATS');
+  };
+
+  const handlePay = async () => {
+    setPayLoading(true);
+    setPayError(null);
     try {
-      setBookingResult({ status: 'success', bookingId: `SV-${Math.floor(Math.random() * 90000 + 10000)}` });
-      setStep(3);
+      // Map passengers to include their exact seat string
+      const augmentedPassengers = passengers.map((p, i) => ({
+        ...p,
+        seatAssigned: seatAssignments[i]?.label || 'Unassigned'
+      }));
+
+      const result = await ApiClient.createBooking({
+        flightId: flight.id,
+        passengers: augmentedPassengers,
+        seatClass: selectedClass,
+        contactEmail: contactEmail,
+        totalPrice: totalPrice
+      });
+      // Navigate exactly as requested, passing the booking result inside state
+      navigate('/confirmation', { state: { booking: result } });
     } catch (err) {
-      dispatch({ type: 'ADD_NOTIFICATION', payload: { message: 'Celestial Network Hub failure.', type: 'error' }});
+      setPayError(err.message || 'Payment failed. Please try again.');
+    } finally {
+      setPayLoading(false);
     }
   };
 
-  if (step === 1) {
+  // If we are in the interactive seat mapping step, defer to that component fully
+  if (step === 'SEATS') {
     return (
-      <div className="min-h-screen bg-[var(--app-bg)] flex items-center py-20 animate-in fade-in duration-1000">
-        <SeatSelection 
-          onSeatSelect={(seat) => {
-            if (seat) {
-              setTimeout(() => setStep(2), 800);
-            }
-          }}
-        />
-      </div>
+      <SeatSelectionMap 
+        flight={flight} 
+        passengers={passengers} 
+        onBack={() => setStep('PASSENGERS')} 
+        onConfirm={(seats, extraCost) => {
+          setSeatAssignments(seats);
+          setSeatAddedPrice(extraCost);
+          setStep('PAYMENT');
+        }} 
+      />
     );
   }
 
+  const bg = darkMode ? '#0A0F1A' : '#f1f3f5';
+  const cardBg = darkMode ? '#1C2333' : '#fff';
+  const bdr = darkMode ? 'rgba(255,255,255,0.1)' : '#e5e7eb';
+  const text = darkMode ? '#f0ece4' : '#111827';
+  const muted = darkMode ? '#9ca3af' : '#6b7280';
+  const inputBg = darkMode ? '#111827' : '#f9fafb';
+  const inputBdr = darkMode ? 'rgba(255,255,255,0.15)' : '#d1d5db';
+  const gold = '#C8A84B';
 
   return (
-    <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)]">
-      <Navbar />
-      
-      <main className="container mx-auto px-6 lg:px-12 py-32">
-        {/* Progress Tracker (Simplified for Payment/Success) */}
-        <div className="flex justify-center items-center gap-12 mb-20 animate-in fade-in duration-700">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full flex items-center justify-center font-black text-xs bg-white/5 text-slate-500 border border-[var(--border-color)] italic">1</div>
-            <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Seat Allocation</span>
-          </div>
-          <ChevronRight size={16} className="text-slate-700" />
-          <div className="flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-xs ${step >= 2 ? 'bg-primary text-dark shadow-[0_0_20px_rgba(212,175,55,0.4)]' : 'bg-white/5 text-slate-500'}`}>2</div>
-            <span className={`text-[10px] font-black uppercase tracking-widest ${step >= 2 ? 'text-primary' : 'text-slate-500'}`}>Authorization</span>
-          </div>
-          <ChevronRight size={16} className="text-slate-700" />
-          <div className="flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-xs ${step === 3 ? 'bg-primary text-dark shadow-[0_0_20px_rgba(212,175,55,0.4)]' : 'bg-white/5 text-slate-500'}`}>3</div>
-            <span className={`text-[10px] font-black uppercase tracking-widest ${step === 3 ? 'text-primary' : 'text-slate-500'}`}>Manifest</span>
-          </div>
+    <div style={{ background: bg, minHeight: '100vh', paddingTop: 100, paddingBottom: 60, color: text }}>
+      <div style={{ maxWidth: 900, margin: '0 auto', padding: '0 24px' }}>
+        
+        {/* Wizard Header Progress */}
+        <div style={{ display: 'flex', gap: 24, fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 600, marginBottom: 32, justifyContent: 'center' }}>
+          <span style={{ color: step === 'PASSENGERS' ? gold : muted }}>1. Passengers</span>
+          <span style={{ color: muted }}>{'>'}</span>
+          <span style={{ color: step === 'SEATS' ? gold : muted }}>2. Seats</span>
+          <span style={{ color: muted }}>{'>'}</span>
+          <span style={{ color: step === 'PAYMENT' ? gold : muted }}>3. Final Review & Payment</span>
         </div>
+        
+        <h1 style={{ fontSize: 28, fontWeight: 900, fontFamily: '"Playfair Display",serif', textTransform: 'uppercase', marginBottom: 24 }}>
+          {step === 'PASSENGERS' ? 'Passenger Details' : 'Finalize Payment'}
+        </h1>
 
-        <div className="max-w-6xl mx-auto">
-          {step === 2 && (
-            <div className="grid lg:grid-cols-12 gap-16 items-start">
-               <div className="lg:col-span-7 animate-in slide-in-from-left duration-700">
-                  <PaymentPrototype amount={price} onPay={handlePay} />
-                  <button 
-                    onClick={() => setStep(1)}
-                    className="mt-8 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-[var(--app-text)] transition-all flex items-center gap-2 group"
-                  >
-                    <ChevronRight size={14} className="rotate-180 group-hover:-translate-x-1 transition-transform" /> Re-allocate Suite
-                  </button>
-               </div>
-               <div className="lg:col-span-5 space-y-8 animate-in slide-in-from-right duration-700">
-                  <div className="p-10 glass-panel rounded-[40px] border-[#d4af37]/20 bg-[var(--app-bg)]">
-                    <h4 className="text-[11px] font-black uppercase tracking-[3px] text-primary mb-8 italic">Voyage Summary</h4>
-                    <div className="space-y-8">
-                       <div className="flex items-center gap-6">
-                         <div className="w-16 h-16 bg-white/5 rounded-3xl flex items-center justify-center text-primary border border-[var(--border-color)]"><Plane size={28} /></div>
-                         <div>
-                           <p className="text-xl font-black italic tracking-tighter uppercase text-[var(--app-text)]">{flightId}</p>
-                           <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-1">LHR ➔ JFK Hub</p>
-                         </div>
-                       </div>
-                       <div className="space-y-4 pt-8 border-t border-[var(--border-color)]">
-                          <div className="flex justify-between text-xs font-bold uppercase tracking-widest"><span className="text-slate-500">Suite</span><span className="text-primary">{selectedSeatId}</span></div>
-                          <div className="flex justify-between text-xs font-bold uppercase tracking-widest"><span className="text-slate-500">Class Type</span><span className="text-[var(--app-text)]">Elite First</span></div>
-                          <div className="flex justify-between items-end pt-4 border-t border-[var(--border-color)]">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Total Yield</span>
-                            <span className="text-4xl font-black text-[var(--app-text)] italic tracking-tighter">₹{price?.toLocaleString()}</span>
-                          </div>
-                       </div>
-                    </div>
+        {/* Flight Summary */}
+        <div style={{ background: cardBg, border: `1px solid ${bdr}`, borderRadius: 16, padding: 24, marginBottom: 24 }}>
+          <h2 style={{ fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700, color: '#C8A84B', marginBottom: 16 }}>Flight Details</h2>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+             <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 8 }}>
+                  <div style={{ width: 48, height: 48, background: '#fff', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 4 }}>
+                    <img src={flight.airlineLogo} alt={flight.airline} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
                   </div>
-               </div>
-            </div>
-          )}
-
-          {step === 3 && (
-            <div className="animate-in zoom-in duration-1000">
-              <div className="text-center mb-16 space-y-6">
-                <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto text-primary border border-primary/20 shadow-[0_0_50px_rgba(212,175,55,0.2)]">
-                  <CheckCircle2 size={56} />
+                  <p style={{ fontSize: 24, fontWeight: 700 }}>{flight.airline}</p>
                 </div>
-                <div>
-                  <h2 className="text-6xl font-black uppercase italic tracking-tighter mb-4 text-[var(--app-text)]">Voyage Authorized</h2>
-                  <p className="text-[11px] text-slate-500 font-black uppercase tracking-[6px] opacity-60">Manifest UID: {bookingResult?.bookingId || 'SV-MANIFEST-4921'}</p>
-                </div>
-              </div>
-              
-              <div className="max-w-md mx-auto">
-                <BoardingPass 
-                  bookingId={bookingResult?.bookingId} 
-                  flightId={flightId} 
-                  seat={selectedSeatId} 
-                />
-              </div>
-
-              <div className="mt-20 flex justify-center">
-                 <button 
-                  onClick={() => navigate('/')}
-                  className="bg-white/5 border border-white/10 px-12 py-5 rounded-2xl font-black text-[10px] uppercase tracking-[4px] hover:bg-primary hover:text-dark transition-all duration-500"
-                 >
-                   Return to Fleet Hub
-                 </button>
-              </div>
-            </div>
-          )}
+                <p style={{ color: muted, fontSize: 14 }}>{flight.flightNumber} • {flight.origin} to {flight.destination}</p>
+             </div>
+             <div style={{ textAlign: 'right' }}>
+                <p style={{ color: muted, fontSize: 12, textTransform: 'uppercase' }}>Departing</p>
+                <p style={{ fontSize: 18, fontWeight: 600 }}>
+                   {new Intl.DateTimeFormat('en-US', { dateStyle: 'long', timeStyle: 'short', timeZone: 'Asia/Kolkata' }).format(new Date(flight.departureTime))}
+                </p>
+             </div>
+          </div>
         </div>
-      </main>
 
-      {step !== 1 && <Footer />}
+        {payError && (
+          <div style={{ background: '#ef4444', color: '#fff', padding: '12px 16px', borderRadius: 8, marginBottom: 24, fontSize: 14, fontWeight: 600 }}>
+            {payError}
+          </div>
+        )}
+
+        {step === 'PASSENGERS' && (
+          <div style={{ background: cardBg, border: `1px solid ${bdr}`, borderRadius: 16, padding: 24, marginBottom: 24, animation: 'fadeIn 0.3s ease' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+              <h2 style={{ fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700, color: '#C8A84B' }}>Passengers</h2>
+              <button onClick={() => setPassengers([...passengers, { name: '', age: '', gender: '' }])} style={{ background: 'transparent', border: `1px solid ${bdr}`, color: text, padding: '6px 12px', borderRadius: 8, cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>+ Add Guest</button>
+            </div>
+            
+            {passengers.map((p, i) => (
+              <div key={i} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: 16, marginBottom: 16 }}>
+                <input type="text" placeholder={`Passenger ${i+1} Full Name`} value={p.name} onChange={(e) => { const neo = [...passengers]; neo[i].name = e.target.value; setPassengers(neo); }} style={{ background: inputBg, border: `1px solid ${inputBdr}`, color: text, padding: '12px 16px', borderRadius: 8, outline: 'none' }} />
+                <input type="number" placeholder="Age" min="1" max="120" value={p.age} onChange={(e) => { const neo = [...passengers]; neo[i].age = e.target.value; setPassengers(neo); }} style={{ background: inputBg, border: `1px solid ${inputBdr}`, color: text, padding: '12px 16px', borderRadius: 8, outline: 'none' }} />
+                <select value={p.gender} onChange={(e) => { const neo = [...passengers]; neo[i].gender = e.target.value; setPassengers(neo); }} style={{ background: inputBg, border: `1px solid ${inputBdr}`, color: text, padding: '12px 16px', borderRadius: 8, outline: 'none' }}>
+                  <option value="">Gender</option><option value="M">Male</option><option value="F">Female</option>
+                </select>
+              </div>
+            ))}
+
+            <div style={{ marginTop: 24, borderTop: `1px solid ${bdr}`, paddingTop: 24 }}>
+               <h2 style={{ fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700, color: '#C8A84B', marginBottom: 12 }}>Contact Info</h2>
+               <input type="email" placeholder="Email Address for Tickets" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} style={{ width: '100%', background: inputBg, border: `1px solid ${inputBdr}`, color: text, padding: '12px 16px', borderRadius: 8, outline: 'none' }} />
+            </div>
+
+            <button onClick={handleProceedToSeats} style={{ width: '100%', marginTop: 32, padding: '18px 0', background: gold, color: '#000', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', cursor: 'pointer', transition: '0.2s' }}>
+              Proceed to Seat Selection →
+            </button>
+          </div>
+        )}
+
+        {step === 'PAYMENT' && (
+          <div style={{ background: cardBg, border: `1px solid ${bdr}`, borderRadius: 16, padding: 24, animation: 'fadeIn 0.3s ease' }}>
+             <h2 style={{ fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700, color: '#C8A84B', marginBottom: 20 }}>Final Payment Overview</h2>
+             
+             <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 24, fontSize: 15, color: text }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span>Base Flight Fare ({passengers.length} Passenger{passengers.length > 1 && 's'})</span>
+                  <span>₹{basePrice.toLocaleString('en-IN')}</span>
+                </div>
+                {seatAddedPrice > 0 && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span>Premium Seat Upgrades</span>
+                    <span>₹{seatAddedPrice.toLocaleString('en-IN')}</span>
+                  </div>
+                )}
+             </div>
+
+             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, paddingTop: 20, borderTop: `1px solid ${bdr}` }}>
+                <p style={{ fontSize: 18, fontWeight: 600 }}>Total Amount</p>
+                <p style={{ fontSize: 28, fontWeight: 800 }}>₹{totalPrice.toLocaleString('en-IN')}</p>
+             </div>
+
+             <div style={{ display: 'flex', gap: 16 }}>
+               <button 
+                  onClick={() => setStep('SEATS')} 
+                  disabled={payLoading}
+                  style={{ flex: 1, padding: '18px 0', background: 'transparent', border: `1px solid ${gold}`, color: gold, borderRadius: 10, fontSize: 14, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', cursor: payLoading ? 'not-allowed' : 'pointer' }}
+               >
+                  Back to Seats
+               </button>
+               <button 
+                  onClick={handlePay} 
+                  disabled={payLoading}
+                  style={{ flex: 2, padding: '18px 0', background: payLoading ? '#9ca3af' : gold, color: payLoading ? '#fff' : '#000', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', cursor: payLoading ? 'not-allowed' : 'pointer', transition: '0.2s' }}
+               >
+                  {payLoading ? 'Processing Secure Payment...' : 'Pay & Confirm'}
+               </button>
+             </div>
+          </div>
+        )}
+      </div>
+      <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }`}</style>
     </div>
   );
 }

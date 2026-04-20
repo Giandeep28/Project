@@ -1,94 +1,101 @@
 import React from 'react';
-import { useApp } from '../context/AppContext';
-import Navbar from '../components/layout/Navbar';
+import { useLocation, Navigate, useNavigate } from 'react-router-dom';
 
-const Confirmation = () => {
-    const { state, dispatch } = useApp();
+export default function Confirmation({ darkMode }) {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const booking = location.state?.booking;
 
-    return (
-        <div className="min-h-screen bg-[var(--bg-primary)]">
-            <Navbar />
-            <main className="container mx-auto px-6 py-32 flex flex-col items-center">
-                <div className="max-w-4xl w-full">
-                    {/* Header */}
-                    <div className="text-center mb-16 animate-fade-in">
-                        <span className="text-primary font-black uppercase tracking-[6px] text-[10px] block mb-4">Voyage Secured</span>
-                        <h2 className="text-5xl font-black italic uppercase italic leading-[0.9]">Welcome Aboard,<br/><span className="text-white/20">The Horizon Awaits</span></h2>
-                    </div>
+  // Fix 7 requirement: redirect to home if accessed directly without booking
+  if (!booking) return <Navigate to="/" replace />;
 
-                    {/* Boarding Pass */}
-                    <div id="boarding-pass" className="glass-panel overflow-hidden rounded-[40px] shadow-2xl animate-slide-up group">
-                        <div className="bg-primary p-10 flex justify-between items-end text-dark">
-                            <div>
-                                <h3 className="text-4xl font-black tracking-tighter uppercase">Boarding Pass</h3>
-                                <p className="font-black text-[10px] uppercase tracking-widest opacity-60">SkyVoyage Premium Elite</p>
-                            </div>
-                            <div className="text-right">
-                                <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Flight No</span>
-                                <p className="text-2xl font-black leading-none mt-1">{state.selectedFlight?.flight_number || 'SV-502'}</p>
-                            </div>
-                        </div>
+  const bg = darkMode ? '#0A0F1A' : '#f1f3f5';
+  const cardBg = darkMode ? '#1C2333' : '#fff';
+  const bdr = darkMode ? 'rgba(255,255,255,0.1)' : '#e5e7eb';
+  const text = darkMode ? '#f0ece4' : '#111827';
+  const muted = darkMode ? '#9ca3af' : '#6b7280';
+  const accent = '#C8A84B';
 
-                        <div className="p-12 grid lg:grid-cols-3 gap-12 items-start relative bg-white/5">
-                            <div className="col-span-2 space-y-12">
-                                <div className="flex justify-between items-center">
-                                    <div className="flex-1">
-                                        <span className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Origin Hub</span>
-                                        <p className="text-4xl font-black tracking-tighter text-white">{state.from || 'DEL'}</p>
-                                        <p className="text-xs font-bold text-slate-500 mt-1 uppercase">Indira Gandhi Intl</p>
-                                    </div>
-                                    <div className="flex flex-col items-center justify-center px-10">
-                                        <i className="fas fa-plane text-primary text-xl animate-pulse"></i>
-                                        <div className="w-24 h-0.5 bg-primary/20 my-4"></div>
-                                    </div>
-                                    <div className="flex-1 text-right">
-                                        <span className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Arrival Hub</span>
-                                        <p className="text-4xl font-black tracking-tighter text-white">{state.to || 'BOM'}</p>
-                                        <p className="text-xs font-bold text-slate-500 mt-1 uppercase">Chhatrapati Shivaji</p>
-                                    </div>
-                                </div>
+  const downloadPass = () => {
+    const textBlob = `
+SKYVOYAGE BOARDING PASS
+=======================
+PNR: ${booking.pnr || 'N/A'}
+Booking ID: ${booking.bookingId}
+Flight ID: ${booking.flightId}
+Status: ${booking.status}
 
-                                <div className="grid grid-cols-3 gap-8 pt-8 border-t border-white/5">
-                                    <div>
-                                        <span className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Passenger</span>
-                                        <p className="text-sm font-black uppercase text-white">Voyager Elite</p>
-                                    </div>
-                                    <div>
-                                        <span className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Berth Alpha</span>
-                                        <p className="text-sm font-black uppercase text-primary italic">{state.selectedSeat || '14A'}</p>
-                                    </div>
-                                    <div>
-                                        <span className="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Status</span>
-                                        <p className="text-sm font-black uppercase text-green-500">Authorized</p>
-                                    </div>
-                                </div>
-                            </div>
+Fare: INR ${booking.totalPrice?.toLocaleString('en-IN')}
+Booked At: ${booking.bookedAt}
+Email: ${booking.contactEmail}
 
-                            <div className="col-span-1 flex flex-col items-center justify-center border-l border-white/5 pl-12 h-full">
-                                <div className="bg-white p-4 rounded-3xl mb-6 shadow-2xl">
-                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=SKYVOYAGE-SECURE" className="w-32 h-32 grayscale brightness-0 transition-all" alt="QR Code" />
-                                </div>
-                                <p className="text-[9px] font-black uppercase tracking-[3px] text-slate-600">SKY-SECURE-882291</p>
-                            </div>
-                        </div>
-                    </div>
+Thank you for flying SkyVoyage.
+    `.trim();
+    const element = document.createElement("a");
+    const file = new Blob([textBlob], { type: 'text/plain' });
+    element.href = URL.createObjectURL(file);
+    element.download = `BoardingPass-${booking.pnr || booking.bookingId}.txt`;
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  };
 
-                    {/* Actions */}
-                    <div className="mt-16 flex gap-6 justify-center">
-                        <button className="btn-gold px-12 py-5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-2xl flex items-center gap-4 hover:scale-105 transition-all">
-                            <i className="fas fa-file-pdf"></i> Download E-Ticket
-                        </button>
-                        <button 
-                            onClick={() => dispatch({ type: 'SET_VIEW', payload: 'home' })}
-                            className="bg-white/5 px-12 py-5 rounded-full text-[10px] font-black uppercase tracking-widest border border-white/10 hover:border-primary transition-all"
-                        >
-                            Return to Hub
-                        </button>
-                    </div>
-                </div>
-            </main>
+  return (
+    <div style={{ background: bg, minHeight: '100vh', paddingTop: 120, paddingBottom: 60, color: text }}>
+      <div style={{ maxWidth: 700, margin: '0 auto', padding: '0 24px' }}>
+        
+        <div style={{ textAlign: 'center', marginBottom: 40 }}>
+          <div style={{ width: 80, height: 80, borderRadius: '50%', background: '#10b981', color: '#fff', fontSize: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>✓</div>
+          <h1 style={{ fontSize: 32, fontWeight: 900, fontFamily: '"Playfair Display",serif', textTransform: 'uppercase', marginBottom: 8 }}>Booking Confirmed</h1>
+          <p style={{ color: muted, fontSize: 16 }}>Your reservation is complete. A copy has been emailed to {booking.contactEmail}.</p>
         </div>
-    );
-};
 
-export default Confirmation;
+        <div style={{ background: cardBg, border: `1px solid ${bdr}`, borderRadius: 16, overflow: 'hidden', boxShadow: darkMode ? '0 10px 40px rgba(0,0,0,0.5)' : '0 10px 40px rgba(0,0,0,0.05)' }}>
+          <div style={{ background: accent, padding: '24px 32px', color: '#000', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div>
+              <p style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', opacity: 0.8, marginBottom: 4 }}>Booking Reference (PNR)</p>
+              <p style={{ fontSize: 28, fontWeight: 900, fontFamily: 'monospace' }}>{booking.pnr || 'SV-WAIT'}</p>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <p style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', opacity: 0.8, marginBottom: 4 }}>Status</p>
+              <p style={{ fontSize: 18, fontWeight: 800, color: '#166534', background: '#bbf7d0', padding: '4px 12px', borderRadius: 20 }}>{booking.status}</p>
+            </div>
+          </div>
+
+          <div style={{ padding: 32 }}>
+            <div style={{ display: 'flex', gap: 32, borderBottom: `1px solid ${bdr}`, paddingBottom: 24, marginBottom: 24 }}>
+              <div style={{ flex: 1 }}>
+                <p style={{ fontSize: 12, color: muted, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>Flight ID</p>
+                <p style={{ fontSize: 18, fontWeight: 600 }}>{booking.flightId}</p>
+              </div>
+              <div style={{ flex: 1 }}>
+                <p style={{ fontSize: 12, color: muted, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>Seat Class</p>
+                <p style={{ fontSize: 18, fontWeight: 600 }}>{booking.seatClass || 'N/A'}</p>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: 32, marginBottom: 32 }}>
+              <div style={{ flex: 1 }}>
+                <p style={{ fontSize: 12, color: muted, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>Total Amount Paid</p>
+                <p style={{ fontSize: 24, fontWeight: 800, color: accent }}>₹{booking.totalPrice?.toLocaleString('en-IN')}</p>
+              </div>
+              <div style={{ flex: 1 }}>
+                <p style={{ fontSize: 12, color: muted, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>Transaction ID</p>
+                <p style={{ fontSize: 14, fontWeight: 500, fontFamily: 'monospace' }}>{booking.bookingId}</p>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: 16 }}>
+              <button onClick={downloadPass} style={{ flex: 1, padding: '16px 0', background: 'transparent', border: `2px solid ${accent}`, color: accent, borderRadius: 10, fontSize: 13, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', cursor: 'pointer', transition: '0.2s' }}>
+                Download Boarding Pass
+              </button>
+              <button onClick={() => navigate('/')} style={{ flex: 1, padding: '16px 0', background: accent, color: '#000', border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', cursor: 'pointer', transition: '0.2s' }}>
+                Return to Hub
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

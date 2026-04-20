@@ -1,115 +1,178 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Shield, Lock, User, ArrowRight, Loader2 } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import ApiClient from '../ApiClient';
 
-export default function Login() {
-  const [credentials, setCredentials] = useState({ username: '', password: '' });
+export default function Login({ darkMode }) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [isRegistering, setIsRegistering] = useState(false);
+
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError('');
-
-    // Professional Mock Bypass for MNC Testing
-    if (credentials.username === 'ADMIN' && credentials.password === 'SKYVOYAGE') {
-      setTimeout(() => {
-        localStorage.setItem('sv_admin_token', 'MOCK_ELITE_TOKEN_V2');
-        localStorage.setItem('sv_admin_user', 'Voyager Elite');
-        navigate('/admin');
-        setLoading(false);
-      }, 1000);
+    if (!email || !password) {
+      setError('Please fill in all required email and password fields.');
       return;
     }
+    
+    if (isRegistering) {
+      if (!name || !phone) {
+        setError('Please fill in Name and Phone for registration.');
+        return;
+      }
+      if (password !== confirmPassword) {
+        setError('Passwords do not match.');
+        return;
+      }
+    }
 
+    setLoading(true);
+    setError(null);
     try {
-      const response = await fetch('http://localhost:8080/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(credentials)
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        localStorage.setItem('sv_admin_token', data.token);
-        localStorage.setItem('sv_admin_user', data.user);
-        navigate('/admin');
+      if (isRegistering) {
+        await ApiClient.register(email, password, name, phone);
+        // On success, reset to login view
+        setIsRegistering(false);
+        setPassword('');
+        setConfirmPassword('');
+        setName('');
+        setPhone('');
+        setError('Registration successful. Please sign in.');
       } else {
-        setError(data.message || 'Invalid mission credentials');
+        const result = await ApiClient.login(email, password);
+        // Valid login returns { id, email, role, token }
+        if (result.token) {
+          localStorage.setItem('sv_admin_token', result.token);
+          localStorage.setItem('sv_admin_user', result.email);
+          
+          // Return to previous page if existed, else go home
+          const from = location.state?.from?.pathname || '/';
+          navigate(from, { replace: true });
+        } else {
+          throw new Error('Authentication failed (no token provided)');
+        }
       }
     } catch (err) {
-      setError('Communication with Core Java failed');
+      setError(err.message || (isRegistering ? 'Registration failed' : 'Invalid credentials'));
     } finally {
       setLoading(false);
     }
   };
 
-  return (
-    <div className="min-h-screen bg-[var(--app-bg)] flex items-center justify-center p-6 relative overflow-hidden">
-      {/* Background Ambience */}
-      <div className="absolute top-0 left-0 w-full h-full">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 blur-[120px] rounded-full"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/5 blur-[120px] rounded-full"></div>
-      </div>
+  const bg = darkMode ? '#0A0F1A' : '#f1f3f5';
+  const cardBg = darkMode ? '#1C2333' : '#fff';
+  const cardBdr = darkMode ? 'rgba(255,255,255,0.1)' : '#e5e7eb';
+  const text = darkMode ? '#f0ece4' : '#111827';
+  const muted = darkMode ? '#9ca3af' : '#6b7280';
+  const accent = '#C8A84B';
+  const inputBg = darkMode ? '#111827' : '#f9fafb';
+  const inputBdr = darkMode ? 'rgba(255,255,255,0.15)' : '#d1d5db';
 
-      <div className="w-full max-w-md relative z-10 animate-in fade-in zoom-in duration-700">
-        <div className="text-center mb-10">
-          <div className="w-16 h-16 bg-primary/10 border border-primary/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
-            <Shield className="text-primary" size={32} />
+  return (
+    <div style={{ background: bg, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 24px' }}>
+      <div style={{ background: cardBg, border: `1px solid ${cardBdr}`, borderRadius: 20, padding: 40, width: '100%', maxWidth: 440, boxShadow: darkMode ? '0 20px 60px rgba(0,0,0,0.6)' : '0 20px 60px rgba(0,0,0,0.1)' }}>
+        <div style={{ textAlign: 'center', marginBottom: 32 }}>
+          <div style={{ width: 48, height: 48, background: accent, borderRadius: '50%', margin: '0 auto 16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
           </div>
-          <h1 className="text-4xl font-black uppercase italic tracking-tighter text-[var(--app-text)] mb-2">Command Center</h1>
-          <p className="text-[10px] font-black uppercase tracking-[4px] text-slate-500">Authorization Required</p>
+          <h1 style={{ fontSize: 24, fontWeight: 900, fontFamily: '"Playfair Display",serif', textTransform: 'uppercase', color: text }}>
+            {isRegistering ? 'Create Account' : 'Celestial Access'}
+          </h1>
+          <p style={{ fontSize: 13, color: muted, marginTop: 8 }}>
+            {isRegistering ? 'Join the exclusive SkyVoyage network.' : 'Authorized personnel only.'}
+          </p>
         </div>
 
-        <form onSubmit={handleLogin} className="glass-panel p-10 rounded-[40px] space-y-6">
-          <div className="space-y-4">
-            <div className="relative group">
-              <User className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors" size={18} />
-              <input 
-                type="text" 
-                placeholder="MISSION ID"
-                required
-                value={credentials.username}
-                onChange={(e) => setCredentials(prev => ({ ...prev, username: e.target.value }))}
-                className="w-full bg-[var(--input-bg)] border border-[var(--border-color)] p-5 pl-14 rounded-2xl font-bold outline-none focus:border-primary transition-all text-[var(--app-text)] placeholder:text-[var(--app-text)] placeholder:opacity-50 text-xs uppercase tracking-widest"
-              />
-            </div>
-            
-            <div className="relative group">
-              <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors" size={18} />
-              <input 
-                type="password" 
-                placeholder="ACCESS KEY"
-                required
-                value={credentials.password}
-                onChange={(e) => setCredentials(prev => ({ ...prev, password: e.target.value }))}
-                className="w-full bg-[var(--input-bg)] border border-[var(--border-color)] p-5 pl-14 rounded-2xl font-bold outline-none focus:border-primary transition-all text-[var(--app-text)] placeholder:text-[var(--app-text)] placeholder:opacity-50 text-xs tracking-widest"
-              />
-            </div>
-          </div>
-
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           {error && (
-            <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-[10px] font-bold text-red-500 uppercase tracking-widest text-center">
+            <div style={{ background: '#ef4444', color: '#fff', padding: '12px 16px', borderRadius: 10, fontSize: 13, fontWeight: 600, textAlign: 'center' }}>
               {error}
             </div>
           )}
 
-          <button 
-            type="submit"
-            disabled={loading}
-            className="w-full bg-primary text-dark py-6 rounded-2xl font-black text-xs uppercase tracking-[3px] shadow-2xl hover:bg-white transition-all flex items-center justify-center gap-3 disabled:opacity-50"
-          >
-            {loading ? <Loader2 className="animate-spin" size={18} /> : <>Initialize Authorization <ArrowRight size={18} /></>}
-          </button>
-        </form>
+          {isRegistering && (
+            <>
+              <div style={{ animation: 'fadeIn 0.2s ease' }}>
+                <label style={{ display: 'block', fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: accent, marginBottom: 8 }}>Full Name</label>
+                <input 
+                  type="text" 
+                  value={name} 
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Enter your full name"
+                  style={{ width: '100%', background: inputBg, border: `1px solid ${inputBdr}`, color: text, padding: '14px 16px', borderRadius: 10, outline: 'none', fontSize: 15 }}
+                />
+              </div>
+              <div style={{ animation: 'fadeIn 0.2s ease' }}>
+                <label style={{ display: 'block', fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: accent, marginBottom: 8 }}>Phone Number</label>
+                <input 
+                  type="tel" 
+                  value={phone} 
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="Enter your phone number"
+                  style={{ width: '100%', background: inputBg, border: `1px solid ${inputBdr}`, color: text, padding: '14px 16px', borderRadius: 10, outline: 'none', fontSize: 15 }}
+                />
+              </div>
+            </>
+          )}
+          
+          <div>
+            <label style={{ display: 'block', fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: accent, marginBottom: 8 }}>Agent Email</label>
+            <input 
+              type="text" 
+              value={email} 
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              style={{ width: '100%', background: inputBg, border: `1px solid ${inputBdr}`, color: text, padding: '14px 16px', borderRadius: 10, outline: 'none', fontSize: 15 }}
+            />
+          </div>
+          
+          <div>
+            <label style={{ display: 'block', fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: accent, marginBottom: 8 }}>Security Key</label>
+            <input 
+              type="password" 
+              value={password} 
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+              style={{ width: '100%', background: inputBg, border: `1px solid ${inputBdr}`, color: text, padding: '14px 16px', borderRadius: 10, outline: 'none', fontSize: 15 }}
+            />
+          </div>
+          
+          {isRegistering && (
+            <div style={{ animation: 'fadeIn 0.2s ease' }}>
+              <label style={{ display: 'block', fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: accent, marginBottom: 8 }}>Confirm Password</label>
+              <input 
+                type="password" 
+                value={confirmPassword} 
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Re-enter your password"
+                style={{ width: '100%', background: inputBg, border: `1px solid ${inputBdr}`, color: text, padding: '14px 16px', borderRadius: 10, outline: 'none', fontSize: 15 }}
+              />
+            </div>
+          )}
 
-        <p className="mt-8 text-center text-[9px] font-bold text-slate-700 uppercase tracking-[3px]">
-          Classified Information • Strictly Personnel Only
-        </p>
+          <button 
+            type="submit" 
+            disabled={loading}
+            style={{ width: '100%', padding: '16px 0', background: loading ? '#9ca3af' : accent, color: loading ? '#fff' : '#000', border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', cursor: loading ? 'not-allowed' : 'pointer', transition: '0.2s', marginTop: 8 }}
+          >
+            {loading ? 'Processing...' : (isRegistering ? 'Register' : 'Sign In')}
+          </button>
+          
+          <div style={{ textAlign: 'center', marginTop: 12 }}>
+             <button type="button" onClick={() => { setIsRegistering(!isRegistering); setError(null); }} style={{ background: 'transparent', border: 'none', color: muted, fontSize: 13, cursor: 'pointer', textDecoration: 'underline' }}>
+                {isRegistering ? 'Already have an account? Sign in' : "Don't have an account? Register"}
+             </button>
+          </div>
+        </form>
       </div>
+      <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }`}</style>
     </div>
   );
 }

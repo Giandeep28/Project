@@ -11,6 +11,25 @@ import Confirmation  from './pages/Confirmation';
 import Loyalty       from './pages/Loyalty';
 import AdminDashboard from './pages/AdminDashboard';
 import ProtectedRoute from './components/shared/ProtectedRoute';
+import Placeholder     from './pages/Placeholder';
+import Privileges      from './pages/Privileges';
+
+import ManageBooking from './pages/booking/ManageBooking';
+import CheckIn       from './pages/booking/CheckIn';
+import Reschedule    from './pages/booking/Reschedule';
+import Extras        from './pages/booking/Extras';
+
+// Flight Services
+import InternationalRoutes from './pages/services/InternationalRoutes';
+import DomesticHubs        from './pages/services/DomesticHubs';
+import CharterBooking      from './pages/services/CharterBooking';
+import CargoExpress        from './pages/services/CargoExpress';
+
+// Support Hub
+import SkyCareHelpDesk    from './pages/support/SkyCareHelpDesk';
+import BaggagePolicies    from './pages/support/BaggagePolicies';
+import RefundRequest      from './pages/support/RefundRequest';
+import SpecialAssistance  from './pages/support/SpecialAssistance';
 
 function Layout() {
   const [dark, setDark] = useState(() => {
@@ -35,11 +54,34 @@ function Layout() {
           <Route path="/login"     element={<Login darkMode={dark}/>}/>
           <Route path="/flights"   element={<SearchResults darkMode={dark}/>}/>
           <Route path="/loyalty"   element={<Loyalty darkMode={dark}/>}/>
+          <Route path="/privileges" element={<Privileges darkMode={dark}/>}/>
           <Route path="/results"   element={<SearchResults darkMode={dark}/>}/>
+          
+          {/* Core Booking Engine */}
           <Route path="/booking"   element={<ProtectedRoute><Booking darkMode={dark}/></ProtectedRoute>}/>
+          
+          {/* Booking Management Hub Extracted Components */}
+          <Route path="/booking/manage"     element={<ManageBooking darkMode={dark}/>}/>
+          <Route path="/booking/checkin"    element={<CheckIn darkMode={dark}/>}/>
+          <Route path="/booking/reschedule" element={<Reschedule darkMode={dark}/>}/>
+          <Route path="/booking/extras"     element={<Extras darkMode={dark}/>}/>
+          
+          {/* Wildcard Fallback */}
           <Route path="/booking/*" element={<ProtectedRoute><Booking darkMode={dark}/></ProtectedRoute>}/>
           <Route path="/confirmation" element={<ProtectedRoute><Confirmation darkMode={dark}/></ProtectedRoute>}/>
           <Route path="/admin"     element={<ProtectedRoute><AdminDashboard darkMode={dark}/></ProtectedRoute>}/>
+          
+          {/* Flight Services */}
+          <Route path="/services/international-routes" element={<InternationalRoutes darkMode={dark}/>}/>
+          <Route path="/services/domestic-hubs"        element={<DomesticHubs darkMode={dark}/>}/>
+          <Route path="/services/charter-booking"      element={<CharterBooking darkMode={dark}/>}/>
+          <Route path="/services/cargo-express"        element={<CargoExpress darkMode={dark}/>}/>
+
+          {/* Support Hub */}
+          <Route path="/support/skycare-help-desk"     element={<SkyCareHelpDesk darkMode={dark}/>}/>
+          <Route path="/support/baggage-policies"      element={<BaggagePolicies darkMode={dark}/>}/>
+          <Route path="/support/refund-request"        element={<RefundRequest darkMode={dark}/>}/>
+          <Route path="/support/special-assistance"    element={<SpecialAssistance darkMode={dark}/>}/>
         </Routes>
         <Footer/>
       </div>

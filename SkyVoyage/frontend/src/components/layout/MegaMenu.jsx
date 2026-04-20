@@ -8,7 +8,7 @@ const Icon = ({ d, size = 15 }) => (
   </svg>
 );
 
-export function FlightsMegaMenu({ dark }) {
+export function FlightsMegaMenu({ dark, closeMenu }) {
   const bg     = dark ? '#111827' : '#ffffff';
   const border = dark ? 'rgba(255,255,255,0.06)' : '#f0f0f0';
   const text   = dark ? 'rgba(255,255,255,0.85)' : '#111827';
@@ -23,7 +23,7 @@ export function FlightsMegaMenu({ dark }) {
       <ul style={{ listStyle:'none', padding:0, margin:0, display:'flex', flexDirection:'column', gap:4 }}>
         {items.map(({ icon, label: lbl, path }) => (
           <li key={lbl}>
-            <Link to={path} style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 10px',
+            <Link to={path} target="_blank" rel="noopener noreferrer" onClick={closeMenu} style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 10px',
               borderRadius:8, color:text, textDecoration:'none', fontSize:14, fontWeight:500, transition:'background 0.15s' }}
               onMouseEnter={e => e.currentTarget.style.background = hover}
               onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
@@ -60,7 +60,7 @@ export function FlightsMegaMenu({ dark }) {
       <div style={{ background:cardBg, borderRadius:12, padding:'20px 18px', display:'flex', flexDirection:'column', gap:12 }}>
         <p style={{ fontSize:11, fontWeight:700, letterSpacing:'0.2em', textTransform:'uppercase', color:gold }}>SkyPriority</p>
         <p style={{ fontSize:13, color:muted, lineHeight:1.55 }}>Unlock premium lounge access and priority boarding with our loyalty tier.</p>
-        <Link to="/loyalty" style={{ display:'inline-flex', alignItems:'center', justifyContent:'center',
+        <Link to="/loyalty" target="_blank" rel="noopener noreferrer" onClick={closeMenu} style={{ display:'inline-flex', alignItems:'center', justifyContent:'center',
           background:gold, color:'#0A0F1A', fontWeight:700, fontSize:11, letterSpacing:'0.14em',
           textTransform:'uppercase', padding:'11px 16px', borderRadius:8, textDecoration:'none' }}>
           Upgrade Now
@@ -70,7 +70,7 @@ export function FlightsMegaMenu({ dark }) {
   );
 }
 
-export function BookingMegaMenu({ dark }) {
+export function BookingMegaMenu({ dark, closeMenu }) {
   const bg    = dark ? '#111827' : '#ffffff';
   const border= dark ? 'rgba(255,255,255,0.06)' : '#f0f0f0';
   const text  = dark ? 'rgba(255,255,255,0.85)' : '#111827';
@@ -89,7 +89,7 @@ export function BookingMegaMenu({ dark }) {
     <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:8,
       padding:'28px 40px 32px', background:bg, borderTop:`1px solid ${border}` }}>
       {items.map(({ icon, label, path, desc }) => (
-        <Link key={label} to={path} style={{ display:'flex', flexDirection:'column', gap:8,
+        <Link key={label} to={path} target="_blank" rel="noopener noreferrer" onClick={closeMenu} style={{ display:'flex', flexDirection:'column', gap:8,
           padding:'16px 14px', borderRadius:10, textDecoration:'none', transition:'background 0.15s' }}
           onMouseEnter={e => e.currentTarget.style.background = hover}
           onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>

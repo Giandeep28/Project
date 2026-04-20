@@ -148,11 +148,15 @@ export default function HeroSearch({ darkMode }) {
   const [tab, setTab] = useState(0);
   const [tried, setTried] = useState(false);
   const [errors, setErrors] = useState([]);
+  
+  // State for all 5 requested fields
   const [origin, setOrigin] = useState(null);
   const [dest, setDest] = useState(null);
   const [date, setDate] = useState("");
-  const [ret, setRet] = useState("");
-  const [guests, setGuests] = useState("1 Passenger, Royal");
+  const [passengers, setPassengers] = useState(1);
+  const [seatClass, setSeatClass] = useState("ECONOMY");
+
+  // Multi-city state (kept for visual completeness but focusing on base validation)
   const [legs, setLegs] = useState([
     { origin: null, dest: null, date: "" },
     { origin: null, dest: null, date: "" },
@@ -163,9 +167,13 @@ export default function HeroSearch({ darkMode }) {
     if (tab < 2) {
       if (!origin) e.push("Please select a departure hub.");
       if (!dest) e.push("Please select a destination hub.");
+      if (!date) e.push("Please select a departure date.");
+      if (!passengers || passengers < 1) e.push("Please select at least 1 passenger.");
+      if (!seatClass) e.push("Please select a seat class.");
     } else {
       legs.forEach((l, i) => {
         if (!l.origin || !l.dest) e.push(`Leg ${i + 1}: select both hubs.`);
+        if (!l.date) e.push(`Leg ${i + 1}: select departure date.`);
       });
     }
     return e;
@@ -173,21 +181,24 @@ export default function HeroSearch({ darkMode }) {
 
   useEffect(() => {
     if (tried) setErrors(validate());
-  }, [origin, dest, legs, tried]);
+  }, [origin, dest, date, passengers, seatClass, legs, tried]);
 
   const submit = () => {
     setTried(true);
     const e = validate();
     setErrors(e);
     if (e.length) return;
-    if (tab < 2)
+
+    if (tab < 2) {
+      // Fix 10: The search form must build the URL safely with react-router and specific keys
       navigate(
-        `/flights?origin=${origin.code}&dest=${dest.code}&date=${date}&guests=${encodeURIComponent(guests)}&mode=${tab === 1 ? "empty" : "charter"}`,
+        `/flights?origin=${origin.code}&dest=${dest.code}&date=${date}&guests=${passengers}&class=${seatClass}`
       );
-    else
+    } else {
       navigate(
-        `/flights?mode=multi&legs=${encodeURIComponent(JSON.stringify(legs.map((l) => ({ o: l.origin?.code, d: l.dest?.code, date: l.date }))))}`,
+        `/flights?mode=multi&legs=${encodeURIComponent(JSON.stringify(legs.map((l) => ({ o: l.origin?.code, d: l.dest?.code, date: l.date }))))}`
       );
+    }
   };
 
   const updLeg = (i, k, v) =>
@@ -284,10 +295,11 @@ export default function HeroSearch({ darkMode }) {
                 darkMode={darkMode}
               />
             </div>
+
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "1fr 1fr",
+                gridTemplateColumns: "1fr 1fr 1fr",
                 gap: 12,
               }}
             >
@@ -303,7 +315,7 @@ export default function HeroSearch({ darkMode }) {
                     opacity: 0.8,
                   }}
                 >
-                  Departure Date
+                  Date
                 </p>
                 <input
                   type="date"
@@ -324,6 +336,7 @@ export default function HeroSearch({ darkMode }) {
                   }}
                 />
               </div>
+
               <div>
                 <p
                   style={{
@@ -336,11 +349,45 @@ export default function HeroSearch({ darkMode }) {
                     opacity: 0.8,
                   }}
                 >
-                  Guest Config
+                  Guests
+                </p>
+                <input
+                  type="number"
+                  min="1"
+                  max="14"
+                  value={passengers}
+                  onChange={(e) => setPassengers(e.target.value)}
+                  style={{
+                    width: "100%",
+                    backgroundColor: inputBg,
+                    border: `1px solid ${inputBdr}`,
+                    borderRadius: 10,
+                    padding: "11px 14px",
+                    fontSize: 14,
+                    color: text,
+                    outline: "none",
+                    boxSizing: "border-box",
+                  }}
+                />
+              </div>
+
+              <div>
+                <p
+                  style={{
+                    fontSize: 9.5,
+                    fontWeight: 700,
+                    letterSpacing: "0.22em",
+                    textTransform: "uppercase",
+                    color: "#C8A84B",
+                    marginBottom: 6,
+                    opacity: 0.8,
+                  }}
+                >
+                  Class
                 </p>
                 <select
-                  value={guests}
-                  onChange={(e) => setGuests(e.target.value)}
+                  value={seatClass}
+                  onChange={(e) => setSeatClass(e.target.value)}
                   style={{
                     width: "100%",
                     backgroundColor: inputBg,
@@ -353,14 +400,9 @@ export default function HeroSearch({ darkMode }) {
                     boxSizing: "border-box",
                   }}
                 >
-                  {[
-                    "1 Passenger, Royal",
-                    "2 Passengers, Royal",
-                    "4 Passengers, Elite",
-                    "8 Passengers, VIP",
-                  ].map((o) => (
-                    <option key={o}>{o}</option>
-                  ))}
+                  <option value="ECONOMY">Economy</option>
+                  <option value="BUSINESS">Business</option>
+                  <option value="FIRST">First</option>
                 </select>
               </div>
             </div>
@@ -405,6 +447,26 @@ export default function HeroSearch({ darkMode }) {
                   darkMode={darkMode}
                 />
               </div>
+              <div>
+                <input
+                  type="date"
+                  value={leg.date}
+                  min={new Date().toISOString().split("T")[0]}
+                  onChange={(e) => updLeg(i, "date", e.target.value)}
+                  style={{
+                    width: "100%",
+                    backgroundColor: inputBg,
+                    border: `1px solid ${inputBdr}`,
+                    borderRadius: 10,
+                    padding: "11px 14px",
+                    fontSize: 14,
+                    color: text,
+                    outline: "none",
+                    boxSizing: "border-box",
+                    colorScheme: darkMode ? "dark" : "light",
+                  }}
+                />
+              </div>
             </div>
           ))}
         {tried &&
@@ -417,7 +479,7 @@ export default function HeroSearch({ darkMode }) {
                 gap: 10,
                 padding: "10px 14px",
                 borderRadius: 10,
-                background: "#F97316",
+                background: "#ef4444",
                 color: "#fff",
                 fontSize: 10.5,
                 fontWeight: 700,
@@ -430,25 +492,26 @@ export default function HeroSearch({ darkMode }) {
           ))}
         <button
           onClick={submit}
+          disabled={errors.length > 0 && tried}
           style={{
             width: "100%",
             padding: "16px 0",
-            background: btnBg,
-            color: btnText,
+            background: (errors.length > 0 && tried) ? "#9ca3af" : btnBg,
+            color: (errors.length > 0 && tried) ? "#fff" : btnText,
             borderRadius: 10,
             border: "none",
             fontSize: 11,
             fontWeight: 800,
             letterSpacing: "0.2em",
             textTransform: "uppercase",
-            cursor: "pointer",
+            cursor: (errors.length > 0 && tried) ? "not-allowed" : "pointer",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             gap: 10,
             transition: "opacity 0.15s",
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.88")}
+          onMouseEnter={(e) => (e.currentTarget.style.opacity = (errors.length > 0 && tried) ? "1" : "0.88")}
           onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
         >
           Search Celestial Routes
