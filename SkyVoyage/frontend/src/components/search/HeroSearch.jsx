@@ -1,13 +1,17 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import ApiClient from "../../ApiClient";
+import ApiClient from "../../services/ApiClient";
 
-function AutoField({ label, placeholder, value, onChange, darkMode }) {
-  const [query, setQuery] = useState(value?.label || "");
+function AutoField({ label, placeholder, value, onChange, onQueryChange, darkMode }) {
+  const [query, setQuery] = useState(value ? `${value.city} (${value.code})` : "");
   const [results, setResults] = useState([]);
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
   const delay = useRef(null);
+
+  useEffect(() => {
+    if (value) setQuery(`${value.city} (${value.code})`);
+  }, [value]);
 
   useEffect(() => {
     const h = (e) => {
@@ -20,6 +24,7 @@ function AutoField({ label, placeholder, value, onChange, darkMode }) {
   const type = (e) => {
     const q = e.target.value;
     setQuery(q);
+    if (onQueryChange) onQueryChange(q);
     onChange(null);
     clearTimeout(delay.current);
     if (q.length < 2) {
@@ -36,6 +41,7 @@ function AutoField({ label, placeholder, value, onChange, darkMode }) {
 
   const pick = (item) => {
     setQuery(`${item.city} (${item.code})`);
+    if (onQueryChange) onQueryChange(`${item.city} (${item.code})`);
     onChange(item);
     setResults([]);
     setOpen(false);
@@ -65,6 +71,14 @@ function AutoField({ label, placeholder, value, onChange, darkMode }) {
       <input
         value={query}
         onChange={type}
+        onBlur={() => {
+            // Auto-pick if there's an exact match in results or only one result
+            if (!value && results.length > 0) {
+                const exact = results.find(r => r.city.toLowerCase() === query.toLowerCase() || r.code.toLowerCase() === query.toLowerCase());
+                if (exact) pick(exact);
+                else if (results.length === 1 && query.length >= 3) pick(results[0]);
+            }
+        }}
         placeholder={placeholder}
         autoComplete="off"
         style={{
@@ -81,7 +95,9 @@ function AutoField({ label, placeholder, value, onChange, darkMode }) {
           boxSizing: "border-box",
         }}
         onFocus={(e) => (e.target.style.borderColor = "#C8A84B")}
-        onBlur={(e) => (e.target.style.borderColor = border)}
+        onBlur={(e) => {
+            e.target.style.borderColor = border;
+        }}
       />
       {open && results.length > 0 && (
         <ul
@@ -147,19 +163,22 @@ export default function HeroSearch({ darkMode }) {
   const navigate = useNavigate();
   const [tab, setTab] = useState(0);
   const [tried, setTried] = useState(false);
+  const [resolving, setResolving] = useState(false);
   const [errors, setErrors] = useState([]);
   
   // State for all 5 requested fields
   const [origin, setOrigin] = useState(null);
   const [dest, setDest] = useState(null);
+  const [originQ, setOriginQ] = useState("");
+  const [destQ, setDestQ] = useState("");
   const [date, setDate] = useState("");
   const [passengers, setPassengers] = useState(1);
   const [seatClass, setSeatClass] = useState("ECONOMY");
 
-  // Multi-city state (kept for visual completeness but focusing on base validation)
+  // Multi-city state
   const [legs, setLegs] = useState([
-    { origin: null, dest: null, date: "" },
-    { origin: null, dest: null, date: "" },
+    { origin: null, dest: null, date: "", originQ: "", destQ: "" },
+    { origin: null, dest: null, date: "", originQ: "", destQ: "" },
   ]);
 
   const validate = () => {
@@ -180,19 +199,58 @@ export default function HeroSearch({ darkMode }) {
   };
 
   useEffect(() => {
-    if (tried) setErrors(validate());
-  }, [origin, dest, date, passengers, seatClass, legs, tried]);
+    if (tried && !resolving) setErrors(validate());
+  }, [origin, dest, date, passengers, seatClass, legs, tried, resolving]);
 
-  const submit = () => {
+  const submit = async () => {
     setTried(true);
-    const e = validate();
+    setResolving(true);
+    setErrors([]);
+
+    // Logic to auto-resolve typed airports if they weren't explicitly clicked
+    let currentOrigin = origin;
+    let currentDest = dest;
+
+    if (tab < 2) {
+        if (!currentOrigin && originQ.length >= 2) {
+            const results = await ApiClient.searchAirports(originQ).catch(() => []);
+            if (results.length > 0) {
+                currentOrigin = results[0];
+                setOrigin(results[0]);
+            }
+        }
+        if (!currentDest && destQ.length >= 2) {
+            const results = await ApiClient.searchAirports(destQ).catch(() => []);
+            if (results.length > 0) {
+                currentDest = results[0];
+                setDest(results[0]);
+            }
+        }
+    }
+
+    setResolving(false);
+
+    // Re-check validation with possibly resolved values
+    const e = [];
+    if (tab < 2) {
+      if (!currentOrigin) e.push("Please select a departure hub.");
+      if (!currentDest) e.push("Please select a destination hub.");
+      if (!date) e.push("Please select a departure date.");
+      if (!passengers || passengers < 1) e.push("Please select at least 1 passenger.");
+      if (!seatClass) e.push("Please select a seat class.");
+    } else {
+      legs.forEach((l, i) => {
+        if (!l.origin || !l.dest) e.push(`Leg ${i + 1}: select both hubs.`);
+        if (!l.date) e.push(`Leg ${i + 1}: select departure date.`);
+      });
+    }
+
     setErrors(e);
     if (e.length) return;
 
     if (tab < 2) {
-      // Fix 10: The search form must build the URL safely with react-router and specific keys
       navigate(
-        `/flights?origin=${origin.code}&dest=${dest.code}&date=${date}&guests=${passengers}&class=${seatClass}`
+        `/flights?origin=${currentOrigin.code}&dest=${currentDest.code}&date=${date}&guests=${passengers}&class=${seatClass}`
       );
     } else {
       navigate(
@@ -285,6 +343,7 @@ export default function HeroSearch({ darkMode }) {
                 placeholder="Select origin hub"
                 value={origin}
                 onChange={setOrigin}
+                onQueryChange={setOriginQ}
                 darkMode={darkMode}
               />
               <AutoField
@@ -292,6 +351,7 @@ export default function HeroSearch({ darkMode }) {
                 placeholder="Discovery hub"
                 value={dest}
                 onChange={setDest}
+                onQueryChange={setDestQ}
                 darkMode={darkMode}
               />
             </div>
@@ -437,6 +497,7 @@ export default function HeroSearch({ darkMode }) {
                   placeholder="Select hub"
                   value={leg.origin}
                   onChange={(v) => updLeg(i, "origin", v)}
+                  onQueryChange={(v) => updLeg(i, "originQ", v)}
                   darkMode={darkMode}
                 />
                 <AutoField
@@ -444,6 +505,7 @@ export default function HeroSearch({ darkMode }) {
                   placeholder="Select hub"
                   value={leg.dest}
                   onChange={(v) => updLeg(i, "dest", v)}
+                  onQueryChange={(v) => updLeg(i, "destQ", v)}
                   darkMode={darkMode}
                 />
               </div>
@@ -469,7 +531,7 @@ export default function HeroSearch({ darkMode }) {
               </div>
             </div>
           ))}
-        {tried &&
+        {(tried || resolving) &&
           errors.map((err, i) => (
             <div
               key={i}
@@ -492,40 +554,42 @@ export default function HeroSearch({ darkMode }) {
           ))}
         <button
           onClick={submit}
-          disabled={errors.length > 0 && tried}
+          disabled={resolving}
           style={{
             width: "100%",
             padding: "16px 0",
-            background: (errors.length > 0 && tried) ? "#9ca3af" : btnBg,
-            color: (errors.length > 0 && tried) ? "#fff" : btnText,
+            background: resolving ? "#9ca3af" : btnBg,
+            color: resolving ? "#fff" : btnText,
             borderRadius: 10,
             border: "none",
             fontSize: 11,
             fontWeight: 800,
             letterSpacing: "0.2em",
             textTransform: "uppercase",
-            cursor: (errors.length > 0 && tried) ? "not-allowed" : "pointer",
+            cursor: resolving ? "not-allowed" : "pointer",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             gap: 10,
             transition: "opacity 0.15s",
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.opacity = (errors.length > 0 && tried) ? "1" : "0.88")}
+          onMouseEnter={(e) => (e.currentTarget.style.opacity = resolving ? "1" : "0.88")}
           onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
         >
-          Search Celestial Routes
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-          >
-            <line x1="5" y1="12" x2="19" y2="12" />
-            <polyline points="12 5 19 12 12 19" />
-          </svg>
+          {resolving ? "Resolving Mission..." : "Search Celestial Routes"}
+          {!resolving && (
+            <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+            >
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+            </svg>
+          )}
         </button>
       </div>
     </div>

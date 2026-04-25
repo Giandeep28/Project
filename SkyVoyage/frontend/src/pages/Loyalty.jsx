@@ -1,9 +1,11 @@
 import React from 'react';
+import Navbar from '../components/layout/Navbar';
 import { useApp } from '../context/AppContext';
 
 const Loyalty = () => {
     return (
-        <div className="min-h-screen bg-[var(--app-bg)]">
+        <div className="min-h-screen bg-[var(--bg-primary)]">
+            <Navbar />
             <main className="container mx-auto px-6 py-32">
                 <div className="max-w-5xl mx-auto grid lg:grid-cols-12 gap-12">
                     {/* Tier Card */}

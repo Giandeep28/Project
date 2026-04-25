@@ -1,53 +1,88 @@
-const JAVA_API_BASE = 'http://localhost:8080/api';
-const PYTHON_API_BASE = 'http://localhost:8000/api';
+const BASE_URL = 'http://localhost:8080';
+const PYTHON_BASE_URL = 'http://localhost:8000';
 
 export const ApiClient = {
-  // Java Backend Calls
-  getFlights: async (from = 'DEL', to = 'BOM', date = '') => {
-    const url = new URL(`${JAVA_API_BASE}/flights`);
-    if (from) url.searchParams.append('from', from);
-    if (to) url.searchParams.append('to', to);
-    if (date) url.searchParams.append('date', date);
+  async request(endpoint, options = {}) {
+    const url = endpoint.startsWith('http') ? endpoint : `${BASE_URL}${endpoint}`;
+    const headers = {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    };
+    const token = localStorage.getItem('token') || localStorage.getItem('sv_admin_token');
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    const config = { ...options, headers };
+    const response = await fetch(url, config);
+    if (response.status === 204) return null;
     
-    const response = await fetch(url.toString());
-    if (!response.ok) throw new Error('Celestial Engine Stall');
-    return response.json();
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || data.error || `HTTP Error ${response.status}`);
+    return data;
   },
 
+  // ── Java Backend Calls ──────────────────────────────────────────────────
+  searchFlights: async ({ origin, dest, date, guests }) => {
+    const p = new URLSearchParams();
+    if (origin) p.append('origin', origin);
+    if (dest) p.append('dest', dest);
+    if (date) p.append('date', date);
+    if (guests) p.append('guests', guests);
+    return ApiClient.request(`/api/flights?${p.toString()}`);
+  },
 
-  bookFlight: async (bookingData) => {
-    const response = await fetch(`${JAVA_API_BASE}/bookFlight`, {
+  createBooking: async (payload) => {
+    return ApiClient.request('/api/bookings', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(bookingData),
+      body: JSON.stringify(payload),
     });
-    return response.json();
   },
 
-  getHealth: async () => {
-    const javaHealth = await fetch(`${JAVA_API_BASE}/health`).then(r => r.json()).catch(() => ({ status: 'DOWN' }));
-    const pythonHealth = await fetch(`${PYTHON_API_BASE.replace('/api', '')}/health`).then(r => r.json()).catch(() => ({ status: 'DOWN' }));
-    return { java: javaHealth, python: pythonHealth };
+  getBooking: async (id) => {
+    return ApiClient.request(`/api/bookings/${id}`);
   },
 
   getAdminBookings: async () => {
-    const token = localStorage.getItem('sv_admin_token');
-    const response = await fetch(`${JAVA_API_BASE}/bookFlight`, { // Aligned GET with BookingController
-      headers: { 
-        'Authorization': token || 'V_LOG_ADMIN_SECURE', // Simulated for prototype
-        'Content-Type': 'application/json' 
-      }
-    });
-    return response.json();
+    return ApiClient.request('/api/bookings');
   },
 
-  // Python AI Calls
-  sendChatMessage: async (message) => {
-    const response = await fetch(`${PYTHON_API_BASE}/chatbot/message`, {
+  searchAirports: async (query) => {
+    return ApiClient.request(`/api/airports?q=${encodeURIComponent(query)}`);
+  },
+
+  getHealth: async () => {
+    const javaHealth = await fetch(`${BASE_URL}/api/health`).then(r => r.json()).catch(() => ({ status: 'DOWN' }));
+    const pythonHealth = await fetch(`${PYTHON_BASE_URL}/health`).then(r => r.json()).catch(() => ({ status: 'DOWN' }));
+    return { java: javaHealth, python: pythonHealth };
+  },
+
+  // ── Auth ────────────────────────────────────────────────────────────
+  login: async (email, password) => {
+    return ApiClient.request('/api/auth/login', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+  },
+
+  register: async (email, password, name, phone) => {
+    return ApiClient.request('/api/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({ email, password, name, phone }),
+    });
+  },
+
+  getMe: async () => {
+    return ApiClient.request('/api/auth/me');
+  },
+
+  // ── Python AI Calls ──────────────────────────────────────────────────
+  sendChatMessage: async (message) => {
+    return ApiClient.request(`${PYTHON_BASE_URL}/api/chatbot/message`, {
+      method: 'POST',
       body: JSON.stringify({ message }),
     });
-    return response.json();
   }
 };
+
+export default ApiClient;

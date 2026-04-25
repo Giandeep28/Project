@@ -3,12 +3,6 @@ import { BaggageClaim, Briefcase, AlertTriangle, CheckCircle2 } from 'lucide-rea
 
 export default function BaggagePolicies({ darkMode }) {
   const [activeTab, setActiveTab] = useState('cabin');
-  const [classSelection, setClassSelection] = useState('Economy');
-
-  const calcAllowance = (cls) => {
-    const map = { 'Economy': 20, 'Premium': 30, 'Business': 40, 'First': 50 };
-    return map[cls] || 20;
-  };
 
   return (
     <div className={`min-h-screen pt-24 pb-12 ${darkMode ? 'bg-[var(--app-bg)] text-[var(--app-text)]' : 'bg-white text-slate-900'}`}>
@@ -67,6 +61,7 @@ export default function BaggagePolicies({ darkMode }) {
                     <li className="flex justify-between border-b border-white/10 pb-2"><span>Examples</span> <span className="font-bold text-white text-right">Handbag, Laptop bag, Small backpack</span></li>
                     <li className="flex justify-between pt-1"><span>Dimensions</span> <span className="font-bold text-white">45 x 35 x 20 cm</span></li>
                   </ul>
+                  <p className="mt-4 text-xs text-slate-500 italic">*Must fit perfectly under the seat in front of you.</p>
                 </div>
               </div>
             </div>
@@ -74,49 +69,35 @@ export default function BaggagePolicies({ darkMode }) {
 
           {activeTab === 'checked' && (
             <div className="animate-in fade-in zoom-in duration-300">
-              <div className="bg-primary/5 border border-primary/20 rounded-2xl p-8 mb-12">
-                 <h2 className="text-xl font-black uppercase tracking-widest mb-6 text-primary">Allowance Calculator</h2>
-                 <div className="grid sm:grid-cols-2 gap-6 items-center">
-                    <div className="space-y-4">
-                       <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Voyage Class</label>
-                       <div className="flex flex-wrap gap-2">
-                          {['Economy', 'Premium', 'Business', 'First'].map(c => (
-                            <button key={c} onClick={() => setClassSelection(c)} className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${classSelection === c ? 'bg-primary text-dark' : 'bg-black/40 text-slate-500 border border-white/10'}`}>{c}</button>
-                          ))}
-                       </div>
-                    </div>
-                    <div className="bg-black/30 p-6 rounded-xl border border-white/5 text-center">
-                       <span className="block text-[10px] font-bold uppercase tracking-tighter text-slate-500 mb-2">Your Allowed Capacity</span>
-                       <span className="text-4xl font-black text-white">{calcAllowance(classSelection)} KG</span>
-                       <span className="block text-[10px] font-medium text-primary mt-2 uppercase tracking-widest">SkyPriority Applied</span>
-                    </div>
-                 </div>
-              </div>
-              
-              <h2 className="text-2xl font-black uppercase mb-8 border-b border-[var(--border-color)] pb-4">Standard Limits Summary</h2>
+              <h2 className="text-2xl font-black uppercase mb-8 border-b border-[var(--border-color)] pb-4">Checked Baggage Limits by Class</h2>
               <div className="overflow-x-auto">
                 <table className="w-full text-left">
                   <thead>
                     <tr className="border-b border-[var(--border-color)] text-xs uppercase tracking-widest text-slate-500">
                       <th className="pb-4 font-bold">Cabin Class</th>
-                      <th className="pb-4 font-bold">Weight Concept (Standard)</th>
+                      <th className="pb-4 font-bold">Piece Concept (Routes to US/Americas)</th>
+                      <th className="pb-4 font-bold">Weight Concept (All other routes)</th>
                     </tr>
                   </thead>
                   <tbody className="text-sm">
                     <tr className="border-b border-white/5">
                       <td className="py-4 font-bold text-primary">Celestial First</td>
+                      <td className="py-4">3 pieces (up to 32kg/70lb each)</td>
                       <td className="py-4">50 kg total weight</td>
                     </tr>
                     <tr className="border-b border-white/5">
                       <td className="py-4 font-bold text-primary">Celestial Business</td>
+                      <td className="py-4">2 pieces (up to 32kg/70lb each)</td>
                       <td className="py-4">40 kg total weight</td>
                     </tr>
                     <tr className="border-b border-white/5">
                       <td className="py-4 font-bold">Premium Economy</td>
+                      <td className="py-4">2 pieces (up to 23kg/50lb each)</td>
                       <td className="py-4">30 kg total weight</td>
                     </tr>
                     <tr>
                       <td className="py-4 font-bold">Economy</td>
+                      <td className="py-4">1 piece (up to 23kg/50lb)</td>
                       <td className="py-4">20 kg total weight</td>
                     </tr>
                   </tbody>

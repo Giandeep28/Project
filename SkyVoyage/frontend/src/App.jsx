@@ -54,8 +54,8 @@ function Layout() {
           <Route path="/login"     element={<Login darkMode={dark}/>}/>
           <Route path="/flights"   element={<SearchResults darkMode={dark}/>}/>
           <Route path="/loyalty"   element={<Loyalty darkMode={dark}/>}/>
-          <Route path="/privileges" element={<Privileges darkMode={dark}/>}/>
           <Route path="/results"   element={<SearchResults darkMode={dark}/>}/>
+          <Route path="/privileges" element={<Privileges darkMode={dark}/>}/>
           
           {/* Core Booking Engine */}
           <Route path="/booking"   element={<ProtectedRoute><Booking darkMode={dark}/></ProtectedRoute>}/>

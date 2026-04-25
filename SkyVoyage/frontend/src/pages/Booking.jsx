@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate, Navigate } from 'react-router-dom';
-import ApiClient from '../ApiClient';
+import ApiClient from '../services/ApiClient';
 import SeatSelectionMap from '../components/booking/SeatSelectionMap';
 
 export default function Booking({ darkMode }) {
@@ -51,6 +51,8 @@ export default function Booking({ darkMode }) {
 
       const result = await ApiClient.createBooking({
         flightId: flight.id,
+        from: flight.origin,
+        to: flight.destination,
         passengers: augmentedPassengers,
         seatClass: selectedClass,
         contactEmail: contactEmail,

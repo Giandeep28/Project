@@ -23,7 +23,7 @@ export function FlightsMegaMenu({ dark, closeMenu }) {
       <ul style={{ listStyle:'none', padding:0, margin:0, display:'flex', flexDirection:'column', gap:4 }}>
         {items.map(({ icon, label: lbl, path }) => (
           <li key={lbl}>
-            <Link to={path} target="_blank" rel="noopener noreferrer" onClick={closeMenu} style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 10px',
+            <Link to={path} onClick={closeMenu} style={{ display:'flex', alignItems:'center', gap:10, padding:'9px 10px',
               borderRadius:8, color:text, textDecoration:'none', fontSize:14, fontWeight:500, transition:'background 0.15s' }}
               onMouseEnter={e => e.currentTarget.style.background = hover}
               onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
@@ -60,7 +60,7 @@ export function FlightsMegaMenu({ dark, closeMenu }) {
       <div style={{ background:cardBg, borderRadius:12, padding:'20px 18px', display:'flex', flexDirection:'column', gap:12 }}>
         <p style={{ fontSize:11, fontWeight:700, letterSpacing:'0.2em', textTransform:'uppercase', color:gold }}>SkyPriority</p>
         <p style={{ fontSize:13, color:muted, lineHeight:1.55 }}>Unlock premium lounge access and priority boarding with our loyalty tier.</p>
-        <Link to="/loyalty" target="_blank" rel="noopener noreferrer" onClick={closeMenu} style={{ display:'inline-flex', alignItems:'center', justifyContent:'center',
+        <Link to="/loyalty" onClick={closeMenu} style={{ display:'inline-flex', alignItems:'center', justifyContent:'center',
           background:gold, color:'#0A0F1A', fontWeight:700, fontSize:11, letterSpacing:'0.14em',
           textTransform:'uppercase', padding:'11px 16px', borderRadius:8, textDecoration:'none' }}>
           Upgrade Now

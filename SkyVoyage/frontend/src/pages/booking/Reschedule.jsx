@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import { Calendar, Search, RefreshCw, ArrowRight, Plane, CheckCircle2, AlertCircle, CreditCard } from 'lucide-react';
+import { CalendarClock, Search, ArrowRight, Plane, CheckCircle2, ChevronRight, AlertCircle, CreditCard } from 'lucide-react';
 
 export default function Reschedule({ darkMode }) {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [pnr, setPnr] = useState('');
-  const [lastName, setLastName] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
 
   const handleLookup = (e) => {
@@ -23,7 +21,7 @@ export default function Reschedule({ darkMode }) {
     setTimeout(() => {
       setLoading(false);
       setStep(3);
-    }, 1200);
+    }, 1000);
   };
 
   const handlePayment = () => {
@@ -38,14 +36,12 @@ export default function Reschedule({ darkMode }) {
     <div className={`min-h-screen pt-24 pb-12 ${darkMode ? 'bg-[var(--app-bg)] text-[var(--app-text)]' : 'bg-white text-slate-900'}`}>
       <div className="container mx-auto px-6 lg:px-12 max-w-5xl">
         <div className="mb-12">
-          <div className="inline-flex items-center justify-center p-3 bg-primary/10 rounded-xl mb-6">
-            <RefreshCw className="w-8 h-8 text-primary" />
-          </div>
+          <CalendarClock className="w-12 h-12 text-primary mb-6" />
           <h1 className="text-5xl font-black uppercase tracking-tighter mb-4">Flex-Reschedule</h1>
-          <p className="text-xl text-slate-500 font-medium max-w-2xl">Adapt your voyage to your changing schedule. Effortlessly modify your travel dates within our flexible Celestial framework.</p>
+          <p className="text-xl text-slate-500 font-medium">Change of plans? Seamlessly modify your travel dates with our premium flexibility engine.</p>
         </div>
 
-        <div className="bg-white/5 border border-[var(--border-color)] rounded-[3rem] p-8 lg:p-12 backdrop-blur-3xl shadow-3xl relative overflow-hidden">
+        <div className="bg-white/5 border border-[var(--border-color)] rounded-[2.5rem] p-8 lg:p-12 relative overflow-hidden backdrop-blur-3xl shadow-2xl">
           {/* Timeline */}
           <div className="flex items-center justify-between mb-16 relative">
             <div className="absolute top-1/2 left-0 w-full h-[1px] bg-white/10 -z-10"></div>
@@ -63,11 +59,11 @@ export default function Reschedule({ darkMode }) {
                 <div className="space-y-4">
                    <div className="space-y-2">
                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Booking Reference</label>
-                     <input required type="text" value={pnr} onChange={e => setPnr(e.target.value.toUpperCase())} placeholder="SV49B2" className="w-full bg-black/40 border-2 border-[var(--border-color)] focus:border-primary rounded-2xl px-6 py-4 font-black outline-none transition-all uppercase tracking-[4px]" maxLength={6} />
+                     <input required type="text" placeholder="SV49B2" className="w-full bg-black/40 border-2 border-[var(--border-color)] focus:border-primary rounded-2xl px-6 py-4 font-black outline-none transition-all uppercase tracking-[4px]" maxLength={6} />
                    </div>
                    <div className="space-y-2">
                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Passenger Last Name</label>
-                     <input required type="text" value={lastName} onChange={e => setLastName(e.target.value)} placeholder="Last name" className="w-full bg-black/40 border-2 border-[var(--border-color)] focus:border-primary rounded-2xl px-6 py-4 font-bold outline-none transition-all" />
+                     <input required type="text" placeholder="Last name" className="w-full bg-black/40 border-2 border-[var(--border-color)] focus:border-primary rounded-2xl px-6 py-4 font-bold outline-none transition-all" />
                    </div>
                 </div>
                 <button type="submit" disabled={loading} className="w-full bg-primary text-dark font-black px-8 py-5 rounded-2xl uppercase tracking-widest text-xs hover:bg-white transition-all">
@@ -157,7 +153,7 @@ export default function Reschedule({ darkMode }) {
                   </div>
                   <div className="text-left px-4">
                     <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Reference</p>
-                    <p className="font-black">{pnr || 'SV49B2'}</p>
+                    <p className="font-black">SV49B2</p>
                   </div>
                </div>
             </div>

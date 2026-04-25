@@ -50,8 +50,8 @@ public class StorageManager {
     private synchronized void saveToDisk(String path, Booking booking) {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path, true), java.nio.charset.StandardCharsets.UTF_8))) {
             // Append as a simple line-delimited JSON for native I/O simplicity
-            String entry = String.format("{\"bookingId\":\"%s\", \"flightId\":\"%s\", \"contactEmail\":\"%s\", \"seatClass\":\"%s\", \"totalFare\":%.2f, \"status\":\"%s\"}\n",
-                booking.getBookingId(), booking.getFlightId(), booking.getContactEmail(), booking.getSeatId(), booking.getTotalFare(), booking.getStatus());
+            String entry = String.format("{\"bookingId\":\"%s\", \"flightId\":\"%s\", \"from\":\"%s\", \"to\":\"%s\", \"contactEmail\":\"%s\", \"seatClass\":\"%s\", \"totalFare\":%.2f, \"status\":\"%s\"}\n",
+                booking.getBookingId(), booking.getFlightId(), booking.getFrom(), booking.getTo(), booking.getContactEmail(), booking.getSeatId(), booking.getTotalFare(), booking.getStatus());
             writer.write(entry);
         } catch (IOException e) {
             System.err.println("[STORAGE-ERR] Failed to sync to disk: " + e.getMessage());

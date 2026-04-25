@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import ApiClient from '../ApiClient';
+import ApiClient from '../services/ApiClient';
 import FilterSidebar from '../components/flights/FilterSidebar';
 import FlightCard from '../components/flights/FlightCard';
 
@@ -30,8 +30,7 @@ export default function SearchResults({ darkMode }) {
   const dest = params.get('dest') || '';
   const date = params.get('date') || '';
   const guests = params.get('guests') || '1';
-  const type = params.get('type') || '';
-  const mode = params.get('mode') || type || 'charter';
+  const mode = params.get('mode') || 'charter';
 
   // ── FIX 4: State Architecture ─────────────────────────────────────────────
   const [allFlights, setAllFlights] = useState([]);

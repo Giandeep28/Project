@@ -1,2 +1,6 @@
 {"bookingId":"BK-CTBFQCT7", "flightId":"f-004", "contactEmail":"test@test.com", "seatClass":"FIRST", "totalFare":4648.00, "status":"CONFIRMED"}
 {"bookingId":"BK-CTBFQCT7", "flightId":"f-004", "contactEmail":"test@test.com", "seatClass":"FIRST", "totalFare":4648.00, "status":"CONFIRMED"}
+{"bookingId":"BK-SJNZSI8N", "flightId":"f-002", "from":"DEL", "to":"CCU", "contactEmail":"abc@gmail.com", "seatClass":"FIRST", "totalFare":5234.00, "status":"CONFIRMED"}
+{"bookingId":"BK-SJNZSI8N", "flightId":"f-002", "from":"DEL", "to":"CCU", "contactEmail":"abc@gmail.com", "seatClass":"FIRST", "totalFare":5234.00, "status":"CONFIRMED"}
+{"bookingId":"BK-BMDAG9TM", "flightId":"f-004", "contactEmail":"john.doe@example.com", "seatClass":"FIRST", "totalFare":4471.00, "status":"CONFIRMED"}
+{"bookingId":"BK-BMDAG9TM", "flightId":"f-004", "contactEmail":"john.doe@example.com", "seatClass":"FIRST", "totalFare":4471.00, "status":"CONFIRMED"}

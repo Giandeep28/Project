@@ -66,9 +66,9 @@ export default function AdminDashboard() {
           <div className="glass-panel p-8 rounded-3xl">
             <div className="flex justify-between items-start mb-4">
               <span className="text-slate-500 font-bold text-[10px] uppercase tracking-widest">Python AI</span>
-              <span className={`px-3 py-1 rounded-full text-[8px] font-black ${stats.python === 'ok' || stats.python === 'UP' ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>{stats.python}</span>
+              <span className={`px-3 py-1 rounded-full text-[8px] font-black ${['ok', 'UP', 'celestial'].includes(stats.python) ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>{stats.python}</span>
             </div>
-            <p className="text-3xl font-black mt-2 italic">Port 8081</p>
+            <p className="text-3xl font-black mt-2 italic">Port 8000</p>
             <div className="mt-4 flex items-center gap-2 text-[10px] font-bold text-slate-500"><Activity size={12} /> Neural Ready</div>
           </div>
           <div className="glass-panel p-8 rounded-3xl">

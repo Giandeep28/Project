@@ -55,11 +55,7 @@ export default function Navbar({ darkMode, toggleDark, user }) {
                 <div key={label} style={{ position:'relative' }}
                   onMouseEnter={() => menu ? enter(menu) : null}
                   onMouseLeave={() => menu ? leave() : null}>
-                  <Link 
-                    to={path} 
-                    target={menu === null && path !== '/' ? "_blank" : undefined}
-                    rel={menu === null && path !== '/' ? "noopener noreferrer" : undefined}
-                    style={{ display:'inline-flex', alignItems:'center', gap:5,
+                  <Link to={path} style={{ display:'inline-flex', alignItems:'center', gap:5,
                     padding:'8px 18px', borderRadius:50, fontSize:11, fontWeight:600,
                     letterSpacing:'0.14em', textDecoration:'none',
                     color: active || isOpen ? '#C8A84B' : linkClr,
@@ -94,11 +90,11 @@ export default function Navbar({ darkMode, toggleDark, user }) {
               </span>
             </button>
             {user?.role === 'admin' && (
-              <Link to="/admin" target="_blank" rel="noopener noreferrer" style={{ fontSize:10, fontWeight:700, letterSpacing:'0.15em',
+              <Link to="/admin" style={{ fontSize:10, fontWeight:700, letterSpacing:'0.15em',
                 padding:'6px 14px', borderRadius:20, border:'1px solid rgba(200,168,75,0.4)',
                 color:'#C8A84B', textDecoration:'none' }}>ADMIN</Link>
             )}
-            <Link to="/login" target="_blank" rel="noopener noreferrer" style={{ background:'#C8A84B', color:'#0A0F1A', fontSize:12,
+            <Link to="/login" style={{ background:'#C8A84B', color:'#0A0F1A', fontSize:12,
               fontWeight:800, letterSpacing:'0.1em', padding:'10px 22px', borderRadius:8,
               textDecoration:'none' }}>SIGN IN</Link>
           </div>

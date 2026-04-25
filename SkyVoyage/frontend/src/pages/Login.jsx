@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import ApiClient from '../ApiClient';
+import ApiClient from '../services/ApiClient';
 
 export default function Login({ darkMode }) {
   const [email, setEmail] = useState('');
