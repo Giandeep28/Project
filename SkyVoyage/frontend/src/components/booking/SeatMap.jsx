@@ -13,6 +13,7 @@ import {
     RefreshCw,
     Shield
 } from 'lucide-react';
+import PriceDisplay from '../shared/PriceDisplay';
 import { motion } from 'framer-motion';
 
 const SeatMap = () => {
@@ -277,18 +278,18 @@ const SeatMap = () => {
                                 </div>
                                 <div className="flex justify-between items-center text-[11px] font-bold">
                                     <span className="text-slate-500 uppercase tracking-widest">Seat Price</span>
-                                    <span className="text-[var(--app-text)]">{currentPrice === 0 ? 'Complimentary' : `₹${currentPrice.toLocaleString()}`}</span>
+                                    <span className="text-[var(--app-text)]">{currentPrice === 0 ? 'Complimentary' : <PriceDisplay amount={currentPrice} currency="INR" />}</span>
                                 </div>
                                 <div className="flex justify-between items-center text-[11px] font-bold">
                                     <span className="text-slate-500 uppercase tracking-widest">Add-ons</span>
-                                    <span className="text-primary italic">Priority Boarding (+₹20)</span>
+                                    <span className="text-primary italic">Priority Boarding (+<PriceDisplay amount={20} currency="INR" />)</span>
                                 </div>
                             </div>
 
                             <div className="pt-6 border-t border-white/5">
                                 <div className="flex justify-between items-end mb-8">
                                     <p className="text-[10px] font-black uppercase tracking-[3px] text-slate-500">Total Price</p>
-                                    <p className="text-4xl font-black text-[var(--app-text)] italic tracking-tighter">₹{totalPrice.toLocaleString()}</p>
+                                    <p className="text-4xl font-black text-[var(--app-text)] italic tracking-tighter"><PriceDisplay amount={totalPrice} currency="INR" /></p>
                                 </div>
 
                                 <button 

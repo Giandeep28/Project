@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import PriceDisplay from '../shared/PriceDisplay';
 
 export default function FlightCard({ flight, darkMode, isSelected }) {
   const navigate  = useNavigate();
@@ -44,7 +45,7 @@ export default function FlightCard({ flight, darkMode, isSelected }) {
         </div>
         <div style={{ textAlign:'right', minWidth:130 }}>
           <p style={{ fontSize:10, color:muted, marginBottom:4 }}>Includes taxes & fees</p>
-          <p style={{ fontSize:26, fontWeight:900, color:text, lineHeight:1, marginBottom:10 }}>₹{price.toLocaleString()}</p>
+          <p style={{ fontSize:26, fontWeight:900, color:text, lineHeight:1, marginBottom:10 }}><PriceDisplay amount={price} /></p>
           <button onClick={()=>navigate(`/booking?flightId=${id}`)}
             style={{ width:'100%', padding:'10px 0', background:'#3B3DBF', color:'#fff', borderRadius:8, border:'none', fontSize:12, fontWeight:700, cursor:'pointer', transition:'background 0.15s' }}
             onMouseEnter={e=>e.currentTarget.style.background='#2F32A0'}

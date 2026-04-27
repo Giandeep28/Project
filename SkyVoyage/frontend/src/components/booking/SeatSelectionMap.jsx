@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import PriceDisplay from '../shared/PriceDisplay';
+import useCurrency from '../../context/useCurrency';
+
 
 // Generates the initial layout of seats based on aircraft type.
 const generateMockGrid = () => {
@@ -37,6 +40,7 @@ const generateMockGrid = () => {
 };
 
 export default function SeatSelectionMap({ flight, passengers, onConfirm, onBack }) {
+  const { rates } = useCurrency();
   const [grid] = useState(generateMockGrid());
   // Object mapping passengerIndex -> seatData
   const [selectedSeats, setSelectedSeats] = useState({});
@@ -196,10 +200,10 @@ export default function SeatSelectionMap({ flight, passengers, onConfirm, onBack
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 16, fontSize: 14 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ opacity: 0.7 }}>Seat:</span> <span style={{ fontWeight: 600 }}>{currentSeat.label} ({currentSeat.type})</span></div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ opacity: 0.7 }}>Type:</span> <span style={{ fontWeight: 600, textAlign: 'right' }}>{currentSeat.premium ? 'Full Flat Bed, Window View' : 'Standard Recline'}</span></div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ opacity: 0.7 }}>Seat Price:</span> <span style={{ fontWeight: 600 }}>${currentSeat.price.toLocaleString('en-US', {minimumFractionDigits: 2})}</span></div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ opacity: 0.7 }}>Seat Price:</span> <span style={{ fontWeight: 600 }}><PriceDisplay amount={currentSeat.price} currency="INR" /></span></div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ opacity: 0.7 }}>Add-ons:</span> <span style={{ fontWeight: 600 }}>None</span></div>
                   <div style={{ height: 1, background: 'rgba(255,255,255,0.1)', margin: '4px 0' }} />
-                  <div style={{ display: 'flex', justifyContent: 'space-between', color: gold, fontSize: 16 }}><span style={{ fontWeight: 700 }}>Total Price:</span> <span style={{ fontWeight: 800 }}>${(currentSeat.price).toLocaleString('en-US', {minimumFractionDigits: 2})}</span></div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', color: gold, fontSize: 16 }}><span style={{ fontWeight: 700 }}>Total Price:</span> <span style={{ fontWeight: 800 }}><PriceDisplay amount={currentSeat.price} currency="INR" /></span></div>
                 </div>
               ) : (
                 <div style={{ padding: '40px 0', textAlign: 'center', color: 'rgba(255,255,255,0.5)', fontSize: 14 }}>
@@ -208,7 +212,11 @@ export default function SeatSelectionMap({ flight, passengers, onConfirm, onBack
               )}
 
               <button 
-                onClick={() => onConfirm(selectedSeats, totalAddedCosts)} 
+                onClick={() => {
+                  const inrRate = rates['INR'] || 83.5;
+                  const totalUsd = totalAddedCosts / inrRate;
+                  onConfirm(selectedSeats, totalUsd);
+                }} 
                 disabled={passengers.length !== Object.keys(selectedSeats).length}
                 style={{ width: '100%', marginTop: 32, background: `linear-gradient(to right, #cfb056, #8e7428)`, color: '#000', border: 'none', borderRadius: 8, padding: '16px 0', fontSize: 14, fontWeight: 800, cursor: passengers.length !== Object.keys(selectedSeats).length ? 'not-allowed' : 'pointer', opacity: passengers.length !== Object.keys(selectedSeats).length ? 0.5 : 1, transition: '0.2s' }}
               >

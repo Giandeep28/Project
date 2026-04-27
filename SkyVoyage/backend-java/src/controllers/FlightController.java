@@ -138,7 +138,16 @@ public class FlightController implements HttpHandler {
             
             int dur = baseDur + rng.nextInt(durVar);
             int stops = isDomestic ? (rng.nextDouble() < 0.7 ? 0 : 1) : (rng.nextDouble() < 0.4 ? 0 : (rng.nextDouble() < 0.8 ? 1 : 2));
-            double price = basePrice + rng.nextInt(priceVar);
+            
+            // ── LIVE PRICE ENGINE ──
+            // We now return prices in USD. 
+            // We add a time-based jitter so prices feel "live" and fluctuate slightly every 10 mins.
+            long timeWindow = System.currentTimeMillis() / (1000 * 60 * 10); // 10-minute window
+            Random liveRng = new Random(fno.hashCode() + timeWindow);
+            double jitter = 0.95 + (liveRng.nextDouble() * 0.1); // +/- 5%
+            
+            double baseUsd = isDomestic ? 50 + rng.nextInt(70) : 350 + rng.nextInt(1000);
+            double price = baseUsd * jitter;
             
             int depH = rng.nextInt(24);
             int depM = rng.nextInt(60);

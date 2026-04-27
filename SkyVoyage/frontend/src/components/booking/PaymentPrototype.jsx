@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { CreditCard, ShieldCheck, Loader2 } from 'lucide-react';
+import PriceDisplay from '../shared/PriceDisplay';
 
 export default function PaymentPrototype({ amount, onPay }) {
   const [isProcessing, setIsProcessing] = useState(false);
@@ -59,7 +60,7 @@ export default function PaymentPrototype({ amount, onPay }) {
         <div className="p-6 bg-primary/5 rounded-2xl border border-primary/10 flex items-center gap-4">
           <ShieldCheck className="text-primary" size={24} />
           <p className="text-[10px] font-medium text-slate-500 leading-relaxed uppercase">
-            Your credentials are encrypted via our neural network. Transaction total: <span className="text-white font-black">₹{amount?.toLocaleString()}</span>
+            Your credentials are encrypted via our neural network. Transaction total: <span className="text-white font-black"><PriceDisplay amount={amount || 0} /></span>
           </p>
         </div>
 

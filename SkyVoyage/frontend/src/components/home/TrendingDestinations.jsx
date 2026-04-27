@@ -1,10 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import PriceDisplay from '../../components/shared/PriceDisplay';
 
 const DESTINATIONS = [
-    { city: 'MALDIVES', price: '₹4,45,000', img: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&q=80&w=800' },
-    { city: 'ST. MORITZ', price: '₹6,15,000', img: 'https://images.unsplash.com/photo-1502943693086-33b5b1cfdf2f?auto=format&fit=crop&q=80&w=800' },
-    { city: 'MONACO', price: '₹8,55,000', img: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=80&w=800' }
+    { city: 'MALDIVES', price: 445000, img: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&q=80&w=800' },
+    { city: 'ST. MORITZ', price: 615000, img: 'https://images.unsplash.com/photo-1502943693086-33b5b1cfdf2f?auto=format&fit=crop&q=80&w=800' },
+    { city: 'MONACO', price: 855000, img: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=80&w=800' }
 ];
 
 const TrendingDestinations = () => {
@@ -47,7 +48,7 @@ const TrendingDestinations = () => {
                                     <h3 className="text-3xl font-luxury font-black text-white italic mb-2">{dest.city}</h3>
                                     <div className="flex justify-between items-center border-t border-white/10 pt-4">
                                         <span className="text-primary font-black uppercase text-[10px] tracking-widest">Starts From</span>
-                                        <span className="text-white font-luxury italic text-xl">{dest.price}</span>
+                                        <span className="text-white font-luxury italic text-xl"><PriceDisplay amount={dest.price} currency="INR" /></span>
                                     </div>
                                 </div>
 

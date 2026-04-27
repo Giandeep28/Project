@@ -1,6 +1,7 @@
 import React from 'react';
 import { Plane, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import Logo from '../shared/Logo';
 
 export default function Footer() {
   return (
@@ -8,13 +9,7 @@ export default function Footer() {
       <div className="container mx-auto px-6 lg:px-12 grid lg:grid-cols-12 gap-16 mb-24">
         <div className="lg:col-span-12 mb-12">
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-12">
-            <div>
-              <span className="text-4xl">✈️</span>
-              <h2 className="text-3xl font-black tracking-tighter mt-4 uppercase">
-                SKYVOYAGE<br />
-                <span className="text-primary tracking-[8px] text-[10px] font-black uppercase block mt-2">Excellence in Air</span>
-              </h2>
-            </div>
+            <Logo size="xl" vertical={true} showTagline={true} light={true} />
             <div className="flex gap-12">
               <div className="text-center">
                 <span className="block text-3xl font-black text-primary">150+</span>

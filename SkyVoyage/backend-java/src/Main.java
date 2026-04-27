@@ -68,6 +68,8 @@ public class Main {
             server.createContext("/api/auth/login",  new AuthController());
             server.createContext("/api/auth/logout", new AuthController());
             server.createContext("/api/auth/me",     new AuthController());
+            server.createContext("/api/food/order",  new FoodOrderService());
+            server.createContext("/api/food/orders", new FoodOrderService());
 
             // ── /api/health ─────────────────────────────────────────────────
             server.createContext("/api/health", exchange -> {
@@ -80,79 +82,7 @@ public class Main {
             });
 
             // ── /api/airports ────────────────────────────────────────────────
-            server.createContext("/api/airports", exchange -> {
-                try {
-                    if (preflight(exchange)) return;
-
-                    String rawQ = exchange.getRequestURI().getQuery();
-                    String q = "";
-                    if (rawQ != null) {
-                        for (String p : rawQ.split("&")) {
-                            if (p.startsWith("q=")) {
-                                q = java.net.URLDecoder.decode(p.substring(2), "UTF-8").toLowerCase();
-                            }
-                        }
-                    }
-
-                    String[][] DB = {
-                        {"DEL","Delhi","Indira Gandhi International","India"},
-                        {"BOM","Mumbai","Chhatrapati Shivaji Maharaj","India"},
-                        {"BLR","Bengaluru","Kempegowda International","India"},
-                        {"MAA","Chennai","Chennai International","India"},
-                        {"CCU","Kolkata","Netaji Subhas Chandra Bose","India"},
-                        {"HYD","Hyderabad","Rajiv Gandhi International","India"},
-                        {"COK","Kochi","Cochin International","India"},
-                        {"PNQ","Pune","Pune Airport","India"},
-                        {"AMD","Ahmedabad","Sardar Vallabhbhai Patel","India"},
-                        {"GOI","Goa","Dabolim Airport","India"},
-                        {"JAI","Jaipur","Jaipur International","India"},
-                        {"LKO","Lucknow","Chaudhary Charan Singh","India"},
-                        {"VNS","Varanasi","Lal Bahadur Shastri","India"},
-                        {"ATQ","Amritsar","Sri Guru Ram Dass Jee","India"},
-                        {"NAG","Nagpur","Dr. Babasaheb Ambedkar","India"},
-                        {"IXC","Chandigarh","Chandigarh Airport","India"},
-                        {"SXR","Srinagar","Sheikh ul-Alam International","India"},
-                        {"GAU","Guwahati","Lokpriya Gopinath Bordoloi","India"},
-                        {"DXB","Dubai","Dubai International","UAE"},
-                        {"LHR","London","Heathrow Airport","United Kingdom"},
-                        {"SIN","Singapore","Changi Airport","Singapore"},
-                        {"JFK","New York","JFK International","USA"},
-                        {"HND","Tokyo","Haneda Airport","Japan"},
-                        {"CDG","Paris","Charles de Gaulle","France"},
-                        {"AMS","Amsterdam","Schiphol Airport","Netherlands"},
-                        {"DOH","Doha","Hamad International","Qatar"},
-                        {"AUH","Abu Dhabi","Zayed International","UAE"},
-                        {"BKK","Bangkok","Suvarnabhumi Airport","Thailand"},
-                        {"SYD","Sydney","Kingsford Smith Airport","Australia"},
-                        {"HKG","Hong Kong","Hong Kong International","China HK"},
-                        {"KUL","Kuala Lumpur","Kuala Lumpur International","Malaysia"},
-                        {"ATH","Athens","Eleftherios Venizelos","Greece"},
-                        {"LAX","Los Angeles","Los Angeles International","USA"},
-                        {"FRA","Frankfurt","Frankfurt am Main","Germany"},
-                    };
-
-                    final String fq = q;
-                    StringBuilder json = new StringBuilder("[");
-                    boolean first = true;
-                    int count = 0;
-                    for (String[] a : DB) {
-                        if (count >= 6) break;
-                        if (a[0].toLowerCase().startsWith(fq) || a[1].toLowerCase().contains(fq)
-                                || a[2].toLowerCase().contains(fq) || a[3].toLowerCase().contains(fq)) {
-                            if (!first) json.append(",");
-                            json.append(String.format(
-                                "{\"code\":\"%s\",\"city\":\"%s\",\"name\":\"%s\",\"country\":\"%s\"}",
-                                a[0], a[1], a[2], a[3]));
-                            first = false;
-                            count++;
-                        }
-                    }
-                    json.append("]");
-                    sendJson(exchange, 200, json.toString());
-                } catch (IOException e) {
-                    exchange.close();
-                }
-            });
+            server.createContext("/api/airports", new AirportRegistry());
 
             // ── Thread Pool ──────────────────────────────────────────────────
             ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
@@ -169,6 +99,8 @@ public class Main {
             System.out.println("    POST /api/auth/login");
             System.out.println("    POST /api/auth/logout");
             System.out.println("    GET  /api/auth/me");
+            System.out.println("    POST /api/food/order");
+            System.out.println("    GET  /api/food/orders/{id}");
             System.out.println("    GET  /api/airports?q=");
             System.out.println("    GET  /api/health");
             System.out.println("=================================================");

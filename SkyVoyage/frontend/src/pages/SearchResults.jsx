@@ -3,6 +3,8 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import ApiClient from '../services/ApiClient';
 import FilterSidebar from '../components/flights/FilterSidebar';
 import FlightCard from '../components/flights/FlightCard';
+import PriceDisplay from '../components/shared/PriceDisplay';
+import useCurrency from '../context/useCurrency';
 
 const SORT_OPTIONS = [
   { key: 'cheapest', label: 'Cheapest',   desc: 'Lowest price first',   fn: (a, b) => a.price - b.price },
@@ -24,6 +26,7 @@ function Skeleton({ darkMode }) {
 }
 
 export default function SearchResults({ darkMode }) {
+  const { rates } = useCurrency();
   const [params] = useSearchParams();
   const navigate = useNavigate();
   const origin = params.get('origin') || '';
@@ -85,8 +88,10 @@ export default function SearchResults({ darkMode }) {
         if (filters.stops.includes('2+') && f.stops >= 2) ok = true;
         if (!ok) return false;
       }
-      // 2. Price
-      if (f.price > filters.maxPrice) return false;
+      // 2. Price (maxPrice is in INR, f.price is in USD)
+      const inrRate = rates['INR'] || 83.5;
+      const maxPriceUSD = filters.maxPrice / inrRate; 
+      if (f.price > maxPriceUSD) return false;
       // 3. Airlines
       if (filters.airlines.length > 0 && !filters.airlines.includes(f.airline)) return false;
       
@@ -154,7 +159,7 @@ export default function SearchResults({ darkMode }) {
 
             <div style={{ background: tabBg, border: `1px solid ${tabBdr}`, borderRadius: 12, padding: 20 }}>
               <h3 style={{ fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700, color: text, marginBottom: 16 }}>
-                Max Price: ₹{filters.maxPrice.toLocaleString('en-IN')}
+                Max Price: <PriceDisplay amount={filters.maxPrice} currency="INR" />
               </h3>
               <input type="range" min="3000" max="50000" step="500" value={filters.maxPrice}
                 onChange={(e) => setFilters(curr => ({ ...curr, maxPrice: parseInt(e.target.value) }))}
@@ -225,7 +230,9 @@ export default function SearchResults({ darkMode }) {
                             </div>
                           </div>
                           <div style={{ textAlign: 'right' }}>
-                            <p style={{ fontSize: 24, fontWeight: 800, color: text }}>₹{f.price.toLocaleString('en-IN')}</p>
+                            <p style={{ fontSize: 24, fontWeight: 800, color: text }}>
+                              <PriceDisplay amount={f.price} />
+                            </p>
                             <p style={{ fontSize: 12, color: '#10b981' }}>{f.seatsAvailable} seats left</p>
                           </div>
                         </div>

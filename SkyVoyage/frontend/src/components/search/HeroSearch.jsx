@@ -2,160 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ApiClient from "../../services/ApiClient";
 
-function AutoField({ label, placeholder, value, onChange, onQueryChange, darkMode }) {
-  const [query, setQuery] = useState(value ? `${value.city} (${value.code})` : "");
-  const [results, setResults] = useState([]);
-  const [open, setOpen] = useState(false);
-  const ref = useRef(null);
-  const delay = useRef(null);
-
-  useEffect(() => {
-    if (value) setQuery(`${value.city} (${value.code})`);
-  }, [value]);
-
-  useEffect(() => {
-    const h = (e) => {
-      if (!ref.current?.contains(e.target)) setOpen(false);
-    };
-    document.addEventListener("mousedown", h);
-    return () => document.removeEventListener("mousedown", h);
-  }, []);
-
-  const type = (e) => {
-    const q = e.target.value;
-    setQuery(q);
-    if (onQueryChange) onQueryChange(q);
-    onChange(null);
-    clearTimeout(delay.current);
-    if (q.length < 2) {
-      setResults([]);
-      setOpen(false);
-      return;
-    }
-    delay.current = setTimeout(async () => {
-      const data = await ApiClient.searchAirports(q).catch(() => []);
-      setResults(data.slice(0, 6));
-      setOpen(data.length > 0);
-    }, 220);
-  };
-
-  const pick = (item) => {
-    setQuery(`${item.city} (${item.code})`);
-    if (onQueryChange) onQueryChange(`${item.city} (${item.code})`);
-    onChange(item);
-    setResults([]);
-    setOpen(false);
-  };
-
-  const bg = darkMode ? "#1C2333" : "#fff";
-  const border = darkMode ? "rgba(255,255,255,0.1)" : "#d1d5db";
-  const text = darkMode ? "#f0ece4" : "#111827";
-  const muted = darkMode ? "rgba(255,255,255,0.35)" : "#9ca3af";
-  const hover = darkMode ? "rgba(200,168,75,0.1)" : "#f5f3ff";
-
-  return (
-    <div style={{ position: "relative" }} ref={ref}>
-      <p
-        style={{
-          fontSize: 9.5,
-          fontWeight: 700,
-          letterSpacing: "0.22em",
-          textTransform: "uppercase",
-          color: "#C8A84B",
-          marginBottom: 6,
-          opacity: 0.8,
-        }}
-      >
-        {label}
-      </p>
-      <input
-        value={query}
-        onChange={type}
-        onBlur={() => {
-            // Auto-pick if there's an exact match in results or only one result
-            if (!value && results.length > 0) {
-                const exact = results.find(r => r.city.toLowerCase() === query.toLowerCase() || r.code.toLowerCase() === query.toLowerCase());
-                if (exact) pick(exact);
-                else if (results.length === 1 && query.length >= 3) pick(results[0]);
-            }
-        }}
-        placeholder={placeholder}
-        autoComplete="off"
-        style={{
-          width: "100%",
-          backgroundColor: bg,
-          border: `1px solid ${border}`,
-          borderRadius: 10,
-          padding: "11px 14px",
-          fontSize: 14,
-          fontWeight: 500,
-          color: text,
-          outline: "none",
-          transition: "border-color 0.2s",
-          boxSizing: "border-box",
-        }}
-        onFocus={(e) => (e.target.style.borderColor = "#C8A84B")}
-        onBlur={(e) => {
-            e.target.style.borderColor = border;
-        }}
-      />
-      {open && results.length > 0 && (
-        <ul
-          style={{
-            position: "absolute",
-            zIndex: 200,
-            top: "100%",
-            marginTop: 4,
-            width: "100%",
-            background: darkMode ? "#111827" : "#fff",
-            border: `1px solid ${darkMode ? "rgba(255,255,255,0.1)" : "#e5e7eb"}`,
-            borderRadius: 10,
-            overflow: "hidden",
-            boxShadow: "0 8px 24px rgba(0,0,0,0.2)",
-            listStyle: "none",
-            padding: 0,
-            margin: 0,
-          }}
-        >
-          {results.map((item) => (
-            <li
-              key={item.code}
-              onMouseDown={() => pick(item)}
-              style={{
-                padding: "10px 14px",
-                cursor: "pointer",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                fontSize: 13,
-                color: text,
-                transition: "background 0.12s",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = hover)}
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.background = "transparent")
-              }
-            >
-              <span>
-                {item.city}, {item.country}
-              </span>
-              <span
-                style={{
-                  color: "#C8A84B",
-                  fontFamily: "monospace",
-                  fontSize: 11,
-                  fontWeight: 700,
-                }}
-              >
-                {item.code}
-              </span>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
-}
+import AirportSearch from "../AirportSearch";
 
 const TABS = ["Charter Trip", "Empty Legs", "Multi-City"];
 
@@ -338,7 +185,7 @@ export default function HeroSearch({ darkMode }) {
                 gap: 12,
               }}
             >
-              <AutoField
+              <AirportSearch
                 label="Departure Point"
                 placeholder="Select origin hub"
                 value={origin}
@@ -346,7 +193,7 @@ export default function HeroSearch({ darkMode }) {
                 onQueryChange={setOriginQ}
                 darkMode={darkMode}
               />
-              <AutoField
+              <AirportSearch
                 label="Destination Hub"
                 placeholder="Discovery hub"
                 value={dest}
@@ -492,7 +339,7 @@ export default function HeroSearch({ darkMode }) {
                   gap: 12,
                 }}
               >
-                <AutoField
+                <AirportSearch
                   label="Departure"
                   placeholder="Select hub"
                   value={leg.origin}
@@ -500,7 +347,7 @@ export default function HeroSearch({ darkMode }) {
                   onQueryChange={(v) => updLeg(i, "originQ", v)}
                   darkMode={darkMode}
                 />
-                <AutoField
+                <AirportSearch
                   label="Arrival"
                   placeholder="Select hub"
                   value={leg.dest}

@@ -1,5 +1,7 @@
 import React from 'react';
 import { useLocation, Navigate, useNavigate } from 'react-router-dom';
+import PriceDisplay from '../components/shared/PriceDisplay';
+import FoodPreBooking from '../components/booking/FoodPreBooking';
 
 export default function Confirmation({ darkMode }) {
   const location = useLocation();
@@ -77,7 +79,9 @@ Thank you for flying SkyVoyage.
             <div style={{ display: 'flex', gap: 32, marginBottom: 32 }}>
               <div style={{ flex: 1 }}>
                 <p style={{ fontSize: 12, color: muted, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>Total Amount Paid</p>
-                <p style={{ fontSize: 24, fontWeight: 800, color: accent }}>₹{booking.totalPrice?.toLocaleString('en-IN')}</p>
+                <p style={{ fontSize: 24, fontWeight: 800, color: accent }}>
+                  <PriceDisplay amount={booking.totalPrice || 0} />
+                </p>
               </div>
               <div style={{ flex: 1 }}>
                 <p style={{ fontSize: 12, color: muted, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>Transaction ID</p>
@@ -95,6 +99,8 @@ Thank you for flying SkyVoyage.
             </div>
           </div>
         </div>
+
+        <FoodPreBooking booking={booking} darkMode={darkMode} />
       </div>
     </div>
   );

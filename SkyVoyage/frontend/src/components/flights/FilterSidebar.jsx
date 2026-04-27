@@ -1,4 +1,5 @@
 import React from 'react';
+import PriceDisplay from '../shared/PriceDisplay';
 const STOPS = ['Non-stop','1 Stop','2+ Stops'];
 export default function FilterSidebar({ filters, onChange, airlines, darkMode }) {
   const { stops, maxPrice, selectedAirlines, priceRange } = filters;
@@ -34,8 +35,8 @@ export default function FilterSidebar({ filters, onChange, airlines, darkMode })
           onChange={e=>onChange({...filters,maxPrice:Number(e.target.value)})}
           style={{ width:'100%', accentColor:gold, cursor:'pointer' }}/>
         <div style={{ display:'flex', justifyContent:'space-between', fontSize:12, color:muted, marginTop:6 }}>
-          <span>₹{priceRange[0].toLocaleString()}</span>
-          <span style={{ color:gold, fontWeight:600 }}>₹{maxPrice.toLocaleString()}</span>
+          <span><PriceDisplay amount={priceRange[0]} currency="INR" /></span>
+          <span style={{ color:gold, fontWeight:600 }}><PriceDisplay amount={maxPrice} currency="INR" /></span>
         </div>
       </div>
       <div>

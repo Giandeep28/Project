@@ -9,10 +9,23 @@ app = FastAPI(title="SkyVoyage AI Concierge")
 # Enable CORS for React frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:5173", "http://localhost:3000"],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+from routers import tracking
+app.include_router(tracking.router)
+
+from routers import chatbot
+app.include_router(chatbot.router)
+
+from routers import currency
+app.include_router(currency.router)
+
+from routers import meals
+app.include_router(meals.router)
 
 class ChatMessage(BaseModel):
     role: str

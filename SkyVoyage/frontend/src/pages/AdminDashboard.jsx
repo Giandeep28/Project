@@ -3,9 +3,10 @@ import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import { ApiClient } from '../services/ApiClient';
 import { TrendingUp, Users, Activity, ShieldCheck, ArrowUpRight, ArrowDownRight, Terminal } from 'lucide-react';
+import PriceDisplay from '../components/shared/PriceDisplay';
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState({ java: 'DOWN', python: 'DOWN', yield: '₹0.00', totalBookings: 0 });
+  const [stats, setStats] = useState({ java: 'DOWN', python: 'DOWN', yield: 0, totalBookings: 0 });
   const [bookings, setBookings] = useState([]);
   const [adminName, setAdminName] = useState('Alexander');
 
@@ -23,7 +24,7 @@ export default function AdminDashboard() {
           setStats({ 
             java: health.java.status || 'DOWN', 
             python: health.python.status || 'DOWN',
-            yield: `₹${(total / 100000).toFixed(2)}L`,
+            yield: total,
             totalBookings: (bookingData.bookings || []).length
           });
         } else {
@@ -73,7 +74,7 @@ export default function AdminDashboard() {
           </div>
           <div className="glass-panel p-8 rounded-3xl">
             <span className="text-slate-500 font-bold text-[10px] uppercase tracking-widest">Fleet Yield</span>
-            <p className="text-3xl font-black mt-2 italic">{stats.yield}</p>
+            <p className="text-3xl font-black mt-2 italic"><PriceDisplay amount={stats.yield} /></p>
             <div className="mt-4 flex items-center gap-2 text-[10px] font-bold text-primary"><ArrowUpRight size={12} /> +{stats.totalBookings > 0 ? 'Live' : '0'} Data Sync</div>
           </div>
           <div className="glass-panel p-8 rounded-3xl">
@@ -113,7 +114,7 @@ export default function AdminDashboard() {
                       <td className="p-8">{row.from || '---'} ➔ {row.to || '---'}</td>
                       <td className="p-8 text-primary/60">{row.flightId}</td>
                       <td className="p-8 text-primary uppercase">{row.seatId || 'STANDBY'}</td>
-                      <td className="p-8 italic">₹{row.amount?.toLocaleString()}</td>
+                      <td className="p-8 italic"><PriceDisplay amount={row.amount || 0} /></td>
                       <td className="p-8">
                         <span className={`px-3 py-1 bg-white/5 rounded-full text-[9px] uppercase font-black text-green-500`}>
                           AUTHORIZED

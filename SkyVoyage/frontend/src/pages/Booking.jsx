@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import ApiClient from '../services/ApiClient';
 import SeatSelectionMap from '../components/booking/SeatSelectionMap';
+import PriceDisplay from '../components/shared/PriceDisplay';
 
 export default function Booking({ darkMode }) {
   const location = useLocation();
@@ -172,19 +173,19 @@ export default function Booking({ darkMode }) {
              <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 24, fontSize: 15, color: text }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <span>Base Flight Fare ({passengers.length} Passenger{passengers.length > 1 && 's'})</span>
-                  <span>₹{basePrice.toLocaleString('en-IN')}</span>
+                  <span><PriceDisplay amount={basePrice} /></span>
                 </div>
                 {seatAddedPrice > 0 && (
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span>Premium Seat Upgrades</span>
-                    <span>₹{seatAddedPrice.toLocaleString('en-IN')}</span>
+                    <span><PriceDisplay amount={seatAddedPrice} /></span>
                   </div>
                 )}
              </div>
 
              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, paddingTop: 20, borderTop: `1px solid ${bdr}` }}>
                 <p style={{ fontSize: 18, fontWeight: 600 }}>Total Amount</p>
-                <p style={{ fontSize: 28, fontWeight: 800 }}>₹{totalPrice.toLocaleString('en-IN')}</p>
+                <p style={{ fontSize: 28, fontWeight: 800 }}><PriceDisplay amount={totalPrice} /></p>
              </div>
 
              <div style={{ display: 'flex', gap: 16 }}>

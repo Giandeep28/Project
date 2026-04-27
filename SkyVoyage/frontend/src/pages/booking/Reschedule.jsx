@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { CalendarClock, Search, ArrowRight, Plane, CheckCircle2, ChevronRight, AlertCircle, CreditCard } from 'lucide-react';
+import PriceDisplay from '../../components/shared/PriceDisplay';
 
 export default function Reschedule({ darkMode }) {
   const [step, setStep] = useState(1);
@@ -96,7 +97,7 @@ export default function Reschedule({ darkMode }) {
                         <input type="date" value={selectedDate} onChange={e => setSelectedDate(e.target.value)} className="w-full bg-black/40 border-2 border-[var(--border-color)] focus:border-primary rounded-2xl px-6 py-5 font-black outline-none transition-all [color-scheme:dark]" />
                         <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl flex gap-4">
                            <AlertCircle className="text-yellow-500 w-5 h-5 flex-shrink-0" />
-                           <p className="text-xs text-slate-400 font-medium">Re-scheduling fee of ₹1,500 applies as per the current fare rules for Celestial First.</p>
+                           <p className="text-xs text-slate-400 font-medium">Re-scheduling fee of <PriceDisplay amount={1500} currency="INR" /> applies as per the current fare rules for Celestial First.</p>
                         </div>
                       </div>
                    </div>
@@ -121,15 +122,15 @@ export default function Reschedule({ darkMode }) {
                      </div>
                      <div className="flex justify-between items-center p-4 border-b border-white/5">
                         <span className="text-slate-500 text-xs font-bold uppercase tracking-widest">Change Fee</span>
-                        <span className="font-black">₹1,500.00</span>
+                        <span className="font-black"><PriceDisplay amount={1500} currency="INR" /></span>
                      </div>
                      <div className="flex justify-between items-center p-4">
                         <span className="text-slate-500 text-xs font-bold uppercase tracking-widest">Fare Difference</span>
-                        <span className="font-black">₹0.00 (Elite Protection)</span>
+                        <span className="font-black"><PriceDisplay amountUSD={0} /> (Elite Protection)</span>
                      </div>
                      <div className="mt-4 p-5 bg-primary/10 rounded-2xl flex justify-between items-center">
                         <span className="font-black uppercase tracking-widest">Total Payable</span>
-                        <span className="text-2xl font-black text-primary">₹1,500.00</span>
+                        <span className="text-2xl font-black text-primary"><PriceDisplay amount={1500} currency="INR" /></span>
                      </div>
                   </div>
                   <button onClick={handlePayment} disabled={loading} className="w-full bg-primary text-dark font-black px-12 py-5 rounded-2xl uppercase tracking-widest text-xs hover:bg-white transition-all flex items-center justify-center gap-3 shadow-2xl">

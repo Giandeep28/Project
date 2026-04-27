@@ -7,6 +7,7 @@ import {
   Wind, 
   Navigation 
 } from 'lucide-react';
+import PriceDisplay from '../shared/PriceDisplay';
 
 /**
  * MOCK DATA
@@ -74,7 +75,7 @@ const SeatSelection = ({ onSeatSelect }) => {
         <div className="text-right">
           <p className="text-slate-500 text-[9px] font-black uppercase tracking-widest mb-1">Total Voyage Cost</p>
           <p className="text-3xl font-black italic tracking-tighter text-[#D4AF37]">
-            ₹{totalPrice.toLocaleString()}
+            <PriceDisplay amount={totalPrice} currency="INR" />
           </p>
         </div>
       </div>
@@ -184,7 +185,7 @@ const SeatSelection = ({ onSeatSelect }) => {
                    </div>
                    <div className="text-right">
                       <span className="text-slate-500 text-[8px] font-black uppercase tracking-widest block">Manifest Price</span>
-                      <p className="text-xl font-black text-white italic tracking-tighter">₹{(hoveredSeat || selectedSeat).price.toLocaleString()}</p>
+                      <p className="text-xl font-black text-white italic tracking-tighter"><PriceDisplay amount={(hoveredSeat || selectedSeat).price} currency="INR" /></p>
                    </div>
                 </div>
 

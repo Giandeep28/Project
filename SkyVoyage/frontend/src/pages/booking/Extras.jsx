@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Sparkles, Armchair, Coffee, ShieldCheck, Briefcase, Plus, Check, ShoppingBag, ArrowRight } from 'lucide-react';
+import PriceDisplay from '../../components/shared/PriceDisplay';
 
 export default function Extras({ darkMode }) {
   const [selected, setSelected] = useState([]);
@@ -31,7 +32,7 @@ export default function Extras({ darkMode }) {
                </div>
                <div className="bg-primary/10 p-6 rounded-3xl border border-primary/20 min-w-[280px]">
                   <p className="text-[10px] font-black uppercase text-slate-500 tracking-[3px] mb-2">Total Selection</p>
-                  <p className="text-3xl font-black text-primary">₹{total.toLocaleString()}</p>
+                  <p className="text-3xl font-black text-primary"><PriceDisplay amount={total} currency="INR" /></p>
                   <button 
                     disabled={selected.length === 0} 
                     onClick={() => setStep(2)}
@@ -58,7 +59,7 @@ export default function Extras({ darkMode }) {
                      <p className="text-sm text-slate-400 font-medium leading-relaxed mb-8">{item.desc}</p>
                      
                      <div className="flex justify-between items-center pt-6 border-t border-white/5">
-                        <span className="text-lg font-black tracking-tight text-white">₹{item.price.toLocaleString()}</span>
+                        <span className="text-lg font-black tracking-tight text-white"><PriceDisplay amount={item.price} currency="INR" /></span>
                         <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${isActive ? 'bg-primary text-dark' : 'bg-white/5 border border-white/10 group-hover:bg-white/10'}`}>
                            {isActive ? <Check size={16} strokeWidth={4} /> : <Plus size={16} />}
                         </div>
@@ -79,12 +80,12 @@ export default function Extras({ darkMode }) {
                {selected.map(id => (
                  <div key={id} className="flex justify-between p-4 bg-white/5 border border-[var(--border-color)] rounded-xl">
                    <span className="text-xs font-black uppercase tracking-widest">{catalog.find(x => x.id === id)?.name}</span>
-                   <span className="text-xs font-bold text-primary">₹{catalog.find(x => x.id === id)?.price}</span>
+                   <span className="text-xs font-bold text-primary"><PriceDisplay amount={catalog.find(x => x.id === id)?.price || 0} currency="INR" /></span>
                  </div>
                ))}
                <div className="flex justify-between p-5 bg-primary/10 border border-primary/20 rounded-2xl">
                  <span className="font-black uppercase tracking-widest">Total Paid</span>
-                 <span className="text-xl font-black text-primary">₹{total.toLocaleString()}</span>
+                 <span className="text-xl font-black text-primary"><PriceDisplay amount={total} currency="INR" /></span>
                </div>
              </div>
              <button onClick={() => setStep(1)} className="text-slate-500 font-bold text-xs uppercase tracking-[4px] border-b border-transparent hover:border-slate-500 transition-all pb-1">Back to Catalog</button>

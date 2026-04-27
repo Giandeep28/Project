@@ -1,0 +1,1732 @@
+{
+  "airlines": {
+    "AI": {
+      "name": "Air India",
+      "meal_categories": [
+        "Vegetarian",
+        "Non-Vegetarian",
+        "Vegan",
+        "Jain",
+        "Child Meal",
+        "Diabetic",
+        "Low Sodium"
+      ],
+      "meals": [
+        {
+          "id": "AI-001",
+          "name": "Dal Makhani with Jeera Rice",
+          "category": "Vegetarian",
+          "description": "Slow-cooked lentils with fragrant cumin rice and naan",
+          "price_usd": 12.0,
+          "allergens": [
+            "gluten",
+            "dairy"
+          ],
+          "available_routes": [
+            "domestic",
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "indian-thali"
+        },
+        {
+          "id": "AI-002",
+          "name": "Chicken Tikka Masala",
+          "category": "Non-Vegetarian",
+          "description": "Tender chicken pieces in a rich, creamy tomato sauce with basmati rice",
+          "price_usd": 14.5,
+          "allergens": [
+            "dairy"
+          ],
+          "available_routes": [
+            "domestic",
+            "international"
+          ],
+          "prep_time_minutes": 20,
+          "image_placeholder": "chicken-tikka"
+        },
+        {
+          "id": "AI-003",
+          "name": "Paneer Butter Masala",
+          "category": "Vegetarian",
+          "description": "Cottage cheese cubes in a buttery tomato gravy",
+          "price_usd": 13.0,
+          "allergens": [
+            "dairy",
+            "nuts"
+          ],
+          "available_routes": [
+            "domestic",
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "paneer-masala"
+        },
+        {
+          "id": "AI-004",
+          "name": "Mutton Biryani",
+          "category": "Non-Vegetarian",
+          "description": "Aromatic rice dish layered with marinated mutton",
+          "price_usd": 16.0,
+          "allergens": [
+            "dairy",
+            "nuts"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 25,
+          "image_placeholder": "mutton-biryani"
+        },
+        {
+          "id": "AI-005",
+          "name": "Vegan Chickpea Curry",
+          "category": "Vegan",
+          "description": "Spicy and tangy chickpea curry served with quinoa",
+          "price_usd": 11.5,
+          "allergens": [],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "chickpea-curry"
+        },
+        {
+          "id": "AI-006",
+          "name": "Jain Thali",
+          "category": "Jain",
+          "description": "Special Jain meal prepared without root vegetables",
+          "price_usd": 12.5,
+          "allergens": [
+            "dairy"
+          ],
+          "available_routes": [
+            "domestic",
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "jain-meal"
+        },
+        {
+          "id": "AI-007",
+          "name": "Kids Pasta",
+          "category": "Child Meal",
+          "description": "Macaroni in a mild cheese sauce with fruit salad",
+          "price_usd": 9.0,
+          "allergens": [
+            "gluten",
+            "dairy"
+          ],
+          "available_routes": [
+            "domestic",
+            "international"
+          ],
+          "prep_time_minutes": 10,
+          "image_placeholder": "kids-pasta"
+        },
+        {
+          "id": "AI-008",
+          "name": "Grilled Fish with Veggies",
+          "category": "Diabetic",
+          "description": "Lightly seasoned grilled fish with steamed broccoli",
+          "price_usd": 15.0,
+          "allergens": [
+            "fish"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 20,
+          "image_placeholder": "grilled-fish"
+        }
+      ]
+    },
+    "6E": {
+      "name": "IndiGo",
+      "meal_categories": [
+        "Snacks",
+        "Light Meals",
+        "Beverages",
+        "Vegetarian",
+        "Non-Vegetarian"
+      ],
+      "meals": [
+        {
+          "id": "6E-001",
+          "name": "Junglee Chicken Sandwich",
+          "category": "Non-Vegetarian",
+          "description": "Shredded chicken in mayo on marble bread",
+          "price_usd": 5.5,
+          "allergens": [
+            "gluten",
+            "egg"
+          ],
+          "available_routes": [
+            "domestic",
+            "international"
+          ],
+          "prep_time_minutes": 5,
+          "image_placeholder": "chicken-sandwich"
+        },
+        {
+          "id": "6E-002",
+          "name": "Paneer Tikka Sandwich",
+          "category": "Vegetarian",
+          "description": "Spiced paneer with mint chutney in focaccia bread",
+          "price_usd": 5.0,
+          "allergens": [
+            "gluten",
+            "dairy"
+          ],
+          "available_routes": [
+            "domestic",
+            "international"
+          ],
+          "prep_time_minutes": 5,
+          "image_placeholder": "paneer-sandwich"
+        },
+        {
+          "id": "6E-003",
+          "name": "Veg Instant Noodles",
+          "category": "Snacks",
+          "description": "Hot cup of instant masala noodles",
+          "price_usd": 3.5,
+          "allergens": [
+            "gluten",
+            "soy"
+          ],
+          "available_routes": [
+            "domestic",
+            "international"
+          ],
+          "prep_time_minutes": 5,
+          "image_placeholder": "cup-noodles"
+        },
+        {
+          "id": "6E-004",
+          "name": "Smoked Chicken Sausage Roll",
+          "category": "Snacks",
+          "description": "Warm chicken sausage wrapped in flaky pastry",
+          "price_usd": 4.5,
+          "allergens": [
+            "gluten",
+            "egg"
+          ],
+          "available_routes": [
+            "domestic",
+            "international"
+          ],
+          "prep_time_minutes": 10,
+          "image_placeholder": "sausage-roll"
+        },
+        {
+          "id": "6E-005",
+          "name": "Nutty Trail Mix",
+          "category": "Snacks",
+          "description": "Healthy mix of almonds, cashews, and dried fruits",
+          "price_usd": 3.0,
+          "allergens": [
+            "nuts"
+          ],
+          "available_routes": [
+            "domestic",
+            "international"
+          ],
+          "prep_time_minutes": 0,
+          "image_placeholder": "trail-mix"
+        },
+        {
+          "id": "6E-006",
+          "name": "Spinach & Corn Quiche",
+          "category": "Vegetarian",
+          "description": "Warm savory tart filled with spinach and sweet corn",
+          "price_usd": 6.0,
+          "allergens": [
+            "gluten",
+            "dairy",
+            "egg"
+          ],
+          "available_routes": [
+            "domestic",
+            "international"
+          ],
+          "prep_time_minutes": 10,
+          "image_placeholder": "spinach-quiche"
+        }
+      ]
+    },
+    "SG": {
+      "name": "SpiceJet",
+      "meal_categories": [
+        "Hot Meals",
+        "Sandwiches",
+        "Snacks",
+        "Beverages"
+      ],
+      "meals": [
+        {
+          "id": "SG-001",
+          "name": "SpiceMax Chicken Biryani",
+          "category": "Hot Meals",
+          "description": "Signature chicken biryani with raita",
+          "price_usd": 7.0,
+          "allergens": [
+            "dairy",
+            "nuts"
+          ],
+          "available_routes": [
+            "domestic",
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "chicken-biryani"
+        },
+        {
+          "id": "SG-002",
+          "name": "Aloo Paratha with Pickle",
+          "category": "Hot Meals",
+          "description": "Stuffed potato flatbread with tangy mango pickle",
+          "price_usd": 5.5,
+          "allergens": [
+            "gluten",
+            "dairy"
+          ],
+          "available_routes": [
+            "domestic"
+          ],
+          "prep_time_minutes": 10,
+          "image_placeholder": "aloo-paratha"
+        },
+        {
+          "id": "SG-003",
+          "name": "Chicken Tikka Wrap",
+          "category": "Sandwiches",
+          "description": "Spicy chicken tikka wrapped in a soft tortilla",
+          "price_usd": 6.5,
+          "allergens": [
+            "gluten",
+            "dairy"
+          ],
+          "available_routes": [
+            "domestic",
+            "international"
+          ],
+          "prep_time_minutes": 8,
+          "image_placeholder": "chicken-wrap"
+        },
+        {
+          "id": "SG-004",
+          "name": "Paneer Makhani Wrap",
+          "category": "Sandwiches",
+          "description": "Cottage cheese in rich gravy wrapped in a flatbread",
+          "price_usd": 6.0,
+          "allergens": [
+            "gluten",
+            "dairy"
+          ],
+          "available_routes": [
+            "domestic",
+            "international"
+          ],
+          "prep_time_minutes": 8,
+          "image_placeholder": "paneer-wrap"
+        },
+        {
+          "id": "SG-005",
+          "name": "Chocolate Brownie",
+          "category": "Snacks",
+          "description": "Fudgy walnut brownie",
+          "price_usd": 3.5,
+          "allergens": [
+            "gluten",
+            "dairy",
+            "egg",
+            "nuts"
+          ],
+          "available_routes": [
+            "domestic",
+            "international"
+          ],
+          "prep_time_minutes": 0,
+          "image_placeholder": "brownie"
+        },
+        {
+          "id": "SG-006",
+          "name": "Cheese & Crackers",
+          "category": "Snacks",
+          "description": "Assorted cheese cubes with savory crackers",
+          "price_usd": 4.0,
+          "allergens": [
+            "gluten",
+            "dairy"
+          ],
+          "available_routes": [
+            "domestic",
+            "international"
+          ],
+          "prep_time_minutes": 0,
+          "image_placeholder": "cheese-crackers"
+        }
+      ]
+    },
+    "UK": {
+      "name": "Vistara",
+      "meal_categories": [
+        "Premium Indian",
+        "Continental",
+        "Vegetarian",
+        "Non-Vegetarian",
+        "Healthy"
+      ],
+      "meals": [
+        {
+          "id": "UK-001",
+          "name": "Pesto Roast Chicken",
+          "category": "Continental",
+          "description": "Herb-roasted chicken breast with mashed potatoes and asparagus",
+          "price_usd": 14.0,
+          "allergens": [
+            "dairy",
+            "nuts"
+          ],
+          "available_routes": [
+            "domestic",
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "pesto-chicken"
+        },
+        {
+          "id": "UK-002",
+          "name": "Awadhi Mutton Korma",
+          "category": "Premium Indian",
+          "description": "Rich and aromatic mutton curry served with saffron rice",
+          "price_usd": 16.5,
+          "allergens": [
+            "dairy",
+            "nuts"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 20,
+          "image_placeholder": "mutton-korma"
+        },
+        {
+          "id": "UK-003",
+          "name": "Truffle Mushroom Risotto",
+          "category": "Vegetarian",
+          "description": "Creamy Arborio rice with wild mushrooms and truffle oil",
+          "price_usd": 13.5,
+          "allergens": [
+            "dairy"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "mushroom-risotto"
+        },
+        {
+          "id": "UK-004",
+          "name": "Malabar Fish Curry",
+          "category": "Premium Indian",
+          "description": "Coconut-based coastal fish curry with steamed rice",
+          "price_usd": 15.0,
+          "allergens": [
+            "fish",
+            "mustard"
+          ],
+          "available_routes": [
+            "domestic",
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "fish-curry"
+        },
+        {
+          "id": "UK-005",
+          "name": "Quinoa & Kale Salad",
+          "category": "Healthy",
+          "description": "Superfood salad with lemon vinaigrette",
+          "price_usd": 9.5,
+          "allergens": [],
+          "available_routes": [
+            "domestic",
+            "international"
+          ],
+          "prep_time_minutes": 5,
+          "image_placeholder": "quinoa-salad"
+        },
+        {
+          "id": "UK-006",
+          "name": "Vegetable Lasagna",
+          "category": "Vegetarian",
+          "description": "Layers of pasta, ricotta, and roasted vegetables",
+          "price_usd": 12.0,
+          "allergens": [
+            "gluten",
+            "dairy"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "veg-lasagna"
+        },
+        {
+          "id": "UK-007",
+          "name": "Chicken Chettinad",
+          "category": "Premium Indian",
+          "description": "Spicy South Indian chicken curry with parotta",
+          "price_usd": 14.5,
+          "allergens": [
+            "gluten",
+            "dairy"
+          ],
+          "available_routes": [
+            "domestic",
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "chicken-chettinad"
+        },
+        {
+          "id": "UK-008",
+          "name": "Mango Cheesecake",
+          "category": "Continental",
+          "description": "Classic baked cheesecake with alphonso mango glaze",
+          "price_usd": 6.0,
+          "allergens": [
+            "gluten",
+            "dairy",
+            "egg"
+          ],
+          "available_routes": [
+            "domestic",
+            "international"
+          ],
+          "prep_time_minutes": 0,
+          "image_placeholder": "mango-cheesecake"
+        }
+      ]
+    },
+    "EK": {
+      "name": "Emirates",
+      "meal_categories": [
+        "Arabic",
+        "International",
+        "Indian",
+        "Continental",
+        "Special Dietary"
+      ],
+      "meals": [
+        {
+          "id": "EK-001",
+          "name": "Traditional Arabic Mezze",
+          "category": "Arabic",
+          "description": "Hummus, moutabal, muhammara with warm pita bread",
+          "price_usd": 18.0,
+          "allergens": [
+            "gluten",
+            "sesame",
+            "nuts"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 10,
+          "image_placeholder": "arabic-mezze"
+        },
+        {
+          "id": "EK-002",
+          "name": "Chicken Machbous",
+          "category": "Arabic",
+          "description": "Spiced chicken with fragrant rice and roasted nuts",
+          "price_usd": 22.0,
+          "allergens": [
+            "nuts"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 20,
+          "image_placeholder": "chicken-machbous"
+        },
+        {
+          "id": "EK-003",
+          "name": "Pan-seared Beef Fillet",
+          "category": "International",
+          "description": "Prime beef fillet with gratin potatoes and peppercorn jus",
+          "price_usd": 28.0,
+          "allergens": [
+            "dairy"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 25,
+          "image_placeholder": "beef-fillet"
+        },
+        {
+          "id": "EK-004",
+          "name": "Grilled Salmon",
+          "category": "Continental",
+          "description": "Atlantic salmon with lemon butter sauce and seasonal greens",
+          "price_usd": 26.0,
+          "allergens": [
+            "fish",
+            "dairy"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 20,
+          "image_placeholder": "grilled-salmon"
+        },
+        {
+          "id": "EK-005",
+          "name": "Lamb Rogan Josh",
+          "category": "Indian",
+          "description": "Classic Kashmiri lamb curry with basmati rice",
+          "price_usd": 24.0,
+          "allergens": [
+            "dairy"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 20,
+          "image_placeholder": "lamb-curry"
+        },
+        {
+          "id": "EK-006",
+          "name": "Wild Mushroom Ravioli",
+          "category": "Continental",
+          "description": "Handmade ravioli in a creamy truffle sauce",
+          "price_usd": 20.0,
+          "allergens": [
+            "gluten",
+            "dairy",
+            "egg"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "mushroom-ravioli"
+        },
+        {
+          "id": "EK-007",
+          "name": "Vegan Pad Thai",
+          "category": "Special Dietary",
+          "description": "Rice noodles stir-fried with tofu, peanuts and tamarind sauce",
+          "price_usd": 18.0,
+          "allergens": [
+            "peanuts",
+            "soy"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "pad-thai"
+        },
+        {
+          "id": "EK-008",
+          "name": "Gulf-style Prawns",
+          "category": "Arabic",
+          "description": "Spiced grilled prawns served with saffron rice",
+          "price_usd": 27.0,
+          "allergens": [
+            "crustaceans"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 20,
+          "image_placeholder": "grilled-prawns"
+        },
+        {
+          "id": "EK-009",
+          "name": "Gluten-Free Lemon Cake",
+          "category": "Special Dietary",
+          "description": "Moist lemon drizzle cake made with almond flour",
+          "price_usd": 8.0,
+          "allergens": [
+            "nuts",
+            "egg"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 0,
+          "image_placeholder": "lemon-cake"
+        },
+        {
+          "id": "EK-010",
+          "name": "Gourmet Cheese Board",
+          "category": "International",
+          "description": "Selection of artisanal cheeses, crackers, and fig jam",
+          "price_usd": 15.0,
+          "allergens": [
+            "gluten",
+            "dairy"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 5,
+          "image_placeholder": "cheese-board"
+        }
+      ]
+    },
+    "QR": {
+      "name": "Qatar Airways",
+      "meal_categories": [
+        "Qatari",
+        "International",
+        "Asian",
+        "Vegetarian",
+        "Premium"
+      ],
+      "meals": [
+        {
+          "id": "QR-001",
+          "name": "Qatari Chicken Saloona",
+          "category": "Qatari",
+          "description": "Traditional chicken and vegetable stew with vermicelli rice",
+          "price_usd": 21.0,
+          "allergens": [
+            "gluten"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 20,
+          "image_placeholder": "chicken-saloona"
+        },
+        {
+          "id": "QR-002",
+          "name": "Wagyu Beef Burger",
+          "category": "Premium",
+          "description": "Gourmet burger with cheddar, caramelized onions, and potato wedges",
+          "price_usd": 25.0,
+          "allergens": [
+            "gluten",
+            "dairy",
+            "egg"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 20,
+          "image_placeholder": "wagyu-burger"
+        },
+        {
+          "id": "QR-003",
+          "name": "Lobster Thermidor",
+          "category": "Premium",
+          "description": "Classic French lobster dish with creamy mushroom sauce",
+          "price_usd": 35.0,
+          "allergens": [
+            "crustaceans",
+            "dairy",
+            "gluten"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 25,
+          "image_placeholder": "lobster-thermidor"
+        },
+        {
+          "id": "QR-004",
+          "name": "Nasi Goreng",
+          "category": "Asian",
+          "description": "Indonesian fried rice with chicken satay and peanut sauce",
+          "price_usd": 19.0,
+          "allergens": [
+            "peanuts",
+            "soy",
+            "egg"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "nasi-goreng"
+        },
+        {
+          "id": "QR-005",
+          "name": "Seabass en Papillote",
+          "category": "International",
+          "description": "Baked seabass with julienne vegetables and white wine sauce",
+          "price_usd": 26.0,
+          "allergens": [
+            "fish",
+            "dairy"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 20,
+          "image_placeholder": "baked-seabass"
+        },
+        {
+          "id": "QR-006",
+          "name": "Miso Glazed Black Cod",
+          "category": "Asian",
+          "description": "Sweet and savory miso-marinated cod with bok choy",
+          "price_usd": 29.0,
+          "allergens": [
+            "fish",
+            "soy"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 20,
+          "image_placeholder": "black-cod"
+        },
+        {
+          "id": "QR-007",
+          "name": "Butternut Squash Tortellini",
+          "category": "Vegetarian",
+          "description": "Pasta parcels in sage brown butter sauce",
+          "price_usd": 18.0,
+          "allergens": [
+            "gluten",
+            "dairy",
+            "egg"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "squash-tortellini"
+        },
+        {
+          "id": "QR-008",
+          "name": "Lamb Kabsa",
+          "category": "Qatari",
+          "description": "Aromatic rice dish with slow-cooked lamb and almonds",
+          "price_usd": 23.0,
+          "allergens": [
+            "nuts"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 20,
+          "image_placeholder": "lamb-kabsa"
+        },
+        {
+          "id": "QR-009",
+          "name": "Vegan Buddha Bowl",
+          "category": "Vegetarian",
+          "description": "Quinoa, roasted sweet potatoes, avocado, and tahini dressing",
+          "price_usd": 16.0,
+          "allergens": [
+            "sesame"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 10,
+          "image_placeholder": "buddha-bowl"
+        },
+        {
+          "id": "QR-010",
+          "name": "Godiva Chocolate Mousse",
+          "category": "Premium",
+          "description": "Rich dark chocolate mousse with gold leaf",
+          "price_usd": 10.0,
+          "allergens": [
+            "dairy",
+            "egg",
+            "soy"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 0,
+          "image_placeholder": "chocolate-mousse"
+        }
+      ]
+    },
+    "EY": {
+      "name": "Etihad",
+      "meal_categories": [
+        "Emirati",
+        "International",
+        "Asian",
+        "Healthy"
+      ],
+      "meals": [
+        {
+          "id": "EY-001",
+          "name": "Emirati Lamb Thareed",
+          "category": "Emirati",
+          "description": "Traditional stew with vegetables and rigag bread",
+          "price_usd": 22.0,
+          "allergens": [
+            "gluten"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 20,
+          "image_placeholder": "lamb-thareed"
+        },
+        {
+          "id": "EY-002",
+          "name": "Chicken Tikka Biryani",
+          "category": "Asian",
+          "description": "Flavored basmati rice with tandoori chicken pieces",
+          "price_usd": 19.0,
+          "allergens": [
+            "dairy"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "tikka-biryani"
+        },
+        {
+          "id": "EY-003",
+          "name": "Beef Stroganoff",
+          "category": "International",
+          "description": "Tender beef strips in a creamy mushroom sauce with egg noodles",
+          "price_usd": 21.0,
+          "allergens": [
+            "gluten",
+            "dairy",
+            "egg"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "beef-stroganoff"
+        },
+        {
+          "id": "EY-004",
+          "name": "Steamed Dim Sum Basket",
+          "category": "Asian",
+          "description": "Assortment of shrimp and chicken dumplings",
+          "price_usd": 18.0,
+          "allergens": [
+            "gluten",
+            "crustaceans",
+            "soy",
+            "sesame"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 12,
+          "image_placeholder": "dim-sum"
+        },
+        {
+          "id": "EY-005",
+          "name": "Grilled Halloumi Salad",
+          "category": "Healthy",
+          "description": "Mixed greens with warm halloumi, pomegranate, and walnuts",
+          "price_usd": 14.0,
+          "allergens": [
+            "dairy",
+            "nuts"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 10,
+          "image_placeholder": "halloumi-salad"
+        },
+        {
+          "id": "EY-006",
+          "name": "Herb-Crusted Cod",
+          "category": "International",
+          "description": "Baked cod with a crisp herb crust, served with ratatouille",
+          "price_usd": 24.0,
+          "allergens": [
+            "fish",
+            "gluten"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 20,
+          "image_placeholder": "herb-cod"
+        },
+        {
+          "id": "EY-007",
+          "name": "Vegetable Tagine",
+          "category": "International",
+          "description": "Moroccan spiced vegetable stew with couscous",
+          "price_usd": 16.0,
+          "allergens": [
+            "gluten"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "veg-tagine"
+        },
+        {
+          "id": "EY-008",
+          "name": "Pistachio Baklava",
+          "category": "Emirati",
+          "description": "Sweet layered pastry filled with chopped pistachios",
+          "price_usd": 7.0,
+          "allergens": [
+            "gluten",
+            "dairy",
+            "nuts"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 0,
+          "image_placeholder": "baklava"
+        }
+      ]
+    },
+    "BA": {
+      "name": "British Airways",
+      "meal_categories": [
+        "British Classics",
+        "International",
+        "Vegetarian"
+      ],
+      "meals": [
+        {
+          "id": "BA-001",
+          "name": "Full English Breakfast",
+          "category": "British Classics",
+          "description": "Sausage, bacon, eggs, grilled tomato, and baked beans",
+          "price_usd": 15.0,
+          "allergens": [
+            "gluten",
+            "egg"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "english-breakfast"
+        },
+        {
+          "id": "BA-002",
+          "name": "Classic Fish and Chips",
+          "category": "British Classics",
+          "description": "Battered cod with thick-cut chips and mushy peas",
+          "price_usd": 18.0,
+          "allergens": [
+            "fish",
+            "gluten"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "fish-chips"
+        },
+        {
+          "id": "BA-003",
+          "name": "Beef Wellington",
+          "category": "British Classics",
+          "description": "Fillet steak coated in p\u00e2t\u00e9 and duxelles, wrapped in puff pastry",
+          "price_usd": 28.0,
+          "allergens": [
+            "gluten",
+            "dairy",
+            "egg"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 25,
+          "image_placeholder": "beef-wellington"
+        },
+        {
+          "id": "BA-004",
+          "name": "Chicken Tikka Masala",
+          "category": "International",
+          "description": "Britain's favorite curry, served with basmati rice",
+          "price_usd": 16.0,
+          "allergens": [
+            "dairy"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "tikka-masala"
+        },
+        {
+          "id": "BA-005",
+          "name": "Shepherd's Pie",
+          "category": "British Classics",
+          "description": "Minced lamb topped with creamy mashed potato",
+          "price_usd": 17.0,
+          "allergens": [
+            "dairy"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 20,
+          "image_placeholder": "shepherds-pie"
+        },
+        {
+          "id": "BA-006",
+          "name": "Roasted Vegetable Tart",
+          "category": "Vegetarian",
+          "description": "Savory tart filled with Mediterranean vegetables and goat cheese",
+          "price_usd": 14.0,
+          "allergens": [
+            "gluten",
+            "dairy",
+            "egg"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "veg-tart"
+        },
+        {
+          "id": "BA-007",
+          "name": "Afternoon Tea Set",
+          "category": "British Classics",
+          "description": "Finger sandwiches, scones with clotted cream and jam",
+          "price_usd": 12.0,
+          "allergens": [
+            "gluten",
+            "dairy",
+            "egg"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 10,
+          "image_placeholder": "afternoon-tea"
+        },
+        {
+          "id": "BA-008",
+          "name": "Sticky Toffee Pudding",
+          "category": "British Classics",
+          "description": "Warm sponge cake covered in rich toffee sauce",
+          "price_usd": 8.0,
+          "allergens": [
+            "gluten",
+            "dairy",
+            "egg"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 5,
+          "image_placeholder": "toffee-pudding"
+        }
+      ]
+    },
+    "LH": {
+      "name": "Lufthansa",
+      "meal_categories": [
+        "European",
+        "German Specialties",
+        "International",
+        "Vegetarian"
+      ],
+      "meals": [
+        {
+          "id": "LH-001",
+          "name": "Traditional Bratwurst",
+          "category": "German Specialties",
+          "description": "Grilled sausage with sauerkraut and mustard",
+          "price_usd": 14.0,
+          "allergens": [
+            "mustard"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "bratwurst"
+        },
+        {
+          "id": "LH-002",
+          "name": "Wiener Schnitzel",
+          "category": "European",
+          "description": "Breaded veal cutlet with potato salad",
+          "price_usd": 22.0,
+          "allergens": [
+            "gluten",
+            "egg"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "schnitzel"
+        },
+        {
+          "id": "LH-003",
+          "name": "Goulash with Sp\u00e4tzle",
+          "category": "German Specialties",
+          "description": "Hearty beef stew with traditional German egg noodles",
+          "price_usd": 19.0,
+          "allergens": [
+            "gluten",
+            "egg",
+            "dairy"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 20,
+          "image_placeholder": "goulash"
+        },
+        {
+          "id": "LH-004",
+          "name": "Roasted Chicken Breast",
+          "category": "European",
+          "description": "Served with rosemary potatoes and green beans",
+          "price_usd": 18.0,
+          "allergens": [],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "roast-chicken"
+        },
+        {
+          "id": "LH-005",
+          "name": "K\u00e4sesp\u00e4tzle",
+          "category": "Vegetarian",
+          "description": "Cheese noodles with crispy fried onions",
+          "price_usd": 15.0,
+          "allergens": [
+            "gluten",
+            "dairy",
+            "egg"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "kasespatzle"
+        },
+        {
+          "id": "LH-006",
+          "name": "Smoked Salmon Plate",
+          "category": "European",
+          "description": "Norwegian smoked salmon with horseradish cream and dark bread",
+          "price_usd": 16.0,
+          "allergens": [
+            "fish",
+            "dairy",
+            "gluten"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 5,
+          "image_placeholder": "smoked-salmon"
+        },
+        {
+          "id": "LH-007",
+          "name": "Mushroom Risotto",
+          "category": "Vegetarian",
+          "description": "Creamy Arborio rice with wild mushrooms and parmesan",
+          "price_usd": 16.0,
+          "allergens": [
+            "dairy"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "mushroom-risotto"
+        },
+        {
+          "id": "LH-008",
+          "name": "Black Forest Cake",
+          "category": "German Specialties",
+          "description": "Chocolate sponge cake with cherries and whipped cream",
+          "price_usd": 8.0,
+          "allergens": [
+            "gluten",
+            "dairy",
+            "egg"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 0,
+          "image_placeholder": "black-forest"
+        }
+      ]
+    },
+    "SQ": {
+      "name": "Singapore Airlines",
+      "meal_categories": [
+        "Singaporean",
+        "Asian Fusion",
+        "International",
+        "Premium"
+      ],
+      "meals": [
+        {
+          "id": "SQ-001",
+          "name": "Hainanese Chicken Rice",
+          "category": "Singaporean",
+          "description": "Poached chicken with fragrant rice and chili-garlic dip",
+          "price_usd": 18.0,
+          "allergens": [
+            "soy",
+            "sesame"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "chicken-rice"
+        },
+        {
+          "id": "SQ-002",
+          "name": "Singapore Laksa",
+          "category": "Singaporean",
+          "description": "Spicy coconut noodle soup with prawns and fish cake",
+          "price_usd": 17.0,
+          "allergens": [
+            "crustaceans",
+            "fish",
+            "gluten",
+            "dairy"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "laksa"
+        },
+        {
+          "id": "SQ-003",
+          "name": "Beef Rendang",
+          "category": "Asian Fusion",
+          "description": "Slow-cooked dry beef curry with coconut rice",
+          "price_usd": 21.0,
+          "allergens": [
+            "nuts"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 20,
+          "image_placeholder": "beef-rendang"
+        },
+        {
+          "id": "SQ-004",
+          "name": "Lobster Thermidor",
+          "category": "Premium",
+          "description": "Signature dish: lobster saut\u00e9ed in butter, flamb\u00e9ed in brandy",
+          "price_usd": 40.0,
+          "allergens": [
+            "crustaceans",
+            "dairy",
+            "gluten"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 25,
+          "image_placeholder": "lobster-thermidor"
+        },
+        {
+          "id": "SQ-005",
+          "name": "Nasi Lemak",
+          "category": "Singaporean",
+          "description": "Coconut rice with sambal, fried anchovies, peanuts, and egg",
+          "price_usd": 15.0,
+          "allergens": [
+            "fish",
+            "peanuts",
+            "egg"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "nasi-lemak"
+        },
+        {
+          "id": "SQ-006",
+          "name": "Seared Black Cod",
+          "category": "Premium",
+          "description": "Miso-marinated black cod with seasonal Asian greens",
+          "price_usd": 32.0,
+          "allergens": [
+            "fish",
+            "soy"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 20,
+          "image_placeholder": "black-cod"
+        },
+        {
+          "id": "SQ-007",
+          "name": "Char Siew Noodles",
+          "category": "Asian Fusion",
+          "description": "Egg noodles with BBQ pork and choy sum",
+          "price_usd": 16.0,
+          "allergens": [
+            "gluten",
+            "soy",
+            "sesame"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "char-siew"
+        },
+        {
+          "id": "SQ-008",
+          "name": "Vegetarian Pad Thai",
+          "category": "Asian Fusion",
+          "description": "Stir-fried rice noodles with tofu and tamarind sauce",
+          "price_usd": 15.0,
+          "allergens": [
+            "peanuts",
+            "soy"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "pad-thai"
+        },
+        {
+          "id": "SQ-009",
+          "name": "Grilled Lamb Chops",
+          "category": "International",
+          "description": "Rosemary infused lamb chops with roasted vegetables",
+          "price_usd": 30.0,
+          "allergens": [],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 25,
+          "image_placeholder": "lamb-chops"
+        },
+        {
+          "id": "SQ-010",
+          "name": "Ondeh Ondeh Cake",
+          "category": "Singaporean",
+          "description": "Pandan sponge cake with gula melaka and coconut",
+          "price_usd": 9.0,
+          "allergens": [
+            "gluten",
+            "dairy",
+            "egg"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 0,
+          "image_placeholder": "ondeh-cake"
+        }
+      ]
+    },
+    "TG": {
+      "name": "Thai Airways",
+      "meal_categories": [
+        "Thai Royal",
+        "Asian",
+        "International"
+      ],
+      "meals": [
+        {
+          "id": "TG-001",
+          "name": "Pad Thai Kung",
+          "category": "Thai Royal",
+          "description": "Stir-fried rice noodles with prawns, peanuts, and bean sprouts",
+          "price_usd": 17.0,
+          "allergens": [
+            "crustaceans",
+            "peanuts",
+            "soy"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "pad-thai"
+        },
+        {
+          "id": "TG-002",
+          "name": "Green Curry Chicken",
+          "category": "Thai Royal",
+          "description": "Spicy green curry with chicken and jasmine rice",
+          "price_usd": 16.0,
+          "allergens": [
+            "fish"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "green-curry"
+        },
+        {
+          "id": "TG-003",
+          "name": "Tom Yum Goong",
+          "category": "Thai Royal",
+          "description": "Spicy and sour prawn soup with lemongrass",
+          "price_usd": 18.0,
+          "allergens": [
+            "crustaceans",
+            "fish"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "tom-yum"
+        },
+        {
+          "id": "TG-004",
+          "name": "Massaman Beef Curry",
+          "category": "Thai Royal",
+          "description": "Rich, relatively mild Thai curry with beef and potatoes",
+          "price_usd": 19.0,
+          "allergens": [
+            "fish",
+            "peanuts"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 20,
+          "image_placeholder": "massaman-curry"
+        },
+        {
+          "id": "TG-005",
+          "name": "Sweet and Sour Fish",
+          "category": "Asian",
+          "description": "Fried fish fillet in sweet and sour sauce",
+          "price_usd": 16.0,
+          "allergens": [
+            "fish",
+            "gluten",
+            "soy"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "sweet-sour-fish"
+        },
+        {
+          "id": "TG-006",
+          "name": "Stir-fried Basil Chicken (Kra Pao)",
+          "category": "Thai Royal",
+          "description": "Spicy minced chicken with holy basil and fried egg",
+          "price_usd": 15.0,
+          "allergens": [
+            "soy",
+            "fish",
+            "egg"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "kra-pao"
+        },
+        {
+          "id": "TG-007",
+          "name": "Grilled Salmon Steak",
+          "category": "International",
+          "description": "Salmon with dill sauce and boiled potatoes",
+          "price_usd": 24.0,
+          "allergens": [
+            "fish",
+            "dairy"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 20,
+          "image_placeholder": "salmon-steak"
+        },
+        {
+          "id": "TG-008",
+          "name": "Mango Sticky Rice",
+          "category": "Thai Royal",
+          "description": "Sweet sticky rice with fresh ripe mango and coconut cream",
+          "price_usd": 8.0,
+          "allergens": [],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 5,
+          "image_placeholder": "mango-sticky-rice"
+        }
+      ]
+    },
+    "CX": {
+      "name": "Cathay Pacific",
+      "meal_categories": [
+        "Hong Kong Flavours",
+        "Asian",
+        "International",
+        "Vegetarian"
+      ],
+      "meals": [
+        {
+          "id": "CX-001",
+          "name": "Wonton Noodle Soup",
+          "category": "Hong Kong Flavours",
+          "description": "Shrimp wontons with egg noodles in a rich broth",
+          "price_usd": 15.0,
+          "allergens": [
+            "gluten",
+            "crustaceans",
+            "egg",
+            "sesame"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "wonton-soup"
+        },
+        {
+          "id": "CX-002",
+          "name": "Char Siu with Rice",
+          "category": "Hong Kong Flavours",
+          "description": "Cantonese-style BBQ pork with steamed jasmine rice",
+          "price_usd": 16.0,
+          "allergens": [
+            "soy",
+            "sesame"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "char-siu"
+        },
+        {
+          "id": "CX-003",
+          "name": "Dim Sum Platter",
+          "category": "Hong Kong Flavours",
+          "description": "Har gow, siu mai, and vegetable dumplings",
+          "price_usd": 18.0,
+          "allergens": [
+            "gluten",
+            "crustaceans",
+            "soy",
+            "sesame"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "dim-sum"
+        },
+        {
+          "id": "CX-004",
+          "name": "Baked Pork Chop Rice",
+          "category": "Hong Kong Flavours",
+          "description": "Classic HK diner dish: pork chop baked with tomato sauce and cheese over rice",
+          "price_usd": 17.0,
+          "allergens": [
+            "gluten",
+            "dairy",
+            "egg"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 20,
+          "image_placeholder": "baked-pork-chop"
+        },
+        {
+          "id": "CX-005",
+          "name": "Sweet and Sour Pork",
+          "category": "Asian",
+          "description": "Crispy pork pieces in a tangy sauce with bell peppers",
+          "price_usd": 16.0,
+          "allergens": [
+            "gluten",
+            "soy"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "sweet-sour-pork"
+        },
+        {
+          "id": "CX-006",
+          "name": "Braised Beef Brisket Noodles",
+          "category": "Hong Kong Flavours",
+          "description": "Tender beef brisket over flat rice noodles",
+          "price_usd": 18.0,
+          "allergens": [
+            "soy",
+            "gluten"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "beef-brisket"
+        },
+        {
+          "id": "CX-007",
+          "name": "Vegetarian Mapo Tofu",
+          "category": "Vegetarian",
+          "description": "Spicy sichuan-style tofu served with steamed rice",
+          "price_usd": 14.0,
+          "allergens": [
+            "soy",
+            "sesame"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "mapo-tofu"
+        },
+        {
+          "id": "CX-008",
+          "name": "Hong Kong Style Milk Tea & Egg Tart",
+          "category": "Hong Kong Flavours",
+          "description": "Classic combo of creamy milk tea and flaky egg tart",
+          "price_usd": 7.0,
+          "allergens": [
+            "gluten",
+            "dairy",
+            "egg"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 5,
+          "image_placeholder": "egg-tart"
+        }
+      ]
+    }
+  }
+}

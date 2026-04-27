@@ -13,11 +13,14 @@ import AdminDashboard from './pages/AdminDashboard';
 import ProtectedRoute from './components/shared/ProtectedRoute';
 import Placeholder     from './pages/Placeholder';
 import Privileges      from './pages/Privileges';
+import FlightTracker   from './pages/FlightTracker';
+import ChatbotWidget   from './components/ChatbotWidget';
 
 import ManageBooking from './pages/booking/ManageBooking';
 import CheckIn       from './pages/booking/CheckIn';
 import Reschedule    from './pages/booking/Reschedule';
 import Extras        from './pages/booking/Extras';
+import FoodOrder     from './pages/booking/FoodOrder';
 
 // Flight Services
 import InternationalRoutes from './pages/services/InternationalRoutes';
@@ -56,6 +59,7 @@ function Layout() {
           <Route path="/loyalty"   element={<Loyalty darkMode={dark}/>}/>
           <Route path="/results"   element={<SearchResults darkMode={dark}/>}/>
           <Route path="/privileges" element={<Privileges darkMode={dark}/>}/>
+          <Route path="/track"     element={<FlightTracker darkMode={dark}/>}/>
           
           {/* Core Booking Engine */}
           <Route path="/booking"   element={<ProtectedRoute><Booking darkMode={dark}/></ProtectedRoute>}/>
@@ -69,6 +73,7 @@ function Layout() {
           {/* Wildcard Fallback */}
           <Route path="/booking/*" element={<ProtectedRoute><Booking darkMode={dark}/></ProtectedRoute>}/>
           <Route path="/confirmation" element={<ProtectedRoute><Confirmation darkMode={dark}/></ProtectedRoute>}/>
+          <Route path="/food-orders" element={<ProtectedRoute><FoodOrder darkMode={dark}/></ProtectedRoute>}/>
           <Route path="/admin"     element={<ProtectedRoute><AdminDashboard darkMode={dark}/></ProtectedRoute>}/>
           
           {/* Flight Services */}
@@ -94,6 +99,7 @@ export default function App() {
     <BrowserRouter>
       <AppProvider>
         <Layout/>
+        <ChatbotWidget />
       </AppProvider>
     </BrowserRouter>
   );

@@ -2,12 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Logo from '../shared/Logo';
 import { FlightsMegaMenu, BookingMegaMenu } from './MegaMenu';
+import CurrencySelector from '../shared/CurrencySelector';
 
 const NAV_ITEMS = [
   { label:'FLIGHTS',     path:'/flights',    menu:'flights' },
   { label:'BOOKING HUB', path:'/booking',    menu:'booking' },
   { label:'SKYMILES',    path:'/loyalty',    menu:null },
   { label:'PRIVILEGES',  path:'/privileges', menu:null },
+  { label:'TRACK FLIGHT', path:'/track',     menu:null },
 ];
 
 export default function Navbar({ darkMode, toggleDark, user }) {
@@ -75,6 +77,7 @@ export default function Navbar({ darkMode, toggleDark, user }) {
           </div>
 
           <div style={{ display:'flex', alignItems:'center', gap:12 }}>
+            <CurrencySelector darkMode={darkMode} />
             <span style={{ fontSize:10, letterSpacing:'0.2em', fontWeight:600, textTransform:'uppercase',
               color: darkMode ? 'rgba(255,255,255,0.35)' : 'rgba(0,0,0,0.3)' }}>
               {darkMode ? 'Cosmic' : 'Radiant'}
@@ -94,6 +97,9 @@ export default function Navbar({ darkMode, toggleDark, user }) {
                 padding:'6px 14px', borderRadius:20, border:'1px solid rgba(200,168,75,0.4)',
                 color:'#C8A84B', textDecoration:'none' }}>ADMIN</Link>
             )}
+            <Link to="/food-orders" style={{ fontSize:10, fontWeight:700, letterSpacing:'0.15em',
+              padding:'6px 14px', borderRadius:20, border:'1px solid rgba(200,168,75,0.4)',
+              color:'#C8A84B', textDecoration:'none' }}>ORDERS</Link>
             <Link to="/login" style={{ background:'#C8A84B', color:'#0A0F1A', fontSize:12,
               fontWeight:800, letterSpacing:'0.1em', padding:'10px 22px', borderRadius:8,
               textDecoration:'none' }}>SIGN IN</Link>
