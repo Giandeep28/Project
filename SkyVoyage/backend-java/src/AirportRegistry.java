@@ -1,3 +1,5 @@
+package controllers;
+
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -31,13 +33,23 @@ public class AirportRegistry implements HttpHandler {
         }
     }
 
-    private final List<Airport> airports = new ArrayList<>();
+    private static final List<Airport> airports = new ArrayList<>();
 
     public AirportRegistry() {
-        loadAirports();
+        if (airports.isEmpty()) {
+            loadAirports();
+        }
     }
 
-    private void loadAirports() {
+    public static Airport getAirport(String iata) {
+        if (iata == null) return null;
+        for (Airport a : airports) {
+            if (iata.equalsIgnoreCase(a.iata)) return a;
+        }
+        return null;
+    }
+
+    private static void loadAirports() {
         try {
             String dbPath = "../database/airports_geo.json";
             String json = Files.readString(Paths.get(dbPath), StandardCharsets.UTF_8);
@@ -68,14 +80,14 @@ public class AirportRegistry implements HttpHandler {
         }
     }
 
-    private String extractStr(String json, String key) {
+    private static String extractStr(String json, String key) {
         String marker = "\"" + key + "\":\\s*\"";
         Matcher m = Pattern.compile(marker + "([^\"]*)\"").matcher(json);
         if (m.find()) return m.group(1);
         return "";
     }
 
-    private double extractDouble(String json, String key) {
+    private static double extractDouble(String json, String key) {
         String marker = "\"" + key + "\":\\s*([0-9.\\-]+)";
         Matcher m = Pattern.compile(marker).matcher(json);
         if (m.find()) {

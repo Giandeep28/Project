@@ -34,7 +34,7 @@ export const CurrencyProvider = ({ children }) => {
     setSelectedCurrency(initial);
 
     // Fetch rates
-    fetch('http://localhost:8000/api/currency/rates')
+    fetch('http://localhost:8080/api/currency/rates')
       .then(res => res.json())
       .then(data => {
         if (data.rates) {

@@ -19,7 +19,7 @@ import React from 'react';
  *   darkMode=true  → light=true  → dark background → screen blend with dark logo
  *   darkMode=false → light=false → light background → multiply blend with light logo
  */
-export default function Logo({ size = 'md', light = false, showTagline = false, vertical = false }) {
+export default function Logo({ size = 'md', isDarkBackground = false, showTagline = false, vertical = false }) {
   const sizes = {
     sm: { icon: 28, font: 14, tagline: 6,  gap: 8  },
     md: { icon: 40, font: 20, tagline: 8,  gap: 10 },
@@ -30,12 +30,14 @@ export default function Logo({ size = 'md', light = false, showTagline = false, 
   const { icon, font, tagline, gap } = sizes[size] || sizes.md;
   const gold = '#C8A84B';
 
-  // light=true means dark mode (dark background), light=false means light mode (white background)
-  const logoSrc   = light ? '/skyvoyage-logo-dark.png'  : '/skyvoyage-logo-light.png';
-  const blendMode = light ? 'screen'                    : 'multiply';
+  // If we are on a dark background, use the 'dark' asset (gold on black) + screen blend
+  // If we are on a light background, use the 'light' asset (gold on white) + multiply blend
+  const logoSrc   = isDarkBackground ? '/skyvoyage-logo-dark.png' : '/skyvoyage-logo-light.png';
+  const blendMode = isDarkBackground ? 'screen'                  : 'multiply';
 
   return (
     <div
+      className="skyvoyage-logo-container"
       style={{
         display: 'inline-flex',
         flexDirection: vertical ? 'column' : 'row',
@@ -43,26 +45,23 @@ export default function Logo({ size = 'md', light = false, showTagline = false, 
         gap: vertical ? gap / 2 : gap,
         userSelect: 'none',
         transition: 'all 0.3s ease',
-        // isolation: 'isolate' would BREAK blend modes — intentionally omitted
       }}
     >
-      {/* Blend mode on the img element directly to avoid stacking-context issues */}
-      <img
-        src={logoSrc}
-        alt="SkyVoyage Phoenix"
-        style={{
-          width: icon,
-          height: icon,
-          flexShrink: 0,
-          objectFit: 'contain',
-          display: 'block',
-          mixBlendMode: blendMode,
-          // On dark mode, screen blend can look slightly dim — compensate
-          filter: light ? 'brightness(1.15) contrast(1.1)' : 'brightness(1) contrast(1)',
-        }}
-      />
+      <div style={{ width: icon, height: icon, flexShrink: 0, position: 'relative' }}>
+        <img
+          src={logoSrc}
+          alt="SkyVoyage Phoenix"
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain',
+            display: 'block',
+            mixBlendMode: blendMode,
+            filter: isDarkBackground ? 'brightness(1.15) contrast(1.1)' : 'brightness(1) contrast(1)',
+          }}
+        />
+      </div>
 
-      {/* Text */}
       <div
         style={{
           display: 'flex',

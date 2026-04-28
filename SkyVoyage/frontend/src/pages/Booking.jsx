@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import ApiClient from '../services/ApiClient';
 import SeatSelectionMap from '../components/booking/SeatSelectionMap';
+import MealSelection from '../components/booking/MealSelection';
 import PriceDisplay from '../components/shared/PriceDisplay';
 
 export default function Booking({ darkMode }) {
@@ -9,10 +10,9 @@ export default function Booking({ darkMode }) {
   const navigate = useNavigate();
   const flight = location.state?.flight;
 
-  // If landed without a flight, go back to flights search
   if (!flight) return <Navigate to="/flights" replace />;
 
-  const [step, setStep] = useState('PASSENGERS'); // 'PASSENGERS', 'SEATS', 'PAYMENT'
+  const [step, setStep] = useState('PASSENGERS'); // 'PASSENGERS', 'SEATS', 'MEALS', 'PAYMENT'
   
   const [passengers, setPassengers] = useState([{ name: '', age: '', gender: '' }]);
   const [contactEmail, setContactEmail] = useState('');
@@ -21,11 +21,14 @@ export default function Booking({ darkMode }) {
   const [seatAssignments, setSeatAssignments] = useState({});
   const [seatAddedPrice, setSeatAddedPrice] = useState(0);
 
+  const [selectedMeals, setSelectedMeals] = useState({}); // { pIdx: mealId }
+  const [mealAddedPrice, setMealAddedPrice] = useState(0);
+
   const [payLoading, setPayLoading] = useState(false);
   const [payError, setPayError] = useState(null);
 
   const basePrice = flight.price * passengers.length;
-  const totalPrice = basePrice + seatAddedPrice;
+  const totalPrice = basePrice + seatAddedPrice + mealAddedPrice;
 
   const handleProceedToSeats = () => {
     if (!contactEmail) {
@@ -44,10 +47,10 @@ export default function Booking({ darkMode }) {
     setPayLoading(true);
     setPayError(null);
     try {
-      // Map passengers to include their exact seat string
       const augmentedPassengers = passengers.map((p, i) => ({
         ...p,
-        seatAssigned: seatAssignments[i]?.label || 'Unassigned'
+        seatAssigned: seatAssignments[i]?.label || 'Unassigned',
+        mealId: selectedMeals[i] || 'SKIP'
       }));
 
       const result = await ApiClient.createBooking({
@@ -57,10 +60,25 @@ export default function Booking({ darkMode }) {
         passengers: augmentedPassengers,
         seatClass: selectedClass,
         contactEmail: contactEmail,
-        totalPrice: totalPrice
+        totalPrice: totalPrice,
+        mealAddedPrice: mealAddedPrice,
+        seatAddedPrice: seatAddedPrice
       });
-      // Navigate exactly as requested, passing the booking result inside state
-      navigate('/confirmation', { state: { booking: result } });
+
+      // Enrich result with local state data for display on Confirmation page
+      const enrichedBooking = {
+        ...result,
+        passengers: augmentedPassengers,
+        legs: flight.legs || [{ 
+          from: flight.origin, 
+          to: flight.destination, 
+          arrival: flight.arrivalTime, 
+          departure: flight.departureTime, 
+          airline: flight.airline 
+        }]
+      };
+
+      navigate('/confirmation', { state: { booking: enrichedBooking } });
     } catch (err) {
       setPayError(err.message || 'Payment failed. Please try again.');
     } finally {
@@ -68,7 +86,6 @@ export default function Booking({ darkMode }) {
     }
   };
 
-  // If we are in the interactive seat mapping step, defer to that component fully
   if (step === 'SEATS') {
     return (
       <SeatSelectionMap 
@@ -78,8 +95,24 @@ export default function Booking({ darkMode }) {
         onConfirm={(seats, extraCost) => {
           setSeatAssignments(seats);
           setSeatAddedPrice(extraCost);
-          setStep('PAYMENT');
+          setStep('MEALS');
         }} 
+      />
+    );
+  }
+
+  if (step === 'MEALS') {
+    return (
+      <MealSelection
+        flight={flight}
+        passengers={passengers}
+        darkMode={darkMode}
+        onBack={() => setStep('SEATS')}
+        onConfirm={(meals, cost) => {
+          setSelectedMeals(meals);
+          setMealAddedPrice(cost);
+          setStep('PAYMENT');
+        }}
       />
     );
   }
@@ -103,7 +136,9 @@ export default function Booking({ darkMode }) {
           <span style={{ color: muted }}>{'>'}</span>
           <span style={{ color: step === 'SEATS' ? gold : muted }}>2. Seats</span>
           <span style={{ color: muted }}>{'>'}</span>
-          <span style={{ color: step === 'PAYMENT' ? gold : muted }}>3. Final Review & Payment</span>
+          <span style={{ color: step === 'MEALS' ? gold : muted }}>3. Meals</span>
+          <span style={{ color: muted }}>{'>'}</span>
+          <span style={{ color: step === 'PAYMENT' ? gold : muted }}>4. Final Review & Payment</span>
         </div>
         
         <h1 style={{ fontSize: 28, fontWeight: 900, fontFamily: '"Playfair Display",serif', textTransform: 'uppercase', marginBottom: 24 }}>
@@ -181,6 +216,12 @@ export default function Booking({ darkMode }) {
                     <span><PriceDisplay amount={seatAddedPrice} /></span>
                   </div>
                 )}
+                {mealAddedPrice > 0 && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span>Gourmet Meal Selections</span>
+                    <span><PriceDisplay amount={mealAddedPrice} /></span>
+                  </div>
+                )}
              </div>
 
              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, paddingTop: 20, borderTop: `1px solid ${bdr}` }}>
@@ -190,11 +231,11 @@ export default function Booking({ darkMode }) {
 
              <div style={{ display: 'flex', gap: 16 }}>
                <button 
-                  onClick={() => setStep('SEATS')} 
+                  onClick={() => setStep('MEALS')} 
                   disabled={payLoading}
                   style={{ flex: 1, padding: '18px 0', background: 'transparent', border: `1px solid ${gold}`, color: gold, borderRadius: 10, fontSize: 14, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', cursor: payLoading ? 'not-allowed' : 'pointer' }}
                >
-                  Back to Seats
+                  Back to Meals
                </button>
                <button 
                   onClick={handlePay} 

@@ -88,7 +88,7 @@ function Layout() {
           <Route path="/support/refund-request"        element={<RefundRequest darkMode={dark}/>}/>
           <Route path="/support/special-assistance"    element={<SpecialAssistance darkMode={dark}/>}/>
         </Routes>
-        <Footer/>
+        <Footer darkMode={dark}/>
       </div>
     </div>
   );

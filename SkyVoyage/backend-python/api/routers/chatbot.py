@@ -85,9 +85,20 @@ async def chat_message(request: ChatRequest):
             return {"reply": "I'm sorry, I am currently experiencing turbulence and couldn't process your request.", "model": "error"}
             
     else:
+        # Rule-based fallback for common questions
+        last_msg = request.messages[-1].content.lower()
+        if "baggage" in last_msg or "limit" in last_msg:
+            reply = "For SkyVoyage Elite, the baggage limit is 25kg for checked luggage and 10kg for cabin luggage. Standard Economy allows 15kg checked and 7kg cabin."
+        elif "cancel" in last_msg or "refund" in last_msg:
+            reply = "You can cancel your booking through the 'Booking Hub'. Refunds are processed within 5-7 business days depending on your bank."
+        elif "status" in last_msg or "track" in last_msg:
+            reply = "You can track any flight in real-time using our 'Flight Tracker' page. Just enter the flight number or route."
+        else:
+            reply = "I am currently in basic mode because my neural links (API keys) are not configured. However, I can still help with general info about baggage, cancellations, and tracking!"
+            
         return {
-            "reply": "I am offline right now. No AI keys are configured on the backend.",
-            "model": "offline"
+            "reply": reply,
+            "model": "rule-based-fallback"
         }
 
 @router.get("/health")

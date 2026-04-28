@@ -4,3 +4,17 @@
 {"bookingId":"BK-SJNZSI8N", "flightId":"f-002", "from":"DEL", "to":"CCU", "contactEmail":"abc@gmail.com", "seatClass":"FIRST", "totalFare":5234.00, "status":"CONFIRMED"}
 {"bookingId":"BK-BMDAG9TM", "flightId":"f-004", "contactEmail":"john.doe@example.com", "seatClass":"FIRST", "totalFare":4471.00, "status":"CONFIRMED"}
 {"bookingId":"BK-BMDAG9TM", "flightId":"f-004", "contactEmail":"john.doe@example.com", "seatClass":"FIRST", "totalFare":4471.00, "status":"CONFIRMED"}
+{"bookingId":"BK-MTQP06XE", "flightId":"f-001", "from":"BLR", "to":"DEL", "contactEmail":"stg@gmail.com", "seatClass":"ECONOMY", "totalFare":87.27, "status":"CONFIRMED"}
+{"bookingId":"BK-MTQP06XE", "flightId":"f-001", "from":"BLR", "to":"DEL", "contactEmail":"stg@gmail.com", "seatClass":"ECONOMY", "totalFare":87.27, "status":"CONFIRMED"}
+{"bookingId":"BK-IZEZM0U5", "flightId":"f-008", "from":"DEL", "to":"BOM", "contactEmail":"abc@gmail.com", "seatClass":"FIRST", "totalFare":63.73, "status":"CONFIRMED"}
+{"bookingId":"BK-IZEZM0U5", "flightId":"f-008", "from":"DEL", "to":"BOM", "contactEmail":"abc@gmail.com", "seatClass":"FIRST", "totalFare":63.73, "status":"CONFIRMED"}
+{"bookingId":"BK-AZZBV4ED", "flightId":"f-012", "from":"DEL", "to":"BOM", "contactEmail":"abc@gmail.com", "seatClass":"BUSINESS", "totalFare":58.00, "status":"CONFIRMED"}
+{"bookingId":"BK-AZZBV4ED", "flightId":"f-012", "from":"DEL", "to":"BOM", "contactEmail":"abc@gmail.com", "seatClass":"BUSINESS", "totalFare":58.00, "status":"CONFIRMED"}
+{"bookingId":"BK-W2R1F1Y4", "flightId":"f-008", "from":"DEL", "to":"BOM", "contactEmail":"ABC@GMAIL.COM", "seatClass":"FIRST", "totalFare":55.77, "status":"CONFIRMED"}
+{"bookingId":"BK-W2R1F1Y4", "flightId":"f-008", "from":"DEL", "to":"BOM", "contactEmail":"ABC@GMAIL.COM", "seatClass":"FIRST", "totalFare":55.77, "status":"CONFIRMED"}
+{"bookingId":"BK-CX9ZC7Z9", "flightId":"f-008", "from":"DEL", "to":"BOM", "contactEmail":"abc@gmail.com", "seatClass":"FIRST", "totalFare":51.00, "status":"CONFIRMED"}
+{"bookingId":"BK-CX9ZC7Z9", "flightId":"f-008", "from":"DEL", "to":"BOM", "contactEmail":"abc@gmail.com", "seatClass":"FIRST", "totalFare":51.00, "status":"CONFIRMED"}
+{"bookingId":"BK-DWLFSEX8", "flightId":"f-011", "from":"DEL", "to":"BOM", "contactEmail":"test@example.com", "seatClass":"BUSINESS", "totalFare":209.55, "status":"CONFIRMED"}
+{"bookingId":"BK-DWLFSEX8", "flightId":"f-011", "from":"DEL", "to":"BOM", "contactEmail":"test@example.com", "seatClass":"BUSINESS", "totalFare":209.55, "status":"CONFIRMED"}
+{"bookingId":"BK-BCHUN2HL", "flightId":"f-005", "from":"DEL", "to":"BOM", "contactEmail":"jane@example.com", "seatClass":"BUSINESS", "totalFare":95.27, "status":"CONFIRMED"}
+{"bookingId":"BK-BCHUN2HL", "flightId":"f-005", "from":"DEL", "to":"BOM", "contactEmail":"jane@example.com", "seatClass":"BUSINESS", "totalFare":95.27, "status":"CONFIRMED"}

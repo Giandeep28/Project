@@ -1,8 +1,6 @@
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
-import controllers.FlightController;
-import controllers.BookingController;
-import controllers.AuthController;
+import controllers.*;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
@@ -11,7 +9,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 public class Main {
 
-    static final String ALLOWED_ORIGIN = "http://localhost:3000";
+    static final String ALLOWED_ORIGIN = "http://localhost:3000"; 
 
     /** Adds the full CORS header block to any response. */
     public static void addCors(HttpExchange ex) {
@@ -30,8 +28,7 @@ public class Main {
      * Handles a browser preflight:
      * - Adds CORS headers
      * - Sends 204 with no body
-     * - Closes the exchange (MANDATORY — prevents browser from hanging)
-     * Returns true so the caller can return immediately.
+     * - Closes the exchange
      */
     public static boolean preflight(HttpExchange ex) throws IOException {
         addCors(ex);
@@ -68,8 +65,16 @@ public class Main {
             server.createContext("/api/auth/login",  new AuthController());
             server.createContext("/api/auth/logout", new AuthController());
             server.createContext("/api/auth/me",     new AuthController());
+            
+            // Refactored Controllers
+            server.createContext("/api/food/meals",  new MealsController());
+            server.createContext("/api/currency",    new CurrencyController());
+            server.createContext("/api/tracking",    new TrackingController());
+            
+            // Existing default package services
             server.createContext("/api/food/order",  new FoodOrderService());
             server.createContext("/api/food/orders", new FoodOrderService());
+            server.createContext("/api/airports",    new AirportRegistry());
 
             // ── /api/health ─────────────────────────────────────────────────
             server.createContext("/api/health", exchange -> {
@@ -81,9 +86,6 @@ public class Main {
                 }
             });
 
-            // ── /api/airports ────────────────────────────────────────────────
-            server.createContext("/api/airports", new AirportRegistry());
-
             // ── Thread Pool ──────────────────────────────────────────────────
             ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
             server.setExecutor(executor);
@@ -92,17 +94,13 @@ public class Main {
             System.out.println("  SKYVOYAGE CORE ENGINE - ONLINE");
             System.out.println("  PORT: " + port);
             System.out.println("  CORS ORIGIN: " + ALLOWED_ORIGIN);
-            System.out.println("  ROUTES:");
-            System.out.println("    GET  /api/flights?origin=&dest=&date=&guests=");
-            System.out.println("    POST /api/bookings");
-            System.out.println("    GET  /api/bookings/{id}");
-            System.out.println("    POST /api/auth/login");
-            System.out.println("    POST /api/auth/logout");
-            System.out.println("    GET  /api/auth/me");
-            System.out.println("    POST /api/food/order");
-            System.out.println("    GET  /api/food/orders/{id}");
-            System.out.println("    GET  /api/airports?q=");
-            System.out.println("    GET  /api/health");
+            System.out.println("  ROUTES REGISTERED:");
+            System.out.println("    [FLIGHTS]  /api/flights");
+            System.out.println("    [AUTH]     /api/auth/*");
+            System.out.println("    [MEALS]    /api/food/meals/*");
+            System.out.println("    [CURRENCY] /api/currency/*");
+            System.out.println("    [TRACKING] /api/tracking/*");
+            System.out.println("    [AIRPORTS] /api/airports");
             System.out.println("=================================================");
 
             server.start();

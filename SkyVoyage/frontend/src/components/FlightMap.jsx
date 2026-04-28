@@ -35,7 +35,7 @@ export default function FlightMap() {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get('http://localhost:8000/api/tracking/live');
+      const response = await axios.get('http://localhost:8080/api/tracking/live');
       setFlights(response.data.slice(0, 3000));
     } catch (err) {
       console.error('Error fetching flights:', err);

@@ -3,6 +3,19 @@ import axios from 'axios';
 import FlightStatusCard from '../components/FlightStatusCard';
 import FlightHistoryTable from '../components/FlightHistoryTable';
 
+const Skeleton = () => (
+  <div style={{ background: 'white', borderRadius: 8, padding: 24, marginBottom: 24, boxShadow: '0 4px 12px rgba(0,0,0,0.05)', animation: 'pulse 1.5s infinite' }}>
+    <div style={{ height: 32, width: '40%', background: '#eee', borderRadius: 4, marginBottom: 16 }}></div>
+    <div style={{ height: 400, width: '100%', background: '#f9f9f9', borderRadius: 8, marginBottom: 24 }}></div>
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr 1fr', gap: 16 }}>
+      <div style={{ height: 80, background: '#eee', borderRadius: 4 }}></div>
+      <div style={{ height: 80, background: '#eee', borderRadius: 4 }}></div>
+      <div style={{ height: 80, background: '#eee', borderRadius: 4 }}></div>
+    </div>
+    <style>{`@keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }`}</style>
+  </div>
+);
+
 export default function FlightTracker() {
   const [airline, setAirline] = useState('');
   const [flightNum, setFlightNum] = useState('');
@@ -14,7 +27,22 @@ export default function FlightTracker() {
   const [historyData, setHistoryData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [lastUpdated, setLastUpdated] = useState(null);
+  const [timer, setTimer] = useState(0);
+  
   const refreshTimerRef = useRef(null);
+  const counterRef = useRef(null);
+
+  useEffect(() => {
+    if (flightData?.status === 'IN_AIR') {
+      counterRef.current = setInterval(() => {
+        setTimer(prev => prev + 1);
+      }, 1000);
+    } else {
+      clearInterval(counterRef.current);
+    }
+    return () => clearInterval(counterRef.current);
+  }, [flightData]);
 
   useEffect(() => {
     return () => clearInterval(refreshTimerRef.current);
@@ -25,59 +53,51 @@ export default function FlightTracker() {
     const match = input.match(/^([A-Z]{2,3})\s*(\d{1,4})$/);
     if (match) return { code: match[1], num: match[2] };
     
-    if (airlineField.trim()) {
-      const aName = airlineField.trim().toLowerCase();
-      let mappedCode = aName.substring(0, 2).toUpperCase();
-      const map = {
-        "indigo": "6E", "air india": "AI", "spicejet": "SG", "vistara": "UK",
-        "emirates": "EK", "qatar": "QR", "etihad": "EY", "british airways": "BA",
-        "lufthansa": "LH", "singapore airlines": "SQ", "thai": "TG", "air france": "AF",
-        "klm": "KL", "united": "UA", "american": "AA", "delta": "DL"
-      };
-      if (map[aName]) mappedCode = map[aName];
-      return { code: mappedCode, num: input.replace(/\D/g, "") };
-    }
-    return null;
+    let code = airlineField.trim().toUpperCase();
+    const map = {
+      "INDIGO": "6E", "AIR INDIA": "AI", "SPICEJET": "SG", "VISTARA": "UK",
+      "EMIRATES": "EK", "QATAR": "QR", "ETIHAD": "EY", "BRITISH AIRWAYS": "BA"
+    };
+    if (map[code]) code = map[code];
+    
+    return { code: code.substring(0, 2), num: input.replace(/\D/g, "") };
   };
 
   const searchByNumber = async () => {
     const parsed = parseFlightInput(airline, flightNum);
     if (!parsed || !parsed.code || !parsed.num) {
-      setError("Please enter a valid flight number (e.g. 6E 4420 or AI 302)");
+      setError("Please enter a valid flight number (e.g. 6E 4420)");
       return;
     }
+    fetchFlight(parsed.code, parsed.num);
+  };
+
+  const fetchFlight = async (code, num) => {
     const today = new Date().toISOString().split("T")[0];
     setLoading(true);
     setError(null);
-    setFlightData(null);
-    setRouteResults([]);
-    setHistoryData([]);
     clearInterval(refreshTimerRef.current);
 
     try {
-      const res = await axios.get(`http://localhost:8000/api/tracking/flight`, {
-        params: { airline: parsed.code, number: parsed.num, date: today }
+      const res = await axios.get(`http://localhost:8080/api/tracking/flight`, {
+        params: { airline: code, number: num, date: today }
       });
       setFlightData(res.data.flight);
+      setLastUpdated(new Date());
+      setTimer(0);
       
       try {
-        const histRes = await axios.get(`http://localhost:8000/api/tracking/history`, {
-          params: { airline: parsed.code, number: parsed.num }
+        const histRes = await axios.get(`http://localhost:8080/api/tracking/history`, {
+          params: { airline: code, number: num }
         });
         setHistoryData(histRes.data.history || []);
-      } catch(e) {
-        console.error("History fetch failed", e);
-      }
+      } catch(e) {}
       
       if (res.data.flight?.status === "IN_AIR") {
-        refreshTimerRef.current = setInterval(() => searchByNumber(), 60000);
+        refreshTimerRef.current = setInterval(() => fetchFlight(code, num), 60000);
       }
     } catch (err) {
-      if (!err.response) {
-        setError("The flight tracking server is currently offline. Please ensure the backend is running on port 8000.");
-      } else {
-        setError("Flight not found in live or scheduled databases. Please check the airline and flight number.");
-      }
+      setError("Flight not found. Please check the flight number.");
     } finally {
       setLoading(false);
     }
@@ -85,19 +105,17 @@ export default function FlightTracker() {
 
   const searchByRoute = async () => {
     if (!fromCity || !toCity) {
-      setError("Please enter both departure and arrival cities/airports.");
+      setError("Enter both departure and arrival airports.");
       return;
     }
     setLoading(true);
     setError(null);
     setFlightData(null);
-    setRouteResults([]);
     setHistoryData([]);
-    clearInterval(refreshTimerRef.current);
-
+    
     const today = new Date().toISOString().split("T")[0];
     try {
-      const res = await axios.get(`http://localhost:8000/api/tracking/route`, {
+      const res = await axios.get(`http://localhost:8080/api/tracking/route`, {
         params: { from_airport: fromCity.trim().toUpperCase(), to_airport: toCity.trim().toUpperCase(), date: today }
       });
       if (res.data.flights && res.data.flights.length > 0) {
@@ -107,145 +125,87 @@ export default function FlightTracker() {
         setError("No flights found on this route today.");
       }
     } catch (err) {
-      setError("Could not search route. Please try again.");
+      setError("Route search failed.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#f5f5f5", paddingTop: "64px" }}>
-      {/* ── SEARCH SECTION — Dark navy background ─────────────── */}
-      <div style={{ backgroundColor: "#1a2e5a", padding: "32px 24px" }}>
-        <div style={{ maxWidth: 960, margin: "0 auto", display: "flex", gap: 24, alignItems: "stretch" }}>
+    <div style={{ minHeight: "100vh", backgroundColor: "#f8f9fa", paddingTop: "64px" }}>
+      {/* Search Header */}
+      <div style={{ backgroundColor: "#1a2e5a", padding: "48px 24px", color: 'white' }}>
+        <div style={{ maxWidth: 1000, margin: "0 auto" }}>
+          <h1 style={{ fontSize: 32, fontWeight: 900, marginBottom: 8, letterSpacing: '-0.02em' }}>LIVE FLIGHT TRACKER</h1>
+          <p style={{ color: '#aac4f0', marginBottom: 32, fontSize: 16 }}>Track any flight in the world with real-time radar data.</p>
           
-          {/* LEFT PANEL — search by flight number */}
-          <div style={{ flex: 1, backgroundColor: "#1a2e5a", color: "white" }}>
-            <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 16, color: "white", marginTop: 0 }}>
-              Quickly & Easily Track a Flight
-            </h2>
-            <hr style={{ borderColor: "rgba(255,255,255,0.2)", marginBottom: 20 }} />
-            <label style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1, color: "#ccc", display: "block", marginBottom: 4 }}>
-              AIRLINE
-            </label>
-            <div style={{ display: "flex", gap: 8, alignItems: "flex-end" }}>
-              <div style={{ flex: 1 }}>
-                <input
-                  value={airline}
-                  onChange={e => setAirline(e.target.value)}
-                  placeholder="e.g. IndiGo"
-                  style={{ width: "100%", padding: "10px 12px", fontSize: 14, border: "none",
-                           borderBottom: "2px solid #4a7fd4", background: "transparent", color: "white",
-                           outline: "none", boxSizing: "border-box" }}
-                />
-                <div style={{ height: 16 }} />
-                <label style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1, color: "#ccc", display: "block", marginBottom: 4 }}>
-                  FLIGHT #
-                </label>
-                <input
-                  value={flightNum}
-                  onChange={e => setFlightNum(e.target.value)}
-                  onKeyDown={e => e.key === "Enter" && searchByNumber()}
-                  placeholder="e.g. 6E 4420"
-                  style={{ width: "100%", padding: "10px 12px", fontSize: 14, border: "none",
-                           borderBottom: "2px solid white", background: "white", color: "#333",
-                           outline: "none", boxSizing: "border-box" }}
-                />
+          <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 32, background: 'rgba(255,255,255,0.05)', padding: 32, borderRadius: 12, backdropFilter: 'blur(10px)' }}>
+            {/* By Number */}
+            <div>
+              <h3 style={{ fontSize: 14, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 20, color: '#4a7fd4' }}>Search by Flight Number</h3>
+              <div style={{ display: 'flex', gap: 12 }}>
+                <input value={airline} onChange={e => setAirline(e.target.value)} placeholder="Airline (e.g. AI)" style={{ flex: 1, padding: '14px', borderRadius: 8, border: 'none', background: 'white', color: '#333' }} />
+                <input value={flightNum} onChange={e => setFlightNum(e.target.value)} onKeyDown={e => e.key === 'Enter' && searchByNumber()} placeholder="Flight #" style={{ flex: 1, padding: '14px', borderRadius: 8, border: 'none', background: 'white', color: '#333' }} />
+                <button onClick={searchByNumber} style={{ background: '#4a7fd4', border: 'none', borderRadius: 8, width: 50, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg>
+                </button>
               </div>
-              <button
-                onClick={searchByNumber}
-                style={{ width: 48, height: 48, borderRadius: 4, backgroundColor: "#4a7fd4",
-                         border: "none", cursor: "pointer", display: "flex", alignItems: "center",
-                         justifyContent: "center", flexShrink: 0 }}
-                title="Search by flight number"
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <circle cx="11" cy="11" r="7" stroke="white" strokeWidth="2.5"/>
-                  <line x1="16.5" y1="16.5" x2="22" y2="22" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
-                </svg>
-              </button>
+            </div>
+
+            {/* By Route */}
+            <div>
+              <h3 style={{ fontSize: 14, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 20, color: '#4a7fd4' }}>Search by Route</h3>
+              <div style={{ display: 'flex', gap: 12 }}>
+                <input value={fromCity} onChange={e => setFromCity(e.target.value)} placeholder="From (e.g. DEL)" style={{ flex: 1, padding: '14px', borderRadius: 8, border: 'none', background: 'white', color: '#333' }} />
+                <input value={toCity} onChange={e => setToCity(e.target.value)} onKeyDown={e => e.key === 'Enter' && searchByRoute()} placeholder="To (e.g. BOM)" style={{ flex: 1, padding: '14px', borderRadius: 8, border: 'none', background: 'white', color: '#333' }} />
+                <button onClick={searchByRoute} style={{ background: '#e8871a', color: 'white', border: 'none', borderRadius: 8, padding: '0 20px', fontWeight: 800, cursor: 'pointer' }}>GO</button>
+              </div>
             </div>
           </div>
-
-          {/* DIVIDER */}
-          <div style={{ width: 1, backgroundColor: "rgba(255,255,255,0.15)", margin: "0 8px" }} />
-
-          {/* RIGHT PANEL — search by route */}
-          <div style={{ flex: 1, backgroundColor: "#3a6ea8", borderRadius: 4, padding: 20, color: "white" }}>
-            <h3 style={{ fontStyle: "italic", fontWeight: 400, fontSize: 18, marginBottom: 16, color: "white", marginTop: 0 }}>
-              Forgot the flight number?
-            </h3>
-            <hr style={{ borderColor: "rgba(255,255,255,0.3)", marginBottom: 16 }} />
-            <label style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1, color: "#ddd", display: "block", marginBottom: 4 }}>
-              DEPARTURE AIRPORT OR CITY
-            </label>
-            <input
-              value={fromCity}
-              onChange={e => setFromCity(e.target.value)}
-              placeholder="e.g. New Delhi"
-              style={{ width: "100%", padding: "8px 10px", fontSize: 13, border: "none",
-                       borderRadius: 2, background: "white", color: "#333", outline: "none",
-                       boxSizing: "border-box", marginBottom: 12 }}
-            />
-            <div style={{ fontStyle: "italic", color: "#ddd", fontSize: 13, marginBottom: 12, textAlign: "center" }}>
-              -and-
-            </div>
-            <label style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1, color: "#ddd", display: "block", marginBottom: 4 }}>
-              ARRIVAL AIRPORT OR CITY
-            </label>
-            <input
-              value={toCity}
-              onChange={e => setToCity(e.target.value)}
-              onKeyDown={e => e.key === "Enter" && searchByRoute()}
-              placeholder="e.g. Mumbai"
-              style={{ width: "100%", padding: "8px 10px", fontSize: 13, border: "none",
-                       borderRadius: 2, background: "white", color: "#333", outline: "none",
-                       boxSizing: "border-box", marginBottom: 16 }}
-            />
-            <button
-              onClick={searchByRoute}
-              style={{ width: "100%", padding: "10px", backgroundColor: "#e8871a",
-                       border: "none", borderRadius: 2, color: "white", fontSize: 13,
-                       fontWeight: 700, letterSpacing: 1, cursor: "pointer" }}
-            >
-              SEARCH
-            </button>
-          </div>
-
-        </div>
-
-        {/* Bottom links row (like FlightAware) */}
-        <div style={{ maxWidth: 960, margin: "16px auto 0", textAlign: "center", color: "#aac4f0", fontSize: 13 }}>
-          (<a href="#" style={{ color: "#aac4f0" }}>Worldwide airport delays</a>) &nbsp;
-          (<a href="#" style={{ color: "#aac4f0" }}>Live flight cancellations</a>)
         </div>
       </div>
 
-      {/* ── RESULTS SECTION ───────────────────────────────────── */}
-      <div style={{ maxWidth: 960, margin: "24px auto", padding: "0 16px" }}>
-        {loading && (
-          <div style={{ textAlign: "center", padding: 40, color: "#555", fontSize: 16 }}>
-            Searching for flight data...
-          </div>
+      {/* Main Content */}
+      <div style={{ maxWidth: 1000, margin: "-20px auto 40px", padding: "0 24px", position: 'relative', zIndex: 10 }}>
+        {loading ? <Skeleton /> : (
+          <>
+            {error && (
+              <div style={{ background: "#fee2e2", border: "1px solid #ef4444", borderRadius: 8, padding: 16, color: "#991b1b", marginBottom: 24, display: 'flex', alignItems: 'center', gap: 12 }}>
+                <span style={{ fontSize: 20 }}>⚠️</span> {error}
+              </div>
+            )}
+            
+            {flightData && (
+              <>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                  <div style={{ fontSize: 13, color: '#666', fontWeight: 600 }}>
+                    {lastUpdated && `LAST UPDATED: ${lastUpdated.toLocaleTimeString()}`}
+                  </div>
+                  {flightData.status === 'IN_AIR' && (
+                    <div style={{ fontSize: 13, color: '#4a7fd4', fontWeight: 700 }}>
+                      REFRESHING IN {60 - timer}s...
+                    </div>
+                  )}
+                </div>
+                <FlightStatusCard flight={flightData} />
+              </>
+            )}
+
+            {routeResults.length > 1 && (
+              <div style={{ marginTop: 32 }}>
+                <h3 style={{ fontSize: 16, fontWeight: 800, marginBottom: 16, color: '#1a2e5a' }}>OTHER FLIGHTS TODAY</h3>
+                {routeResults.slice(1).map((f, i) => <FlightStatusCard key={i} flight={f} compact />)}
+              </div>
+            )}
+
+            {historyData.length > 0 && (
+              <div style={{ marginTop: 32 }}>
+                <h3 style={{ fontSize: 16, fontWeight: 800, marginBottom: 16, color: '#1a2e5a' }}>RECENT FLIGHT HISTORY</h3>
+                <FlightHistoryTable history={historyData} />
+              </div>
+            )}
+          </>
         )}
-        {error && (
-          <div style={{ background: "#fff3cd", border: "1px solid #ffc107", borderRadius: 4,
-                        padding: 16, color: "#856404", marginBottom: 16 }}>
-            {error}
-          </div>
-        )}
-        {flightData && <FlightStatusCard flight={flightData} />}
-        {routeResults.length > 1 && (
-          <div style={{ marginTop: 16 }}>
-            <h3 style={{ fontSize: 14, color: "#555", marginBottom: 8 }}>
-              All flights on this route today ({routeResults.length} found):
-            </h3>
-            {routeResults.slice(1).map((f, i) => (
-              <FlightStatusCard key={i} flight={f} compact />
-            ))}
-          </div>
-        )}
-        {historyData.length > 0 && <FlightHistoryTable history={historyData} />}
       </div>
     </div>
   );

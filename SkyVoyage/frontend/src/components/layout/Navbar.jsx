@@ -45,7 +45,7 @@ export default function Navbar({ darkMode, toggleDark, user }) {
         <div style={{ maxWidth:1280, margin:'0 auto', padding:'0 32px',
           height:64, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
 
-          <Link to="/" style={{ textDecoration:'none' }}><Logo size="md" light={darkMode}/></Link>
+          <Link to="/" style={{ textDecoration:'none' }}><Logo size="md" isDarkBackground={darkMode}/></Link>
 
           <div style={{ display:'flex', alignItems:'center',
             background: darkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)',

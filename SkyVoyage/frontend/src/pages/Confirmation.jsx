@@ -76,7 +76,23 @@ Thank you for flying SkyVoyage.
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: 32, marginBottom: 32 }}>
+            <div style={{ marginBottom: 32 }}>
+              <p style={{ fontSize: 12, color: muted, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>Passengers</p>
+              {booking.passengers?.map((p, i) => (
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0', borderBottom: i < booking.passengers.length - 1 ? `1px dashed ${bdr}` : 'none' }}>
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: 16 }}>{p.name}</div>
+                    <div style={{ fontSize: 12, color: muted }}>Seat: <span style={{ color: accent, fontWeight: 700 }}>{p.seatAssigned}</span></div>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: 11, color: muted, textTransform: 'uppercase' }}>Meal Choice</div>
+                    <div style={{ fontWeight: 600, fontSize: 14 }}>{p.mealId === 'SKIP' ? 'Standard Catering' : p.mealId}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', gap: 32, marginBottom: 32, paddingTop: 20, borderTop: `1px solid ${bdr}` }}>
               <div style={{ flex: 1 }}>
                 <p style={{ fontSize: 12, color: muted, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>Total Amount Paid</p>
                 <p style={{ fontSize: 24, fontWeight: 800, color: accent }}>
@@ -85,7 +101,7 @@ Thank you for flying SkyVoyage.
               </div>
               <div style={{ flex: 1 }}>
                 <p style={{ fontSize: 12, color: muted, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>Transaction ID</p>
-                <p style={{ fontSize: 14, fontWeight: 500, fontFamily: 'monospace' }}>{booking.bookingId}</p>
+                <p style={{ fontSize: 14, fontWeight: 500, fontFamily: 'monospace', wordBreak: 'break-all' }}>{booking.bookingId}</p>
               </div>
             </div>
 

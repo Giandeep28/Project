@@ -15,17 +15,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-from routers import tracking
-app.include_router(tracking.router)
 
-from routers import chatbot
+try:
+    from api.routers import chatbot
+except ImportError:
+    from routers import chatbot
+
 app.include_router(chatbot.router)
 
-from routers import currency
-app.include_router(currency.router)
 
-from routers import meals
-app.include_router(meals.router)
 
 class ChatMessage(BaseModel):
     role: str
