@@ -14,6 +14,10 @@ public class SimpleJson {
         return new Parser(json).parseObject();
     }
 
+    public static List<Object> parseArray(String json) {
+        return new Parser(json).parseArray();
+    }
+
     public static String stringify(Object obj) {
         if (obj == null) return "null";
         if (obj instanceof String) return "\"" + ((String) obj).replace("\"", "\\\"") + "\"";

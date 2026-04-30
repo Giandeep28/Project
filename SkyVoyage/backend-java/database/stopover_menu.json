@@ -1,0 +1,43 @@
+{
+  "cuisines": [
+    {
+      "id": "indian",
+      "name": "Indian Court",
+      "description": "Authentic flavors from the heart of India.",
+      "dishes": [
+        { "id": "ic-01", "name": "Butter Chicken with Naan", "price_usd": 12.0 },
+        { "id": "ic-02", "name": "Paneer Tikka Masala", "price_usd": 10.0 },
+        { "id": "ic-03", "name": "Hyderabadi Biryani", "price_usd": 11.0 }
+      ]
+    },
+    {
+      "id": "chinese",
+      "name": "Chinese Court",
+      "description": "Exotic Szechuan and Cantonese delicacies.",
+      "dishes": [
+        { "id": "cc-01", "name": "Hakka Noodles with Manchurian", "price_usd": 11.0 },
+        { "id": "cc-02", "name": "Dim Sum Platter (8pcs)", "price_usd": 13.0 },
+        { "id": "cc-03", "name": "Szechuan Fried Rice", "price_usd": 10.0 }
+      ]
+    },
+    {
+      "id": "continental",
+      "name": "Continental Court",
+      "description": "Premium European and Western gourmet meals.",
+      "dishes": [
+        { "id": "ct-01", "name": "Grilled Salmon with Asparagus", "price_usd": 18.0 },
+        { "id": "ct-02", "name": "Creamy Alfredo Pasta", "price_usd": 14.0 },
+        { "id": "ct-03", "name": "Herb-Crusted Chicken Steak", "price_usd": 16.0 }
+      ]
+    },
+    {
+      "id": "south_indian",
+      "name": "South Indian Court",
+      "description": "Traditional breakfast and meals from South India.",
+      "dishes": [
+        { "id": "si-01", "name": "Ghee Roast Masala Dosa", "price_usd": 8.0 },
+        { "id": "si-02", "name": "Steamed Idli & Vada Sambar", "price_usd": 7.0 }
+      ]
+    }
+  ]
+}

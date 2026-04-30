@@ -35,7 +35,7 @@ export default function FoodOrder({ darkMode }) {
     setSearched(true);
     
     try {
-      const res = await fetch(`http://localhost:8080/api/food/orders/${id}`);
+      const res = await fetch(`http://localhost:8080/api/stopover/orders/${id}`);
       if (!res.ok) throw new Error('Failed to fetch orders or no orders found');
       const data = await res.json();
       setOrders(data);
@@ -121,7 +121,8 @@ export default function FoodOrder({ darkMode }) {
                   <li key={i} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12, paddingBottom: 12, borderBottom: i < order.items.length - 1 ? `1px dashed ${bdr}` : 'none' }}>
                     <div>
                       <span style={{ fontWeight: 700, marginRight: 8 }}>{item.quantity}x</span>
-                      <span>Meal ID: {item.mealId}</span>
+                      <span style={{ color: accent, fontWeight: 700, marginRight: 8 }}>[{item.cuisine || 'Gourmet'}]</span>
+                      <span>{item.name}</span>
                     </div>
                   </li>
                 ))}

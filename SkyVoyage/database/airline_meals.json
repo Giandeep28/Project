@@ -4,200 +4,140 @@
       "name": "Air India",
       "meal_categories": [
         "Vegetarian",
-        "Non-Vegetarian"
+        "Non-Vegetarian",
+        "Vegan",
+        "Jain",
+        "Child Meal",
+        "Diabetic",
+        "Low Sodium"
       ],
       "meals": [
         {
-          "id": "meal_001",
-          "name": "Veg Biryani",
-          "category": "vegetarian",
-          "subCategory": "pure_veg",
-          "description": "Aromatic basmati rice cooked with seasonal vegetables and whole spices",
-          "price_usd": 4.19,
-          "price_inr": 350,
-          "currency": "INR",
-          "calories": 480,
-          "allergens": ["gluten", "dairy"],
-          "prepTimeMinutes": 15,
-          "imageKeyword": "biryani,vegetarian",
-          "available": true,
-          "tags": ["bestseller"]
+          "id": "AI-001",
+          "name": "Dal Makhani with Jeera Rice",
+          "category": "Vegetarian",
+          "description": "Slow-cooked lentils with fragrant cumin rice and naan",
+          "price_usd": 12.0,
+          "allergens": [
+            "gluten",
+            "dairy"
+          ],
+          "available_routes": [
+            "domestic",
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "indian-thali"
         },
         {
-          "id": "meal_002",
-          "name": "Paneer Tikka Wrap",
-          "category": "vegetarian",
-          "subCategory": "pure_veg",
-          "description": "Grilled cottage cheese with mint chutney in a soft whole wheat wrap",
-          "price_usd": 3.35,
-          "price_inr": 280,
-          "currency": "INR",
-          "calories": 380,
-          "allergens": ["gluten", "dairy"],
-          "prepTimeMinutes": 10,
-          "imageKeyword": "paneer,wrap",
-          "available": true,
-          "tags": []
+          "id": "AI-002",
+          "name": "Chicken Tikka Masala",
+          "category": "Non-Vegetarian",
+          "description": "Tender chicken pieces in a rich, creamy tomato sauce with basmati rice",
+          "price_usd": 14.5,
+          "allergens": [
+            "dairy"
+          ],
+          "available_routes": [
+            "domestic",
+            "international"
+          ],
+          "prep_time_minutes": 20,
+          "image_placeholder": "chicken-tikka"
         },
         {
-          "id": "meal_003",
-          "name": "Jain Thali",
-          "category": "vegetarian",
-          "subCategory": "jain",
-          "description": "A balanced Jain meal with no root vegetables — dal, sabzi, roti, rice",
-          "price_usd": 5.03,
-          "price_inr": 420,
-          "currency": "INR",
-          "calories": 520,
-          "allergens": ["gluten"],
-          "prepTimeMinutes": 20,
-          "imageKeyword": "thali,indian-food",
-          "available": true,
-          "tags": ["jain"]
+          "id": "AI-003",
+          "name": "Paneer Butter Masala",
+          "category": "Vegetarian",
+          "description": "Cottage cheese cubes in a buttery tomato gravy",
+          "price_usd": 13.0,
+          "allergens": [
+            "dairy",
+            "nuts"
+          ],
+          "available_routes": [
+            "domestic",
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "paneer-masala"
         },
         {
-          "id": "meal_004",
-          "name": "Vegan Buddha Bowl",
-          "category": "vegetarian",
-          "subCategory": "vegan",
-          "description": "Quinoa, roasted chickpeas, avocado, and seasonal greens with tahini",
-          "price_usd": 4.67,
-          "price_inr": 390,
-          "currency": "INR",
-          "calories": 340,
-          "allergens": ["sesame"],
-          "prepTimeMinutes": 10,
-          "imageKeyword": "buddha-bowl,vegan",
-          "available": true,
-          "tags": ["vegan", "healthy"]
-        },
-        {
-          "id": "meal_005",
-          "name": "Fruit & Yogurt Parfait",
-          "category": "vegetarian",
-          "subCategory": "low_calorie",
-          "description": "Seasonal fruits layered with low-fat yogurt and honey granola",
-          "price_usd": 2.63,
-          "price_inr": 220,
-          "currency": "INR",
-          "calories": 210,
-          "allergens": ["dairy", "nuts"],
-          "prepTimeMinutes": 5,
-          "imageKeyword": "yogurt,fruit-parfait",
-          "available": true,
-          "tags": ["low_calorie", "diabetic_friendly"]
-        },
-        {
-          "id": "meal_006",
-          "name": "Kids Veg Meal Box",
-          "category": "vegetarian",
-          "subCategory": "kids",
-          "description": "Mac & cheese, veggie sticks, juice box and a small chocolate brownie",
-          "price_usd": 3.58,
-          "price_inr": 299,
-          "currency": "INR",
-          "calories": 450,
-          "allergens": ["gluten", "dairy"],
-          "prepTimeMinutes": 10,
-          "imageKeyword": "kids-meal,macaroni",
-          "available": true,
-          "tags": ["kids"]
-        },
-        {
-          "id": "meal_007",
-          "name": "Butter Chicken with Naan",
-          "category": "non_vegetarian",
-          "subCategory": "chicken",
-          "description": "Tender chicken in a rich tomato-butter gravy, served with soft naan",
-          "price_usd": 5.39,
-          "price_inr": 450,
-          "currency": "INR",
-          "calories": 620,
-          "allergens": ["gluten", "dairy"],
-          "prepTimeMinutes": 15,
-          "imageKeyword": "butter-chicken,indian",
-          "available": true,
-          "tags": ["bestseller"]
-        },
-        {
-          "id": "meal_008",
-          "name": "Grilled Chicken Sandwich",
-          "category": "non_vegetarian",
-          "subCategory": "chicken",
-          "description": "Herb-marinated grilled chicken breast with lettuce, tomato, mayo",
-          "price_usd": 3.83,
-          "price_inr": 320,
-          "currency": "INR",
-          "calories": 420,
-          "allergens": ["gluten", "eggs"],
-          "prepTimeMinutes": 10,
-          "imageKeyword": "grilled-chicken,sandwich",
-          "available": true,
-          "tags": []
-        },
-        {
-          "id": "meal_009",
+          "id": "AI-004",
           "name": "Mutton Biryani",
-          "category": "non_vegetarian",
-          "subCategory": "mutton",
-          "description": "Slow-cooked mutton with aged basmati rice and caramelised onions",
-          "price_usd": 6.23,
-          "price_inr": 520,
-          "currency": "INR",
-          "calories": 710,
-          "allergens": ["gluten"],
-          "prepTimeMinutes": 20,
-          "imageKeyword": "mutton-biryani",
-          "available": true,
-          "tags": ["premium"]
+          "category": "Non-Vegetarian",
+          "description": "Aromatic rice dish layered with marinated mutton",
+          "price_usd": 16.0,
+          "allergens": [
+            "dairy",
+            "nuts"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 25,
+          "image_placeholder": "mutton-biryani"
         },
         {
-          "id": "meal_010",
-          "name": "Fish & Chips",
-          "category": "non_vegetarian",
-          "subCategory": "seafood",
-          "description": "Crispy battered fish fillet with seasoned potato wedges and tartare sauce",
-          "price_usd": 5.75,
-          "price_inr": 480,
-          "currency": "INR",
-          "calories": 580,
-          "allergens": ["gluten", "fish"],
-          "prepTimeMinutes": 15,
-          "imageKeyword": "fish-and-chips",
-          "available": true,
-          "tags": []
+          "id": "AI-005",
+          "name": "Vegan Chickpea Curry",
+          "category": "Vegan",
+          "description": "Spicy and tangy chickpea curry served with quinoa",
+          "price_usd": 11.5,
+          "allergens": [],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "chickpea-curry"
         },
         {
-          "id": "meal_011",
-          "name": "Egg Fried Rice",
-          "category": "non_vegetarian",
-          "subCategory": "egg",
-          "description": "Wok-tossed jasmine rice with scrambled eggs, spring onions and soy",
-          "price_usd": 3.35,
-          "price_inr": 280,
-          "currency": "INR",
-          "calories": 460,
-          "allergens": ["eggs", "soy"],
-          "prepTimeMinutes": 10,
-          "imageKeyword": "egg-fried-rice",
-          "available": true,
-          "tags": []
+          "id": "AI-006",
+          "name": "Jain Thali",
+          "category": "Jain",
+          "description": "Special Jain meal prepared without root vegetables",
+          "price_usd": 12.5,
+          "allergens": [
+            "dairy"
+          ],
+          "available_routes": [
+            "domestic",
+            "international"
+          ],
+          "prep_time_minutes": 15,
+          "image_placeholder": "jain-meal"
         },
         {
-          "id": "meal_012",
-          "name": "Non-Veg Kids Meal Box",
-          "category": "non_vegetarian",
-          "subCategory": "kids",
-          "description": "Chicken nuggets, fries, ketchup, juice box and a cookie",
-          "price_usd": 3.83,
-          "price_inr": 320,
-          "currency": "INR",
-          "calories": 520,
-          "allergens": ["gluten", "eggs"],
-          "prepTimeMinutes": 10,
-          "imageKeyword": "chicken-nuggets,kids-meal",
-          "available": true,
-          "tags": ["kids"]
+          "id": "AI-007",
+          "name": "Kids Pasta",
+          "category": "Child Meal",
+          "description": "Macaroni in a mild cheese sauce with fruit salad",
+          "price_usd": 9.0,
+          "allergens": [
+            "gluten",
+            "dairy"
+          ],
+          "available_routes": [
+            "domestic",
+            "international"
+          ],
+          "prep_time_minutes": 10,
+          "image_placeholder": "kids-pasta"
+        },
+        {
+          "id": "AI-008",
+          "name": "Grilled Fish with Veggies",
+          "category": "Diabetic",
+          "description": "Lightly seasoned grilled fish with steamed broccoli",
+          "price_usd": 15.0,
+          "allergens": [
+            "fish"
+          ],
+          "available_routes": [
+            "international"
+          ],
+          "prep_time_minutes": 20,
+          "image_placeholder": "grilled-fish"
         }
       ]
     },

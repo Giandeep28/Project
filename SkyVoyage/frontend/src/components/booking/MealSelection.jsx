@@ -1,395 +1,409 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Minus, Plus, X, Star, Crown, Info, Flame, AlertCircle } from 'lucide-react';
+import { Leaf, Flame, AlertCircle, Plus, Minus, Check, X } from 'lucide-react';
 import PriceDisplay from '../shared/PriceDisplay';
-import MealImage from './MealImage';
+import { meals as staticMeals } from '../../data/mealsData';
+import useCurrency from '../../context/useCurrency';
 
-const FSSAISymbol = ({ isVeg }) => {
-  const color = isVeg ? '#16a34a' : '#991b1b';
-  return (
-    <div className="flex-shrink-0" style={{
-      width: 14, height: 14, border: `1.5px solid ${color}`,
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      borderRadius: 1, padding: 1
-    }}>
-      <div style={{
-        width: 6, height: 6, background: color, borderRadius: '50%'
-      }} />
-    </div>
-  );
-};
-
-const FilterPill = ({ label, active, onClick }) => (
-  <button
-    onClick={onClick}
-    className={`px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest transition-all duration-300 ${
-      active 
-        ? 'bg-primary text-white shadow-lg shadow-primary/30' 
-        : 'bg-white/10 text-slate-400 border border-white/10 hover:bg-white/20'
-    }`}
-  >
-    {label}
-  </button>
+// ── FSSAI ICON COMPONENTS ──────────────────────────────────
+const VegIcon = ({ size = 14 }) => (
+  <div style={{ 
+    width: size, height: size, border: '2px solid #008237', 
+    display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fff',
+    borderRadius: 2, flexShrink: 0
+  }}>
+    <div style={{ width: size * 0.6, height: size * 0.6, background: '#008237', borderRadius: '50%' }} />
+  </div>
 );
 
-const SectionHeader = ({ isVeg, label }) => {
-  const colorClass = isVeg ? 'bg-emerald-600' : 'bg-rose-700';
+const NonVegIcon = ({ size = 14 }) => (
+  <div style={{ 
+    width: size, height: size, border: '2px solid #8B4513', 
+    display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fff',
+    borderRadius: 2, flexShrink: 0
+  }}>
+    <div style={{ width: size * 0.6, height: size * 0.6, background: '#8B4513', borderRadius: '50%' }} />
+  </div>
+);
+
+// ── IMAGE COMPONENT WITH SHIMMER ──────────────────────────
+const FoodImage = ({ keyword, name, category, darkMode }) => {
+  const [loaded, setLoaded] = useState(false);
+  const [error, setError] = useState(false);
+  
+  // Using featured source for better quality and keyword matching
+  const imgUrl = `https://source.unsplash.com/featured/400x250?${keyword.replace(/ /g, ',')}`;
+
   return (
-    <div className={`w-full ${colorClass} px-6 py-3 flex items-center gap-3 rounded-xl mb-8 shadow-lg`}>
-      <div className="bg-white rounded-full p-1.5 flex items-center justify-center">
-        <FSSAISymbol isVeg={isVeg} />
-      </div>
-      <span className="text-white font-black uppercase tracking-widest text-sm">{label}</span>
+    <div style={{ position: 'relative', width: '100%', paddingTop: '56.25%', background: darkMode ? '#1a202c' : '#f3f4f6', overflow: 'hidden' }}>
+      {!loaded && !error && (
+        <div style={{ 
+          position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+          background: darkMode ? '#2d3748' : '#e2e8f0',
+          animation: 'shimmer 1.5s infinite linear',
+          backgroundImage: `linear-gradient(90deg, transparent, ${darkMode ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.4)'}, transparent)`,
+          backgroundSize: '200% 100%'
+        }} />
+      )}
+      {error ? (
+        <div style={{ 
+          position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          background: category === 'vegetarian' ? 'linear-gradient(135deg, #dcfce7, #bbf7d0)' : 'linear-gradient(135deg, #fee2e2, #fecaca)'
+        }}>
+          <span style={{ fontSize: 32 }}>{category === 'vegetarian' ? '🥗' : '🍗'}</span>
+          <span style={{ fontSize: 10, fontWeight: 700, color: 'rgba(0,0,0,0.4)', marginTop: 4 }}>{name}</span>
+        </div>
+      ) : (
+        <img 
+          src={imgUrl} 
+          alt={name}
+          loading="lazy"
+          onLoad={() => setLoaded(true)}
+          onError={() => setError(true)}
+          style={{ 
+            position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', 
+            objectFit: 'cover', opacity: loaded ? 1 : 0, transition: 'opacity 0.5s ease'
+          }}
+        />
+      )}
+      <style>{`
+        @keyframes shimmer {
+          0% { background-position: -200% 0; }
+          100% { background-position: 200% 0; }
+        }
+      `}</style>
     </div>
   );
 };
 
+// ── FILTER DATA ──────────────────────────────────────────
+const FILTERS = [
+  { key: 'All', label: 'All' },
+  { key: 'Veg', label: 'Veg' },
+  { key: 'Non-Veg', label: 'Non-Veg' },
+  { key: 'Jain', label: 'Jain' },
+  { key: 'Vegan', label: 'Vegan' },
+  { key: 'Low Calorie', label: 'Low Calorie' },
+  { key: 'Kids', label: 'Kids' },
+];
+
 export default function MealSelection({ flight, passengers, onBack, onConfirm, darkMode }) {
-  const [meals, setMeals] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { rates } = useCurrency();
   const [activeFilter, setActiveFilter] = useState('All');
-  const [selectedMeals, setSelectedMeals] = useState({}); // { [pIdx]: { [mealId]: qty } }
-  
-  // Track if "No Meal" is selected per passenger
-  const [noMealSelection, setNoMealSelection] = useState({}); // { [pIdx]: boolean }
+  const [selectedMeals, setSelectedMeals] = useState({}); // { passengerIdx: mealId }
+  const [currentPassengerIdx, setCurrentPassengerIdx] = useState(0);
 
-  const filters = ['All', 'Veg', 'Non-Veg', 'Jain', 'Vegan', 'Low Calorie', 'Kids'];
-
-  useEffect(() => {
-    const fetchMeals = async () => {
-      try {
-        const airlineCode = flight.airlineCode || flight.airline.substring(0, 2).toUpperCase();
-        const res = await fetch(`http://localhost:8080/api/food/meals/${airlineCode}`);
-        const data = await res.json();
-        setMeals(data.meals || []);
-      } catch (err) {
-        console.error("Failed to fetch meals", err);
-        setError("Could not load meal options.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchMeals();
-  }, [flight]);
-
-  const updateQuantity = (pIdx, mealId, delta) => {
-    // If No Meal is selected, deselect it
-    if (noMealSelection[pIdx]) {
-      setNoMealSelection(prev => ({ ...prev, [pIdx]: false }));
-    }
-
-    setSelectedMeals(prev => {
-      const passengerMeals = prev[pIdx] || {};
-      const currentQty = passengerMeals[mealId] || 0;
-      const nextQty = Math.max(0, currentQty + delta);
-      
-      const newPassengerMeals = { ...passengerMeals };
-      if (nextQty === 0) {
-        delete newPassengerMeals[mealId];
-      } else {
-        newPassengerMeals[mealId] = nextQty;
-      }
-
-      return { ...prev, [pIdx]: newPassengerMeals };
-    });
-  };
-
-  const handleNoMeal = (pIdx) => {
-    setNoMealSelection(prev => ({ ...prev, [pIdx]: true }));
-    setSelectedMeals(prev => {
-      const newSelected = { ...prev };
-      delete newSelected[pIdx];
-      return newSelected;
-    });
-  };
-
-  const calculateTotal = useMemo(() => {
-    let total = 0;
-    Object.values(selectedMeals).forEach(passengerMeals => {
-      Object.entries(passengerMeals).forEach(([mealId, qty]) => {
-        const meal = meals.find(m => m.id === mealId);
-        if (meal) {
-          total += (meal.price_inr || (meal.price_usd * 80)) * qty;
-        }
-      });
-    });
-    return total;
-  }, [selectedMeals, meals]);
-
+  // Filter Logic
   const filteredMeals = useMemo(() => {
-    if (activeFilter === 'All') return meals;
-    return meals.filter(m => {
-      const cat = m.category.toLowerCase();
-      const sub = m.subCategory?.toLowerCase() || '';
-      const tags = m.tags?.map(t => t.toLowerCase()) || [];
-
-      if (activeFilter === 'Veg') return cat === 'vegetarian';
-      if (activeFilter === 'Non-Veg') return cat === 'non_vegetarian';
-      if (activeFilter === 'Jain') return sub === 'jain' || tags.includes('jain');
-      if (activeFilter === 'Vegan') return sub === 'vegan' || tags.includes('vegan');
-      if (activeFilter === 'Low Calorie') return sub === 'low_calorie' || tags.includes('low_calorie');
-      if (activeFilter === 'Kids') return sub === 'kids' || tags.includes('kids');
+    return staticMeals.filter(meal => {
+      if (activeFilter === 'All') return true;
+      if (activeFilter === 'Veg') return meal.category === 'vegetarian';
+      if (activeFilter === 'Non-Veg') return meal.category === 'non_vegetarian';
+      if (activeFilter === 'Jain') return meal.tags.includes('jain') || meal.subCategory === 'jain';
+      if (activeFilter === 'Vegan') return meal.tags.includes('vegan') || meal.subCategory === 'vegan';
+      if (activeFilter === 'Low Calorie') return meal.tags.includes('low_calorie') || meal.subCategory === 'low_calorie';
+      if (activeFilter === 'Kids') return meal.tags.includes('kids') || meal.subCategory === 'kids';
       return true;
     });
-  }, [meals, activeFilter]);
+  }, [activeFilter]);
 
-  const vegMeals = filteredMeals.filter(m => m.category.toLowerCase() === 'vegetarian');
-  const nonVegMeals = filteredMeals.filter(m => m.category.toLowerCase() === 'non_vegetarian');
+  const vegMeals = filteredMeals.filter(m => m.category === 'vegetarian');
+  const nonVegMeals = filteredMeals.filter(m => m.category === 'non_vegetarian');
 
-  if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--app-bg)]">
-      <div className="flex flex-col items-center gap-6">
-        <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-        <span className="text-sm font-black uppercase tracking-widest text-slate-500">Preparing Culinary Options...</span>
-      </div>
-    </div>
-  );
+  const calculateTotal = () => {
+    return Object.values(selectedMeals).reduce((acc, mealId) => {
+      if (mealId === 'SKIP') return acc;
+      const meal = staticMeals.find(m => m.id === mealId);
+      return acc + (meal ? meal.price : 0);
+    }, 0);
+  };
+
+  const handleSelectMeal = (mealId) => {
+    setSelectedMeals(prev => ({
+      ...prev,
+      [currentPassengerIdx]: mealId
+    }));
+  };
+
+  const currentSelection = selectedMeals[currentPassengerIdx];
+
+  const gold = '#C8A84B';
+  const themeBg = darkMode ? '#0A0F1A' : '#f1f5f9';
+  const cardBg = darkMode ? '#1C2333' : '#ffffff';
+  const text = darkMode ? '#f0ece4' : '#111827';
+  const muted = darkMode ? '#9ca3af' : '#6b7280';
+  const bdr = darkMode ? 'rgba(255,255,255,0.1)' : '#e2e8f0';
 
   return (
-    <div className="min-h-screen pt-32 pb-60 bg-[var(--app-bg)] text-[var(--app-text)]">
-      <div className="container mx-auto px-6 max-w-6xl">
+    <div style={{ background: themeBg, minHeight: '100vh', paddingBottom: 120, color: text }}>
+      <div style={{ maxWidth: 1000, margin: '0 auto', padding: '40px 24px' }}>
         
-        {/* Header Section */}
-        <div className="text-center mb-16">
-          <h1 className="text-5xl font-black uppercase tracking-tighter mb-4 italic">
-            Gourmet <span className="text-primary">Dining</span> Selection
-          </h1>
-          <p className="text-slate-500 max-w-2xl mx-auto font-bold">
-            Curated in-flight menus tailored to your preferences. Experience premium culinary excellence at 35,000 feet.
-          </p>
+        {/* Wizard Progress */}
+        <div style={{ display: 'flex', gap: 24, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.2em', fontWeight: 800, marginBottom: 48, justifyContent: 'center', opacity: 0.6 }}>
+          <span style={{ color: muted }}>1. Passengers</span>
+          <span style={{ color: muted }}>—</span>
+          <span style={{ color: muted }}>2. Seats</span>
+          <span style={{ color: muted }}>—</span>
+          <span style={{ color: gold }}>3. Meals</span>
+          <span style={{ color: muted }}>—</span>
+          <span style={{ color: muted }}>4. Payment</span>
         </div>
 
-        {/* Filter Bar */}
-        <div className="flex flex-wrap justify-center gap-3 mb-16">
-          {filters.map(f => (
-            <FilterPill 
-              key={f} 
-              label={f} 
-              active={activeFilter === f} 
-              onClick={() => setActiveFilter(f)} 
-            />
+        {/* Header & Passenger Selector */}
+        <div style={{ textAlign: 'center', marginBottom: 48 }}>
+          <h1 style={{ fontSize: 36, fontWeight: 900, fontFamily: '"Playfair Display",serif', textTransform: 'uppercase', letterSpacing: '-0.01em', marginBottom: 16 }}>
+            In-Flight Gourmet
+          </h1>
+          <p style={{ color: muted, marginBottom: 32, fontSize: 15 }}>Select a curated meal for each passenger on this journey.</p>
+          
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 8, flexWrap: 'wrap' }}>
+            {passengers.map((p, i) => (
+              <button 
+                key={i} 
+                onClick={() => setCurrentPassengerIdx(i)}
+                style={{ 
+                  padding: '10px 24px', borderRadius: 12, border: `2px solid ${currentPassengerIdx === i ? gold : bdr}`,
+                  background: currentPassengerIdx === i ? gold : cardBg,
+                  color: currentPassengerIdx === i ? '#000' : text,
+                  fontWeight: 800, fontSize: 13, cursor: 'pointer', transition: '0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  boxShadow: currentPassengerIdx === i ? '0 10px 20px rgba(200, 168, 75, 0.2)' : 'none'
+                }}
+              >
+                {selectedMeals[i] && selectedMeals[i] !== 'SKIP' ? '🍱 ' : ''}
+                {p.name || `Passenger ${i + 1}`}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Filter Pills */}
+        <div style={{ display: 'flex', gap: 10, marginBottom: 40, overflowX: 'auto', padding: '4px', justifyContent: 'center', scrollbarWidth: 'none' }}>
+          {FILTERS.map(f => (
+            <button 
+              key={f.key}
+              onClick={() => setActiveFilter(f.key)}
+              style={{ 
+                padding: '10px 24px', borderRadius: 30, border: `1.5px solid ${activeFilter === f.key ? gold : bdr}`,
+                background: activeFilter === f.key ? gold : 'transparent',
+                color: activeFilter === f.key ? '#000' : text,
+                fontSize: 13, fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap', transition: '0.2s',
+                boxShadow: activeFilter === f.key ? `0 4px 12px ${gold}44` : 'none'
+              }}
+            >
+              {f.label}
+            </button>
           ))}
         </div>
 
-        {passengers.map((p, pIdx) => (
-          <div key={pIdx} className="mb-24 last:mb-0">
-            <div className="flex items-center gap-6 mb-12">
-              <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center text-white font-black text-xl shadow-lg shadow-primary/20">
-                {pIdx + 1}
-              </div>
-              <div>
-                <h2 className="text-2xl font-black uppercase tracking-tight">{p.name || `Passenger ${pIdx + 1}`}</h2>
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Select Meals for this passenger</span>
-              </div>
+        {/* No Meal Row */}
+        <motion.div 
+          whileHover={{ scale: 1.01 }}
+          whileTap={{ scale: 0.99 }}
+          onClick={() => handleSelectMeal('SKIP')}
+          style={{ 
+            background: cardBg, border: `2px solid ${currentSelection === 'SKIP' ? gold : 'transparent'}`,
+            borderRadius: 16, padding: '20px 28px', marginBottom: 48, cursor: 'pointer',
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center', transition: '0.3s',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.04)'
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+            <div style={{ 
+              width: 24, height: 24, borderRadius: '50%', border: `2px solid ${currentSelection === 'SKIP' ? gold : muted}`, 
+              display: 'flex', alignItems: 'center', justifyContent: 'center', transition: '0.3s' 
+            }}>
+              {currentSelection === 'SKIP' && <div style={{ width: 12, height: 12, background: gold, borderRadius: '50%' }} />}
             </div>
-
-            {/* No Meal Option */}
-            <div 
-              onClick={() => handleNoMeal(pIdx)}
-              className={`mb-8 p-4 rounded-xl border-2 transition-all cursor-pointer flex items-center justify-between group ${
-                noMealSelection[pIdx] 
-                  ? 'border-primary bg-primary/5' 
-                  : 'border-white/10 hover:border-white/20'
-              }`}
-            >
-              <div className="flex items-center gap-4">
-                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
-                  noMealSelection[pIdx] ? 'border-primary bg-primary' : 'border-slate-500'
-                }`}>
-                  {noMealSelection[pIdx] && <div className="w-2 h-2 bg-white rounded-full" />}
-                </div>
-                <span className="font-bold text-sm uppercase tracking-wide">✕ No Meal — Free</span>
-              </div>
-              <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Standard snacks only</span>
+            <div>
+              <p style={{ fontWeight: 900, margin: '0 0 2px 0', fontSize: 16 }}>✕ No Meal Selection</p>
+              <p style={{ fontSize: 13, color: muted, margin: 0 }}>Skip in-flight meal for this passenger</p>
             </div>
-
-            <AnimatePresence mode="popLayout">
-              {/* Vegetarian Section */}
-              {(activeFilter === 'All' || activeFilter === 'Veg' || (activeFilter !== 'Non-Veg' && vegMeals.length > 0)) && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.4 }}
-                  className="mb-16"
-                >
-                  <SectionHeader isVeg={true} label="Vegetarian" />
-                  <div className="grid md:grid-cols-2 gap-8">
-                    {vegMeals.map(meal => (
-                      <MealCard 
-                        key={meal.id} 
-                        meal={meal} 
-                        qty={selectedMeals[pIdx]?.[meal.id] || 0}
-                        onUpdate={(delta) => updateQuantity(pIdx, meal.id, delta)}
-                      />
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-
-              {/* Non-Vegetarian Section */}
-              {(activeFilter === 'All' || activeFilter === 'Non-Veg' || (activeFilter !== 'Veg' && nonVegMeals.length > 0)) && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.4 }}
-                >
-                  <SectionHeader isVeg={false} label="Non-Vegetarian" />
-                  <div className="grid md:grid-cols-2 gap-8">
-                    {nonVegMeals.map(meal => (
-                      <MealCard 
-                        key={meal.id} 
-                        meal={meal} 
-                        qty={selectedMeals[pIdx]?.[meal.id] || 0}
-                        onUpdate={(delta) => updateQuantity(pIdx, meal.id, delta)}
-                      />
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
           </div>
-        ))}
+          <span style={{ fontWeight: 900, color: '#10b981', fontSize: 14, letterSpacing: '0.05em' }}>COMPLIMENTARY</span>
+        </motion.div>
 
-        {/* Sticky Footer */}
-        <div className="fixed bottom-0 left-0 right-0 p-8 bg-[var(--app-bg)]/80 backdrop-blur-2xl border-t border-white/10 z-50">
-          <div className="container mx-auto max-w-6xl flex justify-between items-center">
-            <div className="flex flex-col">
-              <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Total Culinary Cost</span>
-              <span className="text-3xl font-black text-primary italic">
-                ₹{calculateTotal.toLocaleString()}
-              </span>
+        {/* MEAL SECTIONS */}
+        <AnimatePresence mode="wait">
+          <motion.div 
+            key={activeFilter}
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -10 }}
+            transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+          >
+            {/* Vegetarian Section */}
+            {vegMeals.length > 0 && (
+              <div style={{ marginBottom: 60 }}>
+                <div style={{ 
+                  display: 'flex', alignItems: 'center', gap: 16, padding: '12px 20px', 
+                  background: darkMode ? 'rgba(0, 130, 55, 0.1)' : '#dcfce7', 
+                  borderLeft: '6px solid #008237', borderRadius: '4px 12px 12px 4px', marginBottom: 32 
+                }}>
+                   <VegIcon size={20} />
+                   <h2 style={{ fontSize: 20, fontWeight: 900, textTransform: 'uppercase', color: darkMode ? '#4ade80' : '#008237', letterSpacing: '0.1em', margin: 0 }}>Vegetarian</h2>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(440px, 1fr))', gap: 32 }}>
+                  {vegMeals.map(meal => <MealCard key={meal.id} meal={meal} isSelected={currentSelection === meal.id} onSelect={() => handleSelectMeal(meal.id)} darkMode={darkMode} />)}
+                </div>
+              </div>
+            )}
+
+            {/* Non-Vegetarian Section */}
+            {nonVegMeals.length > 0 && (
+              <div>
+                <div style={{ 
+                  display: 'flex', alignItems: 'center', gap: 16, padding: '12px 20px', 
+                  background: darkMode ? 'rgba(139, 69, 19, 0.1)' : '#fee2e2', 
+                  borderLeft: '6px solid #8B4513', borderRadius: '4px 12px 12px 4px', marginBottom: 32 
+                }}>
+                   <NonVegIcon size={20} />
+                   <h2 style={{ fontSize: 20, fontWeight: 900, textTransform: 'uppercase', color: darkMode ? '#f87171' : '#8B4513', letterSpacing: '0.1em', margin: 0 }}>Non-Vegetarian</h2>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(440px, 1fr))', gap: 32 }}>
+                  {nonVegMeals.map(meal => <MealCard key={meal.id} meal={meal} isSelected={currentSelection === meal.id} onSelect={() => handleSelectMeal(meal.id)} darkMode={darkMode} />)}
+                </div>
+              </div>
+            )}
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Footer Summary */}
+        <div style={{ 
+          position: 'fixed', bottom: 0, left: 0, right: 0, 
+          background: darkMode ? 'rgba(28, 35, 51, 0.95)' : 'rgba(255, 255, 255, 0.95)', 
+          backdropFilter: 'blur(10px)', borderTop: `1px solid ${bdr}`, padding: '24px 0', 
+          boxShadow: '0 -20px 50px rgba(0,0,0,0.15)', zIndex: 1000 
+        }}>
+          <div style={{ maxWidth: 1000, margin: '0 auto', padding: '0 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div>
+              <p style={{ fontSize: 11, textTransform: 'uppercase', fontWeight: 800, color: muted, marginBottom: 6, letterSpacing: '0.1em' }}>Meals Total Selection</p>
+              <p style={{ fontSize: 32, fontWeight: 900, color: gold, margin: 0 }}><PriceDisplay amount={calculateTotal()} currency="INR" /></p>
             </div>
-            <div className="flex gap-4">
-              <button 
-                onClick={onBack}
-                className="px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs border border-white/10 hover:bg-white/5 transition-all"
-              >
-                Go Back
-              </button>
+            <div style={{ display: 'flex', gap: 16 }}>
+              <button onClick={onBack} style={{ padding: '14px 28px', borderRadius: 12, border: `2px solid ${bdr}`, background: 'transparent', color: text, fontWeight: 800, cursor: 'pointer', transition: '0.2s' }}>Back</button>
               <button 
                 onClick={() => {
-                  const summaryMap = {};
-                  passengers.forEach((_, i) => {
-                    if (noMealSelection[i]) {
-                      summaryMap[i] = 'SKIP';
-                    } else {
-                      const pMeals = selectedMeals[i] || {};
-                      const summary = Object.entries(pMeals)
-                        .map(([mId, qty]) => {
-                          const meal = meals.find(m => m.id === mId);
-                          return `${meal ? meal.name : mId} x${qty}`;
-                        })
-                        .join(', ');
-                      summaryMap[i] = summary || 'SKIP';
-                    }
-                  });
-                  onConfirm(summaryMap, calculateTotal);
+                  const totalINR = calculateTotal();
+                  const rate = rates['INR'] || 83.5;
+                  onConfirm(selectedMeals, totalINR / rate);
                 }}
-                className="px-12 py-4 bg-primary text-white rounded-2xl font-black uppercase tracking-widest text-xs shadow-2xl shadow-primary/40 hover:scale-105 active:scale-95 transition-all"
+                style={{ 
+                  padding: '14px 48px', borderRadius: 12, border: 'none', background: gold, color: '#000', 
+                  fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em', cursor: 'pointer',
+                  boxShadow: `0 10px 25px ${gold}44`, transition: '0.3s'
+                }}
               >
-                Confirm Meals & Proceed
+                Confirm Selection →
               </button>
             </div>
           </div>
         </div>
+
       </div>
     </div>
   );
 }
 
-function MealCard({ meal, qty, onUpdate }) {
-  const isVeg = meal.category.toLowerCase() === 'vegetarian';
-  const highlightColor = isVeg ? 'border-emerald-500/50' : 'border-rose-500/50';
+// ── REDESIGNED MEAL CARD ──────────────────────────────────
+function MealCard({ meal, isSelected, onSelect, darkMode }) {
+  const cardBg = darkMode ? '#1C2333' : '#ffffff';
+  const text = darkMode ? '#f0ece4' : '#111827';
+  const muted = darkMode ? '#9ca3af' : '#6b7280';
+  const bdr = darkMode ? 'rgba(255,255,255,0.06)' : '#f1f5f9';
+  const accent = meal.category === 'vegetarian' ? '#008237' : '#8B4513';
+  const gold = '#C8A84B';
 
   return (
-    <div className={`group bg-white/5 rounded-[2rem] border-2 transition-all duration-500 overflow-hidden ${
-      qty > 0 ? highlightColor : 'border-white/5 hover:border-white/10'
-    }`}>
-      {/* Image Area */}
-      <div className="relative aspect-[16/9] overflow-hidden">
-        <MealImage 
-          keyword={meal.imageKeyword} 
-          category={meal.category} 
-          alt={meal.name}
-          className="w-full h-full"
-        />
+    <motion.div 
+      initial={false}
+      whileHover={{ y: -6, scale: 1.02 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      style={{ 
+        background: cardBg, borderRadius: 20, overflow: 'hidden', cursor: 'pointer',
+        border: `2.5px solid ${isSelected ? accent : 'transparent'}`,
+        boxShadow: isSelected ? `0 20px 40px ${accent}22` : '0 8px 30px rgba(0,0,0,0.06)',
+        display: 'grid', gridTemplateColumns: '190px 1fr', transition: 'border-color 0.3s'
+      }}
+      onClick={onSelect}
+    >
+      {/* Image Part */}
+      <div style={{ position: 'relative', overflow: 'hidden' }}>
+        <FoodImage keyword={meal.imageKeyword} name={meal.name} category={meal.category} darkMode={darkMode} />
         
         {/* Badges */}
-        <div className="absolute top-4 left-4 flex flex-col gap-2">
-          {meal.tags?.includes('bestseller') && (
-            <div className="bg-emerald-500 text-white px-3 py-1 rounded-lg flex items-center gap-2 shadow-lg">
-              <Star size={10} fill="currentColor" />
-              <span className="text-[9px] font-black uppercase tracking-wider">Bestseller</span>
-            </div>
+        <div style={{ position: 'absolute', top: 12, left: 12, display: 'flex', flexDirection: 'column', gap: 6, zIndex: 10 }}>
+          {meal.tags.includes('bestseller') && (
+            <motion.div 
+              initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }}
+              style={{ background: '#ef4444', color: '#fff', fontSize: 10, fontWeight: 900, padding: '4px 10px', borderRadius: 6, textTransform: 'uppercase', boxShadow: '0 4px 10px rgba(239,68,68,0.3)' }}
+            >
+              Bestseller
+            </motion.div>
           )}
-          {meal.tags?.includes('premium') && (
-            <div className="bg-amber-400 text-black px-3 py-1 rounded-lg flex items-center gap-2 shadow-lg">
-              <Crown size={10} fill="currentColor" />
-              <span className="text-[9px] font-black uppercase tracking-wider text-black">Premium</span>
-            </div>
+          {meal.tags.includes('premium') && (
+            <motion.div 
+              initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }}
+              style={{ background: gold, color: '#000', fontSize: 10, fontWeight: 900, padding: '4px 10px', borderRadius: 6, textTransform: 'uppercase', boxShadow: '0 4px 10px rgba(200,168,75,0.3)' }}
+            >
+              Premium
+            </motion.div>
           )}
         </div>
       </div>
 
-      {/* Content Area */}
-      <div className="p-6">
-        <div className="flex items-center gap-3 mb-2">
-          <FSSAISymbol isVeg={isVeg} />
-          <h3 className="text-lg font-black uppercase tracking-tight">{meal.name}</h3>
+      {/* Content Part */}
+      <div style={{ padding: 20, display: 'flex', flexDirection: 'column' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+          {meal.category === 'vegetarian' ? <VegIcon size={14} /> : <NonVegIcon size={14} />}
+          <h3 style={{ fontSize: 17, fontWeight: 900, margin: 0, flex: 1, letterSpacing: '-0.02em' }}>{meal.name}</h3>
         </div>
         
-        <p className="text-xs text-slate-500 font-bold mb-6 line-clamp-2 leading-relaxed">
+        <p style={{ fontSize: 13, color: muted, marginBottom: 16, lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', minHeight: '3em' }}>
           {meal.description}
         </p>
 
-        {/* Nutritional & Allergen Info */}
-        <div className="py-4 border-y border-white/5 flex items-center justify-between mb-6">
-          <div className="flex items-center gap-2 text-slate-400">
-            <Flame size={14} className="text-orange-500" />
-            <span className="text-[10px] font-black uppercase tracking-widest">{meal.calories} kcal</span>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, padding: '10px 0', borderTop: `1px solid ${bdr}`, borderBottom: `1px solid ${bdr}`, marginBottom: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, color: muted }}>
+            <Flame size={14} style={{ color: '#f97316' }} /> {meal.calories} kcal
           </div>
-          {meal.allergens && meal.allergens.length > 0 && (
-            <div className="flex items-center gap-2 text-slate-400">
-              <AlertCircle size={14} className="text-amber-500" />
-              <span className="text-[10px] font-black uppercase tracking-widest">
-                Contains {meal.allergens[0]}{meal.allergens.length > 1 ? '...' : ''}
-              </span>
+          {meal.allergens.length > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, color: '#ef4444' }}>
+              <AlertCircle size={14} /> {meal.allergens[0]}{meal.allergens.length > 1 ? ` +${meal.allergens.length-1}` : ''}
             </div>
           )}
         </div>
 
-        {/* Price & Action */}
-        <div className="flex items-center justify-between">
-          <div className="flex flex-col">
-            <span className="text-[8px] font-black uppercase tracking-widest text-slate-500">Price</span>
-            <span className="text-xl font-black text-white italic">
-              ₹{(meal.price_inr || (meal.price_usd * 80)).toLocaleString()}
-            </span>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
+          <span style={{ fontSize: 22, fontWeight: 900, color: text }}>₹{meal.price}</span>
+          
+          <div onClick={(e) => e.stopPropagation()}>
+            {isSelected ? (
+              <motion.div 
+                initial={{ scale: 0.9 }} animate={{ scale: 1 }}
+                style={{ display: 'flex', alignItems: 'center', gap: 14, background: accent, color: '#fff', padding: '8px 16px', borderRadius: 12, boxShadow: `0 8px 15px ${accent}44` }}
+              >
+                <button onClick={() => onSelect()} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', padding: 0, display: 'flex' }}><Minus size={16} /></button>
+                <span style={{ fontWeight: 900, fontSize: 15 }}>1</span>
+                <button style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'not-allowed', padding: 0, opacity: 0.5, display: 'flex' }}><Plus size={16} /></button>
+              </motion.div>
+            ) : (
+              <motion.button 
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={onSelect}
+                style={{ 
+                  background: 'transparent', border: `2px solid ${accent}`, color: accent, 
+                  padding: '8px 24px', borderRadius: 12, fontWeight: 900, fontSize: 13, cursor: 'pointer', transition: '0.2s',
+                  textTransform: 'uppercase', letterSpacing: '0.05em'
+                }}
+              >
+                + ADD
+              </motion.button>
+            )}
           </div>
-
-          {qty === 0 ? (
-            <button 
-              onClick={() => onUpdate(1)}
-              className="px-6 py-3 bg-white/10 hover:bg-primary hover:text-white rounded-xl font-black uppercase tracking-widest text-[10px] transition-all"
-            >
-              + Add Meal
-            </button>
-          ) : (
-            <div className="flex items-center gap-4 bg-primary rounded-xl px-4 py-2 text-white shadow-lg shadow-primary/30 animate-in fade-in zoom-in duration-300">
-              <button onClick={() => onUpdate(-1)} className="hover:scale-125 transition-transform">
-                <Minus size={14} strokeWidth={4} />
-              </button>
-              <span className="text-sm font-black w-4 text-center">{qty}</span>
-              <button onClick={() => onUpdate(1)} className="hover:scale-125 transition-transform">
-                <Plus size={14} strokeWidth={4} />
-              </button>
-            </div>
-          )}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

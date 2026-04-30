@@ -74,6 +74,9 @@ public class Main {
             // Existing default package services
             server.createContext("/api/food/order",  new FoodOrderService());
             server.createContext("/api/food/orders", new FoodOrderService());
+            server.createContext("/api/stopover/order", new StopoverMealService());
+            server.createContext("/api/stopover/track", new StopoverMealService());
+            server.createContext("/api/stopover/orders", new StopoverMealService());
             server.createContext("/api/airports",    new AirportRegistry());
 
             // ── /api/health ─────────────────────────────────────────────────
@@ -100,6 +103,7 @@ public class Main {
             System.out.println("    [MEALS]    /api/food/meals/*");
             System.out.println("    [CURRENCY] /api/currency/*");
             System.out.println("    [TRACKING] /api/tracking/*");
+            System.out.println("    [STOPOVER] /api/stopover/*");
             System.out.println("    [AIRPORTS] /api/airports");
             System.out.println("=================================================");
 
