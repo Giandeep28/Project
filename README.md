@@ -1,51 +1,71 @@
 # ✈️ SkyVoyage | The Future of Premium Aviation
 
-SkyVoyage is a production-grade, full-stack flight booking ecosystem designed for luxury private and commercial aviation. This version is built on a high-performance distributed architecture.
+SkyVoyage is a production-grade, full-stack flight booking ecosystem designed for luxury private and commercial aviation. Featuring the **Celestial Midnight** design system, it provides a high-end, seamless experience for modern travelers.
 
-## 🏗️ Project Architecture
+---
 
-SkyVoyage is structured as a distributed micro-ecosystem:
+## ✨ Key Features
+
+### 🏛️ The Celestial Midnight Experience
+- **Premium Branding**: A sophisticated gold-on-black luxury aesthetic featuring the Golden Phoenix emblem.
+- **Dynamic Themes**: Seamless transitions between "Radiant" (Light) and "Celestial Midnight" (Dark) modes.
+- **Micro-interactions**: Smooth Framer Motion animations for a responsive, alive interface.
+
+### 🍱 Stopover Extras Wizard
+- **Regional Gastronomy**: Curated meal selections including Indian, Chinese, Continental, and South Indian cuisines.
+- **Travel Amenities**: On-demand lounge access, fast-track security, and personalized cabin upgrades.
+- **Integrated Checkout**: Seamless state management for add-ons during the booking flow.
+
+### 🎫 Digital Check-In
+- **QR Boarding Passes**: Instant generation of digital boarding passes with secure QR verification.
+- **Voyage Summary**: Real-time flight tracking and baggage policy confirmation.
+- **Seamless Retrieval**: Easy booking lookup via reference IDs and passenger details.
+
+### 🤖 AI Concierge
+- **Intelligent Assistant**: Real-time flight recommendations and 24/7 passenger support powered by a Python FastAPI microservice.
+
+---
+
+## 🏗️ Technical Architecture
+
+SkyVoyage is built on a high-performance distributed architecture:
 
 ### 1. **The Voyager Interface (Frontend)**
-- **Source**: `SkyVoyage/frontend/`
 - **Tech Stack**: React 19, Vite, Framer Motion, Lucide React, Tailwind CSS.
+- **Features**: Interactive seat maps, luxury booking wizard, and real-time state management.
 - **Port**: `5173`
-- **Service**: Primary UI for flight search, seat selection, and booking management.
 
 ### 2. **The Core Engine (Java Backend)**
-- **Source**: `SkyVoyage/backend-java/`
-- **Tech Stack**: Core Java, Multithreading.
+- **Tech Stack**: Java 21, Servlets, Multithreading, JSON processing.
+- **Features**: High-concurrency booking engine, real-time seat locking, and inventory management.
 - **Port**: `8080`
-- **Service**: High-concurrency booking engine with real-time seat locking and inventory management.
 
 ### 3. **The AI Concierge (Python Backend)**
-- **Source**: `SkyVoyage/backend-python/`
-- **Tech Stack**: Python, FastAPI, Uvicorn.
+- **Tech Stack**: Python 3.11, FastAPI, Uvicorn.
+- **Features**: Intelligent chatbot logic and personalized assistance services.
 - **Port**: `8000`
-- **Service**: Intelligent chatbot for personalized flight recommendations and passenger assistance.
 
 ---
 
 ## 🚀 Getting Started
 
-### 1. **Launch the Core Engine**
-Navigate to the Java backend directory and run the build script:
+### 1. **Initialize the Core Engine (Java)**
 ```powershell
 cd "SkyVoyage/backend-java"
 .\build.bat
 ```
 
-### 2. **Launch the Voyager Interface**
-Navigate to the frontend directory and start the development server:
+### 2. **Start the Voyager Interface (React)**
 ```powershell
 cd "SkyVoyage/frontend"
+npm install
 npm run dev
 ```
 
-### 3. **Launch the AI Concierge**
-Navigate to the Python backend directory and start the API:
+### 3. **Wake the AI Concierge (Python)**
 ```powershell
 cd "SkyVoyage/backend-python"
+pip install -r requirements.txt
 python api/main.py
 ```
 
@@ -54,9 +74,11 @@ python api/main.py
 ## 📂 Project Structure
 
 - `SkyVoyage/frontend/`: React-based premium user interface.
-- `SkyVoyage/backend-java/`: Core high-performance booking logic.
-- `SkyVoyage/backend-python/`: AI-driven assistant services.
+- `SkyVoyage/backend-java/`: Core high-performance booking and business logic.
+- `SkyVoyage/backend-python/`: AI-driven assistant and recommendation services.
+- `SkyVoyage/database/`: Persistence layer and schema definitions.
 - `Archive/`: Legacy versions and developmental prototypes.
 
 ---
-*© 2026 SkyVoyage Aviation Group. All Rights Secured.*
+*© 2026 SkyVoyage Aviation Group. Elevating the standard of travel.*
+
