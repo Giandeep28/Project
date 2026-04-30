@@ -96,8 +96,9 @@ public class BookingController implements HttpHandler {
         String from         = parseStr(body, "from",         "---");
         String to           = parseStr(body, "to",           "---");
         String seatClass    = parseStr(body, "seatClass",    "ECONOMY");
-        String contactEmail = parseStr(body, "contactEmail", "guest@skyvoyage.com");
-        double totalPrice   = parseDbl(body, "totalPrice",   0.0);
+        String contactEmail  = parseStr(body, "contactEmail",  "guest@skyvoyage.com");
+        String passengerName = parseStr(body, "passengerName", "Guest Passenger");
+        double totalPrice    = parseDbl(body, "totalPrice",    0.0);
 
         // Generate IDs
         String bookingId = "BK-" + randomAlpha(8);
@@ -105,7 +106,7 @@ public class BookingController implements HttpHandler {
         String bookedAt  = Instant.now().toString();
 
         // Persist to storage
-        Booking booking = new Booking(bookingId, flightId, from, to, contactEmail, seatClass, totalPrice);
+        Booking booking = new Booking(bookingId, flightId, from, to, contactEmail, passengerName, seatClass, totalPrice);
         booking.setStatus("CONFIRMED");
 
         // Run payment simulation
@@ -145,9 +146,9 @@ public class BookingController implements HttpHandler {
         }
         send(ex, 200, String.format(
             "{\"bookingId\":\"%s\",\"flightId\":\"%s\",\"passengerName\":\"%s\"," +
-            "\"seatClass\":\"%s\",\"totalPrice\":%.2f,\"status\":\"%s\"}",
+            "\"from\":\"%s\",\"to\":\"%s\",\"seatClass\":\"%s\",\"totalPrice\":%.2f,\"status\":\"%s\"}",
             b.getBookingId(), b.getFlightId(), b.getPassengerName(),
-            b.getSeatId(), b.getTotalFare(), b.getStatus()
+            b.getFrom(), b.getTo(), b.getSeatId(), b.getTotalFare(), b.getStatus()
         ));
     }
 

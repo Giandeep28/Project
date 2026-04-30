@@ -49,17 +49,21 @@ export const CurrencyProvider = ({ children }) => {
     localStorage.setItem('skyvoyage_currency', currency);
   };
 
+  const convert = useCallback((amount, from, to) => {
+    if (amount === undefined || amount === null) return 0;
+    if (from === to) return amount;
+
+    const fromRate = rates[from] || (from === 'INR' ? 83.5 : from === 'EUR' ? 0.92 : from === 'GBP' ? 0.79 : 1);
+    const toRate = rates[to] || (to === 'INR' ? 83.5 : to === 'EUR' ? 0.92 : to === 'GBP' ? 0.79 : 1);
+    
+    return (amount / fromRate) * toRate;
+  }, [rates]);
+
   const formatPrice = useCallback((amountUSD) => {
     if (!amountUSD && amountUSD !== 0) return '';
     
-    // Convert
-    let rate = rates[selectedCurrency];
-    if (!rate) {
-      if (selectedCurrency === 'USD') rate = 1;
-      else if (selectedCurrency === 'INR') rate = 83.5; // Robust fallback
-      else rate = 1;
-    }
-    const amount = amountUSD * rate;
+    // Convert using our new universal logic
+    const amount = convert(amountUSD, 'USD', selectedCurrency);
     
     // Format
     const symbol = SYMBOLS[selectedCurrency] || selectedCurrency + ' ';
@@ -70,10 +74,10 @@ export const CurrencyProvider = ({ children }) => {
     });
     
     return `${symbol} ${formatted}`;
-  }, [rates, selectedCurrency]);
+  }, [selectedCurrency, convert]);
 
   return (
-    <CurrencyContext.Provider value={{ selectedCurrency, rates, setCurrency, formatPrice }}>
+    <CurrencyContext.Provider value={{ selectedCurrency, rates, setCurrency, formatPrice, convert }}>
       {children}
     </CurrencyContext.Provider>
   );

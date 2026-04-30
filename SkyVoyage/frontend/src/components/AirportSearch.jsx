@@ -177,6 +177,21 @@ export default function AirportSearch({ label, placeholder, value, onChange, onQ
                 <span style={{ fontSize: 11, color: darkMode ? 'rgba(255,255,255,0.4)' : '#6b7280', paddingLeft: 26 }}>
                   {item.name}
                 </span>
+                
+                {item.airlines && item.airlines.length > 0 && (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, paddingLeft: 26, marginTop: 4 }}>
+                    {item.airlines.slice(0, 4).map((air, i) => (
+                      <span key={i} style={{ fontSize: 8, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#C8A84B', background: 'rgba(200,168,75,0.1)', padding: '2px 6px', borderRadius: 4 }}>
+                        {air}
+                      </span>
+                    ))}
+                    {item.airlines.length > 4 && (
+                      <span style={{ fontSize: 8, fontWeight: 800, color: darkMode ? 'rgba(255,255,255,0.3)' : '#94a3b8' }}>
+                        +{item.airlines.length - 4} More
+                      </span>
+                    )}
+                  </div>
+                )}
               </li>
             );
           })}

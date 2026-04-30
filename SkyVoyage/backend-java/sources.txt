@@ -6,6 +6,7 @@ D:\GIANDEEP MAIN\Project\SkyVoyage\backend-java\src\controllers\BookingControlle
 D:\GIANDEEP MAIN\Project\SkyVoyage\backend-java\src\controllers\CurrencyController.java
 D:\GIANDEEP MAIN\Project\SkyVoyage\backend-java\src\controllers\FlightController.java
 D:\GIANDEEP MAIN\Project\SkyVoyage\backend-java\src\controllers\MealsController.java
+D:\GIANDEEP MAIN\Project\SkyVoyage\backend-java\src\controllers\StopoverMealService.java
 D:\GIANDEEP MAIN\Project\SkyVoyage\backend-java\src\controllers\TrackingController.java
 D:\GIANDEEP MAIN\Project\SkyVoyage\backend-java\src\models\Booking.java
 D:\GIANDEEP MAIN\Project\SkyVoyage\backend-java\src\models\Flight.java

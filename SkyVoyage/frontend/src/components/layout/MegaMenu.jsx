@@ -83,6 +83,7 @@ export function BookingMegaMenu({ dark, closeMenu }) {
     { icon:'M21 16V14L13 9V3.5A1.5 1.5 0 0012 2a1.5 1.5 0 00-1.5 1.5V9L3 14v2l8.5-2.5V19z', label:'Check In Online', path:'/booking/checkin', desc:'Start online check-in up to 48h before' },
     { icon:'M23 4v6h-6M1 20v-6h6M3.5 9A9 9 0 0120.5 15', label:'Reschedule Flight', path:'/booking/reschedule', desc:'Flexible date and time changes' },
     { icon:'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z', label:'Add Extras', path:'/booking/extras', desc:'Seat upgrades, baggage, lounge access' },
+    { icon:'M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6', label:'Currency Hub', path:'/currency-calculator', desc:'Universal converter & live market rates' },
   ];
 
   return (

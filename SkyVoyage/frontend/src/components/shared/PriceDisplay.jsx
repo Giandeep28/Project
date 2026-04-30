@@ -9,21 +9,15 @@ import useCurrency from '../../context/useCurrency';
  * @param {string} currency - The base currency of the 'amount' prop (default: 'USD').
  */
 export default function PriceDisplay({ amount, currency = 'USD', className, style }) {
-  const { formatPrice, rates } = useCurrency();
+  const { formatPrice, convert } = useCurrency();
   
   if (amount === undefined || amount === null) return null;
   
   // Logic: 
-  // 1. If base currency is NOT USD, we convert it to USD first using the live rates.
+  // 1. If base currency is NOT USD, we convert it to USD first using the universal convert logic.
   // 2. Then we use formatPrice(amountUSD) which handles the final conversion to user's choice.
   
-  let amountUSD = amount;
-  if (currency !== 'USD' && rates[currency]) {
-    amountUSD = amount / rates[currency];
-  } else if (currency === 'INR' && !rates['INR']) {
-    // Fallback if rates are not yet loaded for INR
-    amountUSD = amount / 83.5;
-  }
+  const amountUSD = convert(amount, currency, 'USD');
   
   return (
     <span className={className} style={style}>

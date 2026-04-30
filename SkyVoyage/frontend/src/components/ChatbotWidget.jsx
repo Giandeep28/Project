@@ -38,13 +38,14 @@ export default function ChatbotWidget() {
     setIsLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:8000/api/chat/message', {
+      const response = await axios.post('http://localhost:8000/api/chatbot/message', {
+        message: inputText.trim(),
         messages: newMessages
       });
       
       setMessages(prev => [...prev, {
         role: "assistant",
-        content: response.data.reply || "Sorry, I couldn't understand that."
+        content: response.data.response || "Sorry, I couldn't understand that."
       }]);
     } catch (error) {
       setMessages(prev => [...prev, {
@@ -68,14 +69,14 @@ export default function ChatbotWidget() {
       <button 
         onClick={() => setIsOpen(!isOpen)}
         style={{
-          position: 'fixed', bottom: 24, right: 24, zIndex: 9999,
-          width: 56, height: 56, borderRadius: '50%',
+          position: 'fixed', bottom: 32, right: 32, zIndex: 9999,
+          width: 64, height: 64, borderRadius: '50%',
           background: '#C8A84B', color: '#111827',
           border: 'none', cursor: 'pointer',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 24, transition: 'transform 0.2s, background 0.2s',
-          transform: isOpen ? 'scale(0.9)' : 'scale(1)'
+          fontSize: 28, transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+          transform: isOpen ? 'rotate(180deg) scale(0.9)' : 'scale(1)'
         }}
         onMouseEnter={(e) => e.currentTarget.style.background = '#d6b658'}
         onMouseLeave={(e) => e.currentTarget.style.background = '#C8A84B'}
@@ -85,11 +86,12 @@ export default function ChatbotWidget() {
 
       {isOpen && (
         <div style={{
-          position: 'fixed', bottom: 96, right: 24, zIndex: 9998,
-          width: 360, height: 500, background: '#ffffff',
-          borderRadius: 16, boxShadow: '0 10px 40px rgba(0,0,0,0.2)',
+          position: 'fixed', bottom: 108, right: 32, zIndex: 9998,
+          width: 380, height: 550, background: '#ffffff',
+          borderRadius: 24, boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
           display: 'flex', flexDirection: 'column', overflow: 'hidden',
-          border: '1px solid rgba(0,0,0,0.1)', fontFamily: 'system-ui, -apple-system, sans-serif'
+          border: '1px solid rgba(0,0,0,0.1)', fontFamily: 'system-ui, -apple-system, sans-serif',
+          animation: 'slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
         }}>
           {/* Header */}
           <div style={{
@@ -191,7 +193,10 @@ export default function ChatbotWidget() {
               </svg>
             </button>
           </div>
-          <style>{`@keyframes typing { 0%, 100% { transform: translateY(0); opacity: 0.5; } 50% { transform: translateY(-3px); opacity: 1; } }`}</style>
+          <style>{`
+            @keyframes typing { 0%, 100% { transform: translateY(0); opacity: 0.5; } 50% { transform: translateY(-3px); opacity: 1; } }
+            @keyframes slideUp { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+          `}</style>
         </div>
       )}
     </>

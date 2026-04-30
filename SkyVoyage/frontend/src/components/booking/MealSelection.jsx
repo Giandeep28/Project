@@ -89,7 +89,7 @@ const FILTERS = [
 ];
 
 export default function MealSelection({ flight, passengers, onBack, onConfirm, darkMode }) {
-  const { rates } = useCurrency();
+  const { rates, convert } = useCurrency();
   const [activeFilter, setActiveFilter] = useState('All');
   const [selectedMeals, setSelectedMeals] = useState({}); // { passengerIdx: mealId }
   const [currentPassengerIdx, setCurrentPassengerIdx] = useState(0);
@@ -285,8 +285,7 @@ export default function MealSelection({ flight, passengers, onBack, onConfirm, d
               <button 
                 onClick={() => {
                   const totalINR = calculateTotal();
-                  const rate = rates['INR'] || 83.5;
-                  onConfirm(selectedMeals, totalINR / rate);
+                  onConfirm(selectedMeals, convert(totalINR, 'INR', 'USD'));
                 }}
                 style={{ 
                   padding: '14px 48px', borderRadius: 12, border: 'none', background: gold, color: '#000', 

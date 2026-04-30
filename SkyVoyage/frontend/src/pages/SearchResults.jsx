@@ -88,10 +88,10 @@ export default function SearchResults({ darkMode }) {
         if (filters.stops.includes('2+') && f.stops >= 2) ok = true;
         if (!ok) return false;
       }
-      // 2. Price (maxPrice is in INR, f.price is in USD)
-      const inrRate = rates['INR'] || 83.5;
-      const maxPriceUSD = filters.maxPrice / inrRate; 
-      if (f.price > maxPriceUSD) return false;
+      // 2. Price (Normalize both to USD for stable comparison)
+      const fPriceUSD = f.currency === 'INR' ? f.price / (rates['INR'] || 83.5) : f.price;
+      const maxPriceUSD = filters.maxPrice / (rates['INR'] || 83.5);
+      if (fPriceUSD > maxPriceUSD) return false;
       // 3. Airlines
       if (filters.airlines.length > 0 && !filters.airlines.includes(f.airline)) return false;
       
@@ -231,7 +231,7 @@ export default function SearchResults({ darkMode }) {
                           </div>
                           <div style={{ textAlign: 'right' }}>
                             <p style={{ fontSize: 24, fontWeight: 800, color: text }}>
-                              <PriceDisplay amount={f.price} />
+                              <PriceDisplay amount={f.price} currency={f.currency} />
                             </p>
                             <p style={{ fontSize: 12, color: '#10b981' }}>{f.seatsAvailable} seats left</p>
                           </div>
@@ -239,7 +239,7 @@ export default function SearchResults({ darkMode }) {
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                           <div style={{ textAlign: 'left' }}>
                             <p style={{ fontSize: 20, fontWeight: 700, color: text }}>
-                               {new Intl.DateTimeFormat('en-US', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Kolkata' }).format(new Date(f.departureTime))}
+                              {new Intl.DateTimeFormat('en-US', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Kolkata' }).format(new Date(f.departureTime))}
                             </p>
                             <p style={{ fontSize: 12, color: muted, fontWeight: 600 }}>{f.origin}</p>
                           </div>
@@ -280,3 +280,4 @@ export default function SearchResults({ darkMode }) {
     </div>
   );
 }
+

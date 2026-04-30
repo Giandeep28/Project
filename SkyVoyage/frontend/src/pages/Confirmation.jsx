@@ -105,7 +105,7 @@ Thank you for flying SkyVoyage.
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: 16 }}>
+            <div style={{ display: 'flex', gap: 16, marginBottom: booking.stopoverOrder ? 32 : 0 }}>
               <button onClick={downloadPass} style={{ flex: 1, padding: '16px 0', background: 'transparent', border: `2px solid ${accent}`, color: accent, borderRadius: 10, fontSize: 13, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', cursor: 'pointer', transition: '0.2s' }}>
                 Download Boarding Pass
               </button>
@@ -113,11 +113,38 @@ Thank you for flying SkyVoyage.
                 Return to Hub
               </button>
             </div>
+
+            {booking.stopoverOrder && (
+              <div style={{ marginTop: 32, padding: '24px', background: 'rgba(200, 168, 75, 0.05)', border: `1px solid ${accent}44`, borderRadius: 16, animation: 'fadeIn 0.5s ease' }}>
+                <h3 style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', color: accent, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span>✦</span> Stopover Privilege Secured
+                </h3>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <div>
+                    <p style={{ fontSize: 18, fontWeight: 800, marginBottom: 4 }}>{booking.stopoverOrder.stopoverAirport} Hub Meal</p>
+                    <p style={{ fontSize: 13, color: muted }}>Track Order: <span style={{ fontFamily: 'monospace', fontWeight: 700, color: text }}>{booking.stopoverOrder.orderId}</span></p>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <p style={{ fontSize: 12, color: muted, marginBottom: 4 }}>Pickup at Court</p>
+                    <p style={{ fontSize: 14, fontWeight: 700 }}>{booking.stopoverOrder.items?.[0]?.name || 'Pre-booked Meal'}</p>
+                  </div>
+                </div>
+                <div style={{ marginTop: 20, paddingTop: 16, borderTop: `1px dashed ${accent}33` }}>
+                   <button 
+                     onClick={() => navigate('/orders', { state: { booking: { bookingId: booking.bookingId } } })}
+                     style={{ background: 'transparent', border: 'none', color: accent, fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}
+                   >
+                     Track Delivery Status →
+                   </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
-        <FoodPreBooking booking={booking} darkMode={darkMode} />
+        {!booking.stopoverOrder && <FoodPreBooking booking={booking} darkMode={darkMode} />}
       </div>
+      <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }`}</style>
     </div>
   );
 }

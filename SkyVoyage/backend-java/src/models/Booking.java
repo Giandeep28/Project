@@ -13,6 +13,7 @@ public class Booking implements Serializable {
     private String from;          // Added for Dashboard alignment
     private String to;            // Added for Dashboard alignment
     private String contactEmail;  
+    private String passengerName; // Added for Check-In validation
     private String seatId;        // Used as seatClass
     private double totalFare;
     private long   bookingTimestamp;
@@ -20,12 +21,13 @@ public class Booking implements Serializable {
 
     public Booking() {}
 
-    public Booking(String bookingId, String flightId, String from, String to, String contactEmail, String seatId, double totalFare) {
+    public Booking(String bookingId, String flightId, String from, String to, String contactEmail, String passengerName, String seatId, double totalFare) {
         this.bookingId        = bookingId;
         this.flightId         = flightId;
         this.from             = from;
         this.to               = to;
         this.contactEmail     = contactEmail;
+        this.passengerName    = passengerName;
         this.seatId           = seatId;
         this.totalFare        = totalFare;
         this.bookingTimestamp = System.currentTimeMillis();
@@ -41,8 +43,8 @@ public class Booking implements Serializable {
     public void   setFrom(String v)                     { this.from = v; }
     public String getTo()                               { return to; }
     public void   setTo(String v)                       { this.to = v; }
-    public String getPassengerName()                    { return contactEmail; }
-    public void   setPassengerName(String v)            { this.contactEmail = v; }
+    public String getPassengerName()                    { return passengerName; }
+    public void   setPassengerName(String v)            { this.passengerName = v; }
     public String getContactEmail()                     { return contactEmail; }
     public void   setContactEmail(String v)             { this.contactEmail = v; }
     public String getSeatId()                           { return seatId; }

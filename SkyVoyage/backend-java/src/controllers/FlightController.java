@@ -103,13 +103,18 @@ public class FlightController implements HttpHandler {
 
         List<String> indianAirports = Arrays.asList(
             "DEL", "BOM", "BLR", "MAA", "CCU", "HYD", "COK", "PNQ", "AMD", "GOI", 
-            "JAI", "LKO", "VNS", "ATQ", "NAG", "IXC", "SXR", "GAU"
+            "JAI", "LKO", "VNS", "ATQ", "NAG", "IXC", "SXR", "GAU", "DED", "IXB", 
+            "BBI", "TRV", "CJB", "IDR", "UDR", "RPR", "VTZ", "IXU", "NDC"
         );
         boolean isDomestic = indianAirports.contains(origin) && indianAirports.contains(dest);
+        
+        // Debug logging
+        LOGGER.info("Route: " + origin + " -> " + dest + " isDomestic: " + isDomestic);
 
-        // Vistara removed per user request (merged with Air India)
+        // Only Indian domestic airlines for domestic routes
         String[][] domesticAirlines = {
-            {"Air India", "AI"}, {"IndiGo", "6E"}, {"SpiceJet", "SG"}, {"Akasa Air", "QP"}
+            {"Air India", "AI"}, {"IndiGo", "6E"}, {"SpiceJet", "SG"}, {"Akasa Air", "QP"},
+            {"Vistara", "UK"}, {"Go First", "G8"}, {"AirAsia India", "I5"}
         };
         String[][] intlAirlines = {
             {"Air India", "AI"}, {"IndiGo", "6E"}, {"SpiceJet", "SG"}, {"Akasa Air", "QP"},
@@ -127,7 +132,7 @@ public class FlightController implements HttpHandler {
         
         StringBuilder sb = new StringBuilder();
         sb.append("{\"flights\":[");
-        int count = isDomestic ? 12 : 10;
+        int count = isDomestic ? domesticAirlines.length : intlAirlines.length;
         for (int i = 0; i < count; i++) {
             // Strictly guarantee every airline is shown at least once
             String[] al = airlines[i % airlines.length];
@@ -140,14 +145,26 @@ public class FlightController implements HttpHandler {
             int stops = isDomestic ? (rng.nextDouble() < 0.7 ? 0 : 1) : (rng.nextDouble() < 0.4 ? 0 : (rng.nextDouble() < 0.8 ? 1 : 2));
             
             // ── LIVE PRICE ENGINE ──
-            // We now return prices in USD. 
+            // We return prices in INR for domestic flights and USD for international flights
             // We add a time-based jitter so prices feel "live" and fluctuate slightly every 10 mins.
             long timeWindow = System.currentTimeMillis() / (1000 * 60 * 10); // 10-minute window
             Random liveRng = new Random(fno.hashCode() + timeWindow);
             double jitter = 0.95 + (liveRng.nextDouble() * 0.1); // +/- 5%
             
-            double baseUsd = isDomestic ? 50 + rng.nextInt(70) : 350 + rng.nextInt(1000);
-            double price = baseUsd * jitter;
+            double price;
+            if (isDomestic) {
+                // Realistic INR pricing for domestic flights (₹3,000 - ₹15,000)
+                double baseInr = 3000 + rng.nextInt(12000);
+                // Adjust for stops (non-stop flights cost more)
+                if (stops == 0) baseInr *= 1.2;
+                // Adjust for airline tier (Air India typically costs more)
+                if (airline.equals("Air India")) baseInr *= 1.15;
+                price = baseInr * jitter;
+            } else {
+                // USD pricing for international flights ($350 - $1350)
+                double baseUsd = 350 + rng.nextInt(1000);
+                price = baseUsd * jitter;
+            }
             
             int depH = rng.nextInt(24);
             int depM = rng.nextInt(60);
@@ -170,10 +187,10 @@ public class FlightController implements HttpHandler {
                 "{\"id\":\"f-%03d\",\"airline\":\"%s\",\"airlineLogo\":\"%s\",\"flightNumber\":\"%s\"," +
                 "\"origin\":\"%s\",\"destination\":\"%s\"," +
                 "\"departureTime\":\"%s\",\"arrivalTime\":\"%s\"," +
-                "\"duration\":%d,\"stops\":%d,\"price\":%.0f," +
+                "\"duration\":%d,\"stops\":%d,\"price\":%.0f,\"currency\":\"%s\"," +
                 "\"seatClass\":\"%s\",\"seatsAvailable\":%d,\"score\":%.0f}",
                 i+1, airline, logo, fno, origin, dest, depStr, arrStr,
-                dur, stops, price, cls, seats, score
+                dur, stops, price, isDomestic ? "INR" : "USD", cls, seats, score
             ));
         }
         sb.append(String.format("],\"count\":%d,\"origin\":\"%s\",\"destination\":\"%s\"}", count, origin, dest));

@@ -130,7 +130,7 @@ export default function FoodOrder({ darkMode }) {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 16, paddingTop: 16, borderTop: `1px solid ${bdr}` }}>
                 <span style={{ fontSize: 14, fontWeight: 700, textTransform: 'uppercase' }}>Total Paid</span>
                 <span style={{ fontSize: 20, fontWeight: 800, color: accent }}>
-                  <PriceDisplay amountUSD={order.totalUSD} />
+                  <PriceDisplay amount={order.totalUSD} currency="USD" />
                 </span>
               </div>
             </div>

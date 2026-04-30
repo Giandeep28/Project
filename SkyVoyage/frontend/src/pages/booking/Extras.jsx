@@ -14,8 +14,11 @@ import {
   Loader2,
 } from "lucide-react";
 import PriceDisplay from "../../components/shared/PriceDisplay";
+import useCurrency from "../../context/useCurrency";
+import CurrencyCalculator from "../../components/shared/CurrencyCalculator";
 
-export default function Extras({ darkMode }) {
+export default function Extras({ darkMode, isWizard, onConfirm, onBack }) {
+  const { convert } = useCurrency();
   const [selected, setSelected] = useState([]);
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -60,49 +63,57 @@ export default function Extras({ darkMode }) {
     setSelected(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
   };
 
+  const total = selected.reduce((acc, curr) => acc + (catalog.find(x => x.id === curr)?.price || 0), 0);
+
   const handleConfirm = async () => {
     if (selected.includes('dining')) {
-      setLoading(true);
-      try {
-        const selectedCuisine = menu[stopoverData.cuisine];
-        const selectedDish = selectedCuisine.dishes.find(d => d.id === stopoverData.dishId);
-        
-        const orderBody = {
-          bookingId: "BK-" + Math.random().toString(36).substring(2, 8).toUpperCase(),
-          flightNumber: "SV102",
-          stopoverAirport: stopoverData.airport,
-          deliveryTime: stopoverData.time,
-          items: [{ 
-            name: selectedDish.name, 
-            quantity: 1, 
-            mealId: selectedDish.id,
-            cuisine: selectedCuisine.name
-          }],
-          totalUSD: selectedDish.price / 80 // Mock conversion
-        };
+      const selectedCuisine = menu[stopoverData.cuisine];
+      const selectedDish = selectedCuisine.dishes.find(d => d.id === stopoverData.dishId);
+      
+      const totalUSD = convert(total, 'INR', 'USD');
+      
+      const orderBody = {
+        flightNumber: "SV102",
+        stopoverAirport: stopoverData.airport,
+        deliveryTime: stopoverData.time,
+        items: [{ 
+          name: selectedDish.name, 
+          quantity: 1, 
+          mealId: selectedDish.id,
+          cuisine: selectedCuisine.name
+        }],
+        totalUSD: totalUSD
+      };
 
-        const res = await fetch('http://localhost:8080/api/stopover/order', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(orderBody)
-        });
-
-        if (res.ok) {
-          const data = await res.json();
-          setStopoverData(prev => ({ ...prev, orderId: data.orderId, bookingId: orderBody.bookingId, confirmedDish: selectedDish.name }));
-          setStep(2);
+      if (isWizard) {
+        onConfirm(selected, totalUSD, orderBody);
+      } else {
+        setLoading(true);
+        try {
+          const res = await fetch('http://localhost:8080/api/stopover/order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...orderBody, bookingId: "BK-" + Math.random().toString(36).substring(2, 8).toUpperCase() })
+          });
+          if (res.ok) {
+            const data = await res.json();
+            setStopoverData(prev => ({ ...prev, orderId: data.orderId, confirmedDish: selectedDish.name }));
+            setStep(2);
+          }
+        } catch (err) {
+          console.error("Failed to order stopover meal:", err);
+        } finally {
+          setLoading(false);
         }
-      } catch (err) {
-        console.error("Failed to order stopover meal:", err);
-      } finally {
-        setLoading(false);
       }
     } else {
-      setStep(2);
+      if (isWizard) {
+        const totalUSD = convert(total, 'INR', 'USD');
+        onConfirm(selected, totalUSD, null);
+      }
+      else setStep(2);
     }
   };
-
-  const total = selected.reduce((acc, curr) => acc + (catalog.find(x => x.id === curr)?.price || 0), 0);
 
   return (
     <div className={`min-h-screen pt-24 pb-12 ${darkMode ? 'bg-[var(--app-bg)] text-[var(--app-text)]' : 'bg-white text-slate-900'}`}>
@@ -114,17 +125,27 @@ export default function Extras({ darkMode }) {
                   <h1 className="text-5xl font-black uppercase tracking-tighter mb-4">Enhance Your Voyage</h1>
                   <p className="text-xl text-slate-500 font-medium max-w-2xl">Tailor your journey with our premium selection of amenities and exclusive privileges.</p>
                </div>
-               <div className="bg-primary/10 p-6 rounded-3xl border border-primary/20 min-w-[280px]">
-                  <p className="text-[10px] font-black uppercase text-slate-500 tracking-[3px] mb-2">Total Selection</p>
-                  <p className="text-3xl font-black text-primary"><PriceDisplay amount={total} currency="INR" /></p>
-                  <button 
-                    disabled={selected.length === 0 || loading} 
-                    onClick={handleConfirm}
-                    className="w-full mt-4 bg-primary text-dark font-black px-6 py-3 rounded-xl uppercase tracking-widest text-[10px] hover:bg-white transition-all disabled:opacity-30 flex items-center justify-center gap-2"
-                  >
-                    {loading ? <Loader2 className="w-3 h-3 animate-spin"/> : <>Confirm Extras <ArrowRight className="w-3 h-3"/></>}
-                  </button>
-               </div>
+                <div className="bg-primary/10 p-6 rounded-3xl border border-primary/20 min-w-[280px]">
+                   <p className="text-[10px] font-black uppercase text-slate-500 tracking-[3px] mb-2">Total Selection</p>
+                   <p className="text-3xl font-black text-primary"><PriceDisplay amount={total} currency="INR" /></p>
+                   <div className="flex gap-3 mt-4">
+                     {isWizard && (
+                       <button 
+                         onClick={onBack}
+                         className="flex-1 bg-white/10 text-white font-black px-4 py-3 rounded-xl uppercase tracking-widest text-[10px] hover:bg-white/20 transition-all border border-white/10"
+                       >
+                         Back
+                       </button>
+                     )}
+                     <button 
+                       disabled={selected.length === 0 || loading} 
+                       onClick={handleConfirm}
+                       className={`${isWizard ? 'flex-[2]' : 'w-full'} bg-primary text-dark font-black px-6 py-3 rounded-xl uppercase tracking-widest text-[10px] hover:bg-white transition-all disabled:opacity-30 flex items-center justify-center gap-2`}
+                     >
+                       {loading ? <Loader2 className="w-3 h-3 animate-spin"/> : <>{isWizard ? 'Next Step' : 'Confirm Extras'} <ArrowRight className="w-3 h-3"/></>}
+                     </button>
+                   </div>
+                </div>
             </div>
 
             {selected.includes('dining') && (
@@ -196,44 +217,51 @@ export default function Extras({ darkMode }) {
               </div>
             )}
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {catalog.map((item) => {
-                const isActive = selected.includes(item.id);
-                return (
-                  <div
-                    key={item.id}
-                    onClick={() => toggle(item.id)}
-                    className={`p-8 border-2 rounded-[2rem] cursor-pointer transition-all relative group ${isActive ? "bg-primary/5 border-primary shadow-[0_20px_40px_rgba(200,168,75,0.1)]" : "bg-white/5 border-[var(--border-color)] hover:border-white/20"}`}
-                  >
-                    <div
-                      className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-all ${isActive ? "bg-primary text-dark" : "bg-black/40 text-primary"}`}
-                    >
-                      {React.cloneElement(item.icon, { size: 24 })}
-                    </div>
-                    <h3 className="text-xl font-black uppercase tracking-tight mb-4">
-                      {item.name}
-                    </h3>
-                    <p className="text-sm text-slate-400 font-medium leading-relaxed mb-8">
-                      {item.desc}
-                    </p>
-
-                    <div className="flex justify-between items-center pt-6 border-t border-white/5">
-                      <span className="text-lg font-black tracking-tight text-white">
-                        <PriceDisplay amount={item.price} currency="INR" />
-                      </span>
+            <div className="grid lg:grid-cols-3 gap-12 mb-12">
+              <div className="lg:col-span-2">
+                <div className="grid md:grid-cols-2 gap-6">
+                  {catalog.map((item) => {
+                    const isActive = selected.includes(item.id);
+                    return (
                       <div
-                        className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${isActive ? "bg-primary text-dark" : "bg-white/5 border border-white/10 group-hover:bg-white/10"}`}
+                        key={item.id}
+                        onClick={() => toggle(item.id)}
+                        className={`p-8 border-2 rounded-[2rem] cursor-pointer transition-all relative group ${isActive ? "bg-primary/5 border-primary shadow-[0_20px_40px_rgba(200,168,75,0.1)]" : "bg-white/5 border-[var(--border-color)] hover:border-white/20"}`}
                       >
-                        {isActive ? (
-                          <Check size={16} strokeWidth={4} />
-                        ) : (
-                          <Plus size={16} />
-                        )}
+                        <div
+                          className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-all ${isActive ? "bg-primary text-dark" : "bg-black/40 text-primary"}`}
+                        >
+                          {React.cloneElement(item.icon, { size: 24 })}
+                        </div>
+                        <h3 className="text-xl font-black uppercase tracking-tight mb-4">
+                          {item.name}
+                        </h3>
+                        <p className="text-sm text-slate-400 font-medium leading-relaxed mb-8">
+                          {item.desc}
+                        </p>
+
+                        <div className="flex justify-between items-center pt-6 border-t border-white/5">
+                          <span className="text-lg font-black tracking-tight text-white">
+                            <PriceDisplay amount={item.price} currency="INR" />
+                          </span>
+                          <div
+                            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${isActive ? "bg-primary text-dark" : "bg-white/5 border border-white/10 group-hover:bg-white/10"}`}
+                          >
+                            {isActive ? (
+                              <Check size={16} strokeWidth={4} />
+                            ) : (
+                              <Plus size={16} />
+                            )}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                );
-              })}
+                    );
+                  })}
+                </div>
+              </div>
+              <div className="lg:col-span-1">
+                <CurrencyCalculator darkMode={darkMode} />
+              </div>
             </div>
           </div>
         ) : (

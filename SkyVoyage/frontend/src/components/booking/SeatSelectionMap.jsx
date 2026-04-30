@@ -40,7 +40,7 @@ const generateMockGrid = () => {
 };
 
 export default function SeatSelectionMap({ flight, passengers, onConfirm, onBack }) {
-  const { rates } = useCurrency();
+  const { rates, convert } = useCurrency();
   const [grid] = useState(generateMockGrid());
   // Object mapping passengerIndex -> seatData
   const [selectedSeats, setSelectedSeats] = useState({});
@@ -213,8 +213,7 @@ export default function SeatSelectionMap({ flight, passengers, onConfirm, onBack
 
               <button 
                 onClick={() => {
-                  const inrRate = rates['INR'] || 83.5;
-                  const totalUsd = totalAddedCosts / inrRate;
+                  const totalUsd = convert(totalAddedCosts, 'INR', 'USD');
                   onConfirm(selectedSeats, totalUsd);
                 }} 
                 disabled={passengers.length !== Object.keys(selectedSeats).length}

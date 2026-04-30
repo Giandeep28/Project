@@ -15,6 +15,7 @@ import Placeholder     from './pages/Placeholder';
 import Privileges      from './pages/Privileges';
 import FlightTracker   from './pages/FlightTracker';
 import ChatbotWidget   from './components/ChatbotWidget';
+import CurrencyCalculatorPage from './pages/CurrencyCalculatorPage';
 
 import ManageBooking from './pages/booking/ManageBooking';
 import CheckIn       from './pages/booking/CheckIn';
@@ -60,6 +61,7 @@ function Layout() {
           <Route path="/results"   element={<SearchResults darkMode={dark}/>}/>
           <Route path="/privileges" element={<Privileges darkMode={dark}/>}/>
           <Route path="/track"     element={<FlightTracker darkMode={dark}/>}/>
+          <Route path="/currency-calculator" element={<CurrencyCalculatorPage darkMode={dark}/>}/>
           
           {/* Core Booking Engine */}
           <Route path="/booking"   element={<ProtectedRoute><Booking darkMode={dark}/></ProtectedRoute>}/>
