@@ -27,7 +27,7 @@ Booking ID: ${booking.bookingId}
 Flight ID: ${booking.flightId}
 Status: ${booking.status}
 
-Fare: INR ${booking.totalPrice?.toLocaleString('en-IN')}
+Fare: ${booking.totalPrice ? (booking.totalPrice * 83.5).toLocaleString('en-IN', { style: 'currency', currency: 'INR' }) : 'N/A'} (Normalized)
 Booked At: ${booking.bookedAt}
 Email: ${booking.contactEmail}
 
@@ -96,7 +96,7 @@ Thank you for flying SkyVoyage.
               <div style={{ flex: 1 }}>
                 <p style={{ fontSize: 12, color: muted, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>Total Amount Paid</p>
                 <p style={{ fontSize: 24, fontWeight: 800, color: accent }}>
-                  <PriceDisplay amount={booking.totalPrice || 0} />
+                  <PriceDisplay amount={booking.totalPrice || 0} currency="USD" />
                 </p>
               </div>
               <div style={{ flex: 1 }}>

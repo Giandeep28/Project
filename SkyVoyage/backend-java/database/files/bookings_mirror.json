@@ -30,3 +30,9 @@
 {"bookingId":"BK-QIC9JTXJ", "flightId":"f-008", "from":"DEL", "to":"BOM", "contactEmail":"audit@example.com", "seatClass":"FIRST", "totalFare":912.09, "status":"CONFIRMED"}
 {"bookingId":"BK-GKKYZYDI", "flightId":"f-008", "from":"DEL", "to":"BOM", "contactEmail":"john@example.com", "passengerName":"John Doe", "seatClass":"FIRST", "totalFare":94.18, "status":"CONFIRMED"}
 {"bookingId":"BK-GKKYZYDI", "flightId":"f-008", "from":"DEL", "to":"BOM", "contactEmail":"john@example.com", "passengerName":"John Doe", "seatClass":"FIRST", "totalFare":94.18, "status":"CONFIRMED"}
+{"bookingId":"BK-S091UEJR", "flightId":"f-002", "from":"BLR", "to":"DEL", "contactEmail":"pqr@gmail.com", "passengerName":"pqr", "seatClass":"BUSINESS", "totalFare":50.86, "status":"CONFIRMED"}
+{"bookingId":"BK-S091UEJR", "flightId":"f-002", "from":"BLR", "to":"DEL", "contactEmail":"pqr@gmail.com", "passengerName":"pqr", "seatClass":"BUSINESS", "totalFare":50.86, "status":"CONFIRMED"}
+{"bookingId":"BK-690U2MG3", "flightId":"f-002", "from":"MAA", "to":"CCU", "contactEmail":"pqr@yahoo.com", "passengerName":"pqr", "seatClass":"ECONOMY", "totalFare":73.73, "status":"CONFIRMED"}
+{"bookingId":"BK-690U2MG3", "flightId":"f-002", "from":"MAA", "to":"CCU", "contactEmail":"pqr@yahoo.com", "passengerName":"pqr", "seatClass":"ECONOMY", "totalFare":73.73, "status":"CONFIRMED"}
+{"bookingId":"BK-O23ZSZCL", "flightId":"f-004", "from":"DEL", "to":"DED", "contactEmail":"abz@gmail.com", "passengerName":"abz", "seatClass":"BUSINESS", "totalFare":67.90, "status":"CONFIRMED"}
+{"bookingId":"BK-O23ZSZCL", "flightId":"f-004", "from":"DEL", "to":"DED", "contactEmail":"abz@gmail.com", "passengerName":"abz", "seatClass":"BUSINESS", "totalFare":67.90, "status":"CONFIRMED"}

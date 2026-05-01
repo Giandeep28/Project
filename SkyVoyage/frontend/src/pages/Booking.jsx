@@ -5,6 +5,7 @@ import SeatSelectionMap from "../components/booking/SeatSelectionMap";
 import MealSelection from "../components/booking/MealSelection";
 import Extras from "./booking/Extras";
 import PriceDisplay from "../components/shared/PriceDisplay";
+import useCurrency from "../context/useCurrency";
 
 export default function Booking({ darkMode }) {
   const location = useLocation();
@@ -36,8 +37,15 @@ export default function Booking({ darkMode }) {
   const [payLoading, setPayLoading] = useState(false);
   const [payError, setPayError] = useState(null);
 
-  const basePrice = (flight.price || 0) * passengers.length;
-  const totalPrice = basePrice + (seatAddedPrice || 0) + (mealAddedPrice || 0) + (extrasPrice || 0);
+  const { convert } = useCurrency();
+  const basePriceInFlightCurrency = (flight.price || 0) * passengers.length;
+  
+  // Calculate total in USD for stable persistence and calculation
+  const basePriceUSD = convert(basePriceInFlightCurrency, flight.currency || 'USD', 'USD');
+  const totalPriceUSD = basePriceUSD + (seatAddedPrice || 0) + (mealAddedPrice || 0) + (extrasPrice || 0);
+
+  // For backend persistence, we send the combined total in USD
+  const totalPrice = totalPriceUSD; 
 
   const handleProceedToSeats = () => {
     if (!contactEmail) {
@@ -565,7 +573,7 @@ export default function Booking({ darkMode }) {
                   {passengers.length > 1 && "s"})
                 </span>
                 <span>
-                  <PriceDisplay amount={basePrice} />
+                  <PriceDisplay amount={basePriceInFlightCurrency} currency={flight.currency} />
                 </span>
               </div>
               {seatAddedPrice > 0 && (
@@ -574,7 +582,7 @@ export default function Booking({ darkMode }) {
                 >
                   <span>Premium Seat Upgrades</span>
                   <span>
-                    <PriceDisplay amount={seatAddedPrice} />
+                    <PriceDisplay amount={seatAddedPrice} currency="USD" />
                   </span>
                 </div>
               )}
@@ -584,7 +592,7 @@ export default function Booking({ darkMode }) {
                 >
                   <span>Gourmet Meal Selections</span>
                   <span>
-                    <PriceDisplay amount={mealAddedPrice} />
+                    <PriceDisplay amount={mealAddedPrice} currency="USD" />
                   </span>
                 </div>
               )}
@@ -594,7 +602,7 @@ export default function Booking({ darkMode }) {
                 >
                   <span>Premium Extras & Stopover Dining</span>
                   <span>
-                    <PriceDisplay amount={extrasPrice} />
+                    <PriceDisplay amount={extrasPrice} currency="USD" />
                   </span>
                 </div>
               )}
@@ -612,7 +620,7 @@ export default function Booking({ darkMode }) {
             >
               <p style={{ fontSize: 18, fontWeight: 600 }}>Total Amount</p>
               <p style={{ fontSize: 28, fontWeight: 800 }}>
-                <PriceDisplay amount={totalPrice} />
+                <PriceDisplay amount={totalPriceUSD} currency="USD" />
               </p>
             </div>
 
